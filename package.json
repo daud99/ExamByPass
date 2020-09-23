@@ -1,0 +1,22 @@
+{
+  "name": "exambypass",
+  "version": "1.0.0",
+  "description": "It's an exam simulator. Let's it's user simulate the real exam situation and help for the original upcoming exam.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daud99/ExamByPass.git"
+  },
+  "keywords": [
+    "exambypass"
+  ],
+  "author": "Daud Ahmed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daud99/ExamByPass/issues"
+  },
+  "homepage": "https://github.com/daud99/ExamByPass#readme"
+}
