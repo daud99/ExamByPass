@@ -1,2 +1,24 @@
 # ExamByPass
-It's an exam simulator it let user to practice exam in real environment before giving the actual exam
+
+For Bahaa and Khaleed.
+
+## For development
+
+### Running the server
+```sh
+npm install
+```
+```sh
+npm start
+```
+
+### Running the vue app
+```sh
+cd views
+```
+```sh
+npm install
+```
+```sh
+npm run serve
+```

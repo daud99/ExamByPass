@@ -4,7 +4,8 @@
   "description": "It's an exam simulator. Let's it's user simulate the real exam situation and help for the original upcoming exam.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
   },
   "repository": {
     "type": "git",
