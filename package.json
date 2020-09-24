@@ -18,5 +18,16 @@
   "bugs": {
     "url": "https://github.com/daud99/ExamByPass/issues"
   },
-  "homepage": "https://github.com/daud99/ExamByPass#readme"
+  "homepage": "https://github.com/daud99/ExamByPass#readme",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.20.0",
+    "cookie-parser": "^1.4.5",
+    "csurf": "^1.11.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.1",
+    "form-data": "^3.0.0",
+    "multer": "^1.4.2"
+  }
 }

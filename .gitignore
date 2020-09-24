@@ -1,0 +1,30 @@
+node_modules
+docs
+raw
+sessions
+.vscode
+dumps
+.compiled.js
+views/node_modules
+
+views/.DS_Store
+node_modules
+views/dist
+
+# local env files
+views/.env.local
+views/.env.*.local
+
+# Log files
+views/npm-debug.log*
+views/yarn-debug.log*
+views/yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
