@@ -1,24 +1,24 @@
-node_modules
-docs
-raw
-sessions
+server/node_modules
+server/docs
+server/raw
+server/sessions
 .vscode
 dumps
-.compiled.js
-views/node_modules
+server/.compiled.js
+client/node_modules
 
-views/.DS_Store
+client/.DS_Store
 node_modules
-views/dist
+client/dist
 
 # local env files
-views/.env.local
-views/.env.*.local
+client/.env.local
+client/.env.*.local
 
 # Log files
-views/npm-debug.log*
-views/yarn-debug.log*
-views/yarn-error.log*
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
 
 # Editor directories and files
 .idea
