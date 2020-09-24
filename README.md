@@ -6,6 +6,9 @@ For Bahaa and Khaleed.
 
 ### Running the server
 ```sh
+cd server
+```
+```sh
 npm install
 ```
 ```sh
@@ -14,7 +17,7 @@ npm start
 
 ### Running the vue app
 ```sh
-cd views
+cd client
 ```
 ```sh
 npm install
