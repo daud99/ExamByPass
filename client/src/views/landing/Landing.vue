@@ -1,15 +1,20 @@
 <template>
   <div>
-    <FrontPage />
+    <FirstPage />
+    <br />
+    <br />
+    <PricingPage />
   </div>
 </template>
 <script>
-import FrontPage from "./components/FrontPage";
+import FirstPage from "./components/First_page";
+import PricingPage from './components/Pricing'
 
 export default {
   name: "landing",
   components: {
-    FrontPage
+    FirstPage,
+    PricingPage
   }
 };
 </script>
