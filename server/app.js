@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
 let ejs = require('ejs');
@@ -9,6 +10,9 @@ const routes = require('./server-routes.js');
 async function ignite() {
 
     try {
+        if (!process.env.MSG) {
+          throw new Error("\nEnvironment variables are not working.\n")
+        }
 
         auth.initialize(app);
 
@@ -26,12 +30,11 @@ async function ignite() {
           })
         }
         app.listen(siteConfig.port, () => {
-            console.log(`SocDash active at ${siteConfig.port}!`);
+            console.log(`ExamByPass server is running on ${ process.env.PORT || siteConfig.port }!`);
         });
 
     } catch (e) {
-        console.log("FATAL IGNITION ERROR");
-        console.log(e);
+        console.log("FATAL IGNITION ERROR", '\n', e);
     }
 
 }

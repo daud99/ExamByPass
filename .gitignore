@@ -1,7 +1,9 @@
 server/node_modules
+server/public
 server/docs
 server/raw
 server/sessions
+.env
 .vscode
 dumps
 server/.compiled.js

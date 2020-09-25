@@ -26,7 +26,8 @@ module.exports = {
       '/api': {
         target: 'http:localhost:3000'
       }
-    }
+    },
+    port: 8080
   },
   outputDir: path.resolve(__dirname, '../server/public')
 };
