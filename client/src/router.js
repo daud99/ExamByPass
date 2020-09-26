@@ -27,8 +27,7 @@ export default new Router({
       name: "login",
       components: {
         header: AppHeader,
-        default: Login,
-        footer: AppFooter
+        default: Login
       }
     },
     {
@@ -36,8 +35,7 @@ export default new Router({
       name: "register",
       components: {
         header: AppHeader,
-        default: Register,
-        footer: AppFooter
+        default: Register
       }
     },
     {
