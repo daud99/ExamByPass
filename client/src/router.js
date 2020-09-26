@@ -1,10 +1,13 @@
 import Vue from "vue";
 import Router from "vue-router";
-import AppHeader from "./layout/AppHeader";
-import AppFooter from "./layout/AppFooter";
+import LandingHeader from "./layout/landing/LandingHeader";
+import LandingFooter from "./layout/landing/LandingFooter";
+import LoginHeader from "./layout/login/LoginHeader"
+import RegisterHeader from "./layout/register/RegisterHeader"
 import Landing from "./views/landing/Landing.vue";
 import Login from "./views/login/Login.vue";
 import Register from "./views/register/Register.vue";
+import Forget from "./views/forgetPassword/Forget-Password.vue";
 import Profile from "./views/profile/Profile.vue";
 
 Vue.use(Router);
@@ -17,16 +20,16 @@ export default new Router({
       path: "/",
       name: "components",
       components: {
-        header: AppHeader,
+        header: LandingHeader,
         default: Landing,
-        footer: AppFooter
+        footer: LandingFooter
       }
     },
     {
       path: "/login",
       name: "login",
       components: {
-        header: AppHeader,
+        header: LoginHeader,
         default: Login
       }
     },
@@ -34,17 +37,25 @@ export default new Router({
       path: "/register",
       name: "register",
       components: {
-        header: AppHeader,
+        header: RegisterHeader,
         default: Register
+      }
+    },
+    {
+      path: "/forget",
+      name: "forget",
+      components: {
+        header: LoginHeader,
+        default: Forget
       }
     },
     {
       path: "/profile",
       name: "profile",
       components: {
-        header: AppHeader,
+        header: LandingHeader,
         default: Profile,
-        footer: AppFooter
+        footer: LandingFooter
       }
     }
   ],

@@ -20,11 +20,13 @@
           <div class="col col-lg-6 col-md-6 col-xs-12">
             <card class="d-flex align-items-center">
               <h5>Upload .ete file</h5>
+              <p>Upload your file here</p>
             </card>
           </div>
           <div class="col col-lg-6 col-md-6 col-xs-12">
             <card class="d-flex align-items-center">
               <h5>Show my exams</h5>
+              <p>Show my uploaded files</p>
             </card>
           </div>
         </div>

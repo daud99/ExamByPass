@@ -69,6 +69,14 @@
                             </form>
                         </template>
                     </card>
+                    <div class="row mt-3">
+                        <div 
+                          class="col-12 text-center text-light pointer"
+                          @click="() => { this.$router.push({ name: 'login' }) }"
+                        >
+                          <small>Already have an account?</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

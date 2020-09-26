@@ -1,5 +1,5 @@
 <template>
-  <div class="py-5 bg-secondary">
+  <div class="py-5 bg-secondary" id="pricingSection">
     <div class="container shape-container d-flex align-items-center">
         <div class="col px-0">
           <div class="row">
