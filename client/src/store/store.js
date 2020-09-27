@@ -7,7 +7,7 @@ import actions from './actions';
 import getters from './getters';
 
 // Modules
-import userManagement from './user-management/user-management';
+import auth from './auth/auth';
 
 Vue.use(Vuex);
 
@@ -17,6 +17,6 @@ export const store = new Vuex.Store({
   actions,
   getters,
   modules: {
-    userManagement
+    auth
   }
 });
