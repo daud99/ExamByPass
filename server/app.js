@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
 let ejs = require('ejs');
-
 const auth = require("./auth.js");
 const siteConfig = require('./config/site.js');
 const routes = require('./server-routes.js');
+const db = require("./config/db.js")
 
+db.authenticate()
+.then(() => console.log("connectedd"))
 async function ignite() {
 
     try {
