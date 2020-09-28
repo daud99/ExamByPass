@@ -17,6 +17,7 @@ const Discount = db.define('discount',{
     discountType:DataTypes.STRING(15),
     amount:DataTypes.DATE ,
     isActive:DataTypes.BOOLEAN,
-})
+},{freezeTableName: true,
+    underscored: true })
 
 module.exports=Discount

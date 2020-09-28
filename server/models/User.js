@@ -34,7 +34,8 @@ const User = db.define('user',{
     archieved:DataTypes.STRING(30),
     modifiedId:DataTypes.STRING(20),
     
-})
+},{freezeTableName: true,
+    underscored: true })
 
 
 

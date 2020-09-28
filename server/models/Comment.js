@@ -11,5 +11,6 @@ const Comment = db.define('comment',{
     text:DataTypes.TEXT,
     isHelpful:DataTypes.BOOLEAN,
  
-})
+},{freezeTableName: true,
+    underscored: true })
 module.exports=Comment

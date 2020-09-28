@@ -31,6 +31,9 @@ const examLibrary = db.define('exam_library',{
     time_limit	:DataTypes.INTEGER,
     type:DataTypes.STRING,
    
+},{
+    freezeTableName: true,
+    underscored: true 
 })
 
 

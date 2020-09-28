@@ -14,6 +14,7 @@ const Ticket = db.define('ticket',{
     description:DataTypes.STRING(500),
     status:DataTypes.STRING(15),
  
-})
+},{freezeTableName: true,
+    underscored: true })
 
 module.exports=Ticket

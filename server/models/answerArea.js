@@ -18,5 +18,8 @@ const answerArea = db.define('answer_area',{
     correct_object_index:DataTypes.INTEGER,
     position:DataTypes.INTEGER,
     owned_place_index:DataTypes.INTEGER,
-})
+},
+{
+    freezeTableName: true,
+    underscored: true })
 module.exports=answerArea

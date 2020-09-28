@@ -12,6 +12,7 @@ const Invoice = db.define('invoice',{
     },
     title:DataTypes.STRING(30),
 
-})
+},{freezeTableName: true,
+    underscored: true })
 
 module.exports=Invoice

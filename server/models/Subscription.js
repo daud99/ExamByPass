@@ -12,6 +12,7 @@ const Subscription = db.define('subscription',{
     title:DataTypes.STRING(30),
     duration:DataTypes.STRING(15),
     amount:DataTypes.STRING(15),
-})
+},{freezeTableName: true,
+    underscored: true })
 
 module.exports=Subscription

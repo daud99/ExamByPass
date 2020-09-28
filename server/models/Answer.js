@@ -16,6 +16,9 @@ const Answer = db.define('answer',{
     should_ignore_multiple_spaces:DataTypes.INTEGER(1),
     should_trim_user_response:DataTypes.INTEGER(1),
     drag_drop_type:DataTypes.STRING,
+},{
+    freezeTableName: true,
+    underscored: true 
 })
 
 module.exports=Answer

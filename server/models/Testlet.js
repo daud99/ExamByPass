@@ -14,7 +14,8 @@ const Testlet = db.define('Testlet',{
     overview:DataTypes.TEXT,
     title:DataTypes.STRING,
    
-})
+},{freezeTableName: true,
+    underscored: true })
 
 
 module.exports=Testlet

@@ -16,6 +16,9 @@ const resetPasswordRequest = db.define('reset_password_request',{
     expires_at	:DataTypes.DATE,  
     
    
+},{
+    freezeTableName: true,
+    underscored: true 
 })
 
 

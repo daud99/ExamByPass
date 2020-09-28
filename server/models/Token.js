@@ -13,7 +13,8 @@ const Token = db.define('token',{
     lastUsed:DataTypes.STRING(20),
     token:DataTypes.STRING(150),
     expiry:DataTypes.STRING(15),
-})
+},{freezeTableName: true,
+    underscored: true })
 
 
 module.exports=Token

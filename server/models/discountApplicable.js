@@ -12,6 +12,7 @@ const discountApplicable = db.define('discountApplicable',{
     },
     radeemDate:DataTypes.DATE  
   
-})
+},{freezeTableName: true,
+    underscored: true })
 
 module.exports=discountApplicable
