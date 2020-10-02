@@ -2,7 +2,6 @@
     <div class="form-group"
          :class="[
        {'input-group': hasIcon},
-       {'has-danger': error},
        {'focused': focused},
        {'input-group-alternative': alternative},
        {'has-label': label || $slots.label},
@@ -26,6 +25,7 @@
         </div>
         <slot v-bind="slotData">
             <input
+                    autocomplete="new-password"
                     :value="value"
                     v-on="listeners"
                     v-bind="$attrs"
@@ -41,8 +41,8 @@
           </span>
         </div>
         <slot name="infoBlock"></slot>
-        <slot name="helpBlock">
-            <div class="text-danger invalid-feedback" style="display: block;" :class="{'mt-2': hasIcon}" v-if="error">
+        <slot name="help6Block">
+            <div class="text-danger invalid-feedback" style="display: block;" :class="{'mt-2': hasIcon}" v-if="!valid">
                 {{ error }}
             </div>
         </slot>

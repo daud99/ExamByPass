@@ -19,12 +19,16 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import Argon from "./plugins/argon-kit";
+import Vuelidate from "vuelidate";
 import './registerServiceWorker'
 
 import { store } from './store/store';
 
 Vue.config.productionTip = false;
 Vue.use(Argon);
+Vue.use(Vuelidate);
+
+Vue.prototype.$user = {};
 
 new Vue({
   router,

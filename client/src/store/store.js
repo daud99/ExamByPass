@@ -9,6 +9,7 @@ import getters from './getters';
 // Modules
 import auth from './auth/auth';
 
+Vue.prototype.$user = {};
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
