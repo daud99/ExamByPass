@@ -131,10 +131,7 @@ export default {
     },
     methods: {
         async saveUser () {
-            // alert("Wao saveUSer");
              try {
-                // console.log("going to send request");
-                // console.log(quickRequest);
                 const user = {
                     email: this.email,
                     password: this.password,
@@ -142,8 +139,6 @@ export default {
                     lastName: this.lastName
                 };
                 let response = await quickRequest("/api/auth/save-user", "POST", user);
-                console.log("response below");
-                console.log(response);
                 if("error" in response) {
                     Swal.fire({
                         type: "error",

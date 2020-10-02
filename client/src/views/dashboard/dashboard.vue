@@ -31,7 +31,6 @@ export default {
     // this.getCurrentUser();
     let response = {};
     if(!(localStorage.getItem("email"))) {
-      console.log("fetching user information as we don't know wether the user is login or not");
       await this.getCurrentUser();
       response = this['auth/getUser'];
       if(Object.keys(response).length === 0 && response.constructor === Object) {
@@ -52,15 +51,8 @@ export default {
     ]),
     async getCurrentUser() {
       try {
-        console.log("going to send request");
-        console.log(quickRequest);
         let response = await quickRequest("/api/auth/get-user", "POST", {});
-        console.log("response");
-        console.log(response);
-        console.log("WE are trying to store user in vuex");
         this['auth/setUser'](response);
-        console.log("now lets check it's even working or not");
-        console.log(this['auth/getUser']);
       } 
       catch(e) {
         console.log("error");

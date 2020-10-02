@@ -7,8 +7,6 @@ const siteConfig = require('./config/site.js');
 const routes = require('./server-routes.js');
 const db = require("./config/db.js")
 
-db.authenticate()
-.then(() => console.log("connectedd"))
 async function ignite() {
 
     try {
@@ -16,13 +14,15 @@ async function ignite() {
           throw new Error("\nEnvironment variables are not working.\n")
         }
 
+        db.authenticate()
+        .then(() => console.log("connectedd"))
+
         auth.initialize(app);
-
-
+        
         app.use('/', routes);
 
         // Handle production
-        if(process.env.NODE_ENV === 'production') {
+        if(process.env.NODE_ENV === 'development') {
           //static folder
           app.use(express.static(__dirname + '/public'));
 
@@ -31,6 +31,7 @@ async function ignite() {
             res.sendFile(__dirname + '/public/index.html');
           })
         }
+
         app.listen(siteConfig.port, () => {
             console.log(`ExamByPass server is running on ${ process.env.PORT || siteConfig.port }!`);
         });

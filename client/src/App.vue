@@ -24,9 +24,7 @@ export default {
     ])
   },
   created() {
-    console.log("calling tryAutoLogin");
     this.tryAutoLogin();
-    console.log("returning from created in App.vue");
   },
   methods: {
      ...mapActions([
@@ -49,13 +47,7 @@ export default {
         roles,
         uuid
       }
-      console.log("On login we are setting up the user data in vuex");
       this['auth/setUser'](user);
-      console.log("let's see is it even getting store on not on vuex");
-       console.log(this['auth/getUser']);
-      // this.$user = user;
-      // console.log("this.$user below in app.vue");
-      // console.log(this.$user);
     }
   }
 };

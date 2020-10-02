@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize")
-module.exports =  new Sequelize('exam', 'root', '', {
+module.exports =  new Sequelize('ExamByPass', 'root', 'toor', {
     host: 'localhost',
     dialect: 'mysql',
     pool:{

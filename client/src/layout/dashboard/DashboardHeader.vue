@@ -106,8 +106,6 @@ export default {
     },
     async logout() {
       try {
-        console.log("going to send request");
-        console.log(quickRequest);
         let response = await quickRequest("/api/login/logout", "POST", {});
         this['auth/setUser']({});
         localStorage.clear();

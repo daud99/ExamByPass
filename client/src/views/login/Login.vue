@@ -119,8 +119,6 @@ export default {
                     password: this.password
                 };
                 let response = await quickRequest("/api/auth/log-in", "POST", login);
-                console.log("response below");
-                console.log(response);
                 if("error" in response) {
                     Swal.fire({
                         type: "error",
@@ -136,14 +134,10 @@ export default {
                     localStorage.setItem("roles", response.user.roles);
                     localStorage.setItem("uuid", response.user.uuid);
                     this['auth/setUser'](response.user);
-                    console.log("now lets check it's even working or not");
-                    console.log(this['auth/getUser']);
                     this.$router.push("dashboard");
                 }
             }
             catch(e) {
-                console.log("error below");
-                console.log(e);
                 Swal.fire({
                     type: "error",
                     title: "Error Fetching Information",

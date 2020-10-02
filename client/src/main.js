@@ -28,8 +28,6 @@ Vue.config.productionTip = false;
 Vue.use(Argon);
 Vue.use(Vuelidate);
 
-Vue.prototype.$user = {};
-
 new Vue({
   router,
   store,

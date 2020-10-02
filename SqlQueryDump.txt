@@ -1,0 +1,6 @@
+// For deleting all sessions
+
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM exambypass.session;
+SET SQL_SAFE_UPDATES = 1;
+
