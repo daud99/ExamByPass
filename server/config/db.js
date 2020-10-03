@@ -5,7 +5,7 @@ module.exports =  new Sequelize('exam', 'root', '', {
     pool:{
         max:5,
         min:0,
-        acquire:3000,
+        acquire:6000,
         idle:10000
     },
 });

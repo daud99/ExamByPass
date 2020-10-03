@@ -30,7 +30,10 @@ const upload = require('./config/multer').upload;
 var csrfProtection = csrf({ cookie: true });
 
 router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
-
+//Route for questions
+router.get('/api/questions/:page', ParserController.getQuestions);
+//Route for answers
+router.get('/api/answers/:question_id', ParserController.getAnswers);
 // Send CSRF token for session
 router.get('/api/getcsrftoken', csrfProtection, function (req, res) {
     return res.json({ csrfToken: req.csrfToken() });

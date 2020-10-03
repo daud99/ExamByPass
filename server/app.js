@@ -18,7 +18,6 @@ async function ignite() {
 
         auth.initialize(app);
 
-
         app.use('/', routes);
 
         // Handle production
