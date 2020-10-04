@@ -10,8 +10,6 @@ const structureEntryQuestionLink = db.define('structure_entry_question_link',{
     },
     is_accessible_in_demo_version:DataTypes.INTEGER(1) ,
 
-},{
-    freezeTableName: true,
-    underscored: true 
-})
+},{freezeTableName: true,
+    underscored: true })
 module.exports=structureEntryQuestionLink

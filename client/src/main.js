@@ -16,27 +16,23 @@
 
 */
 import Vue from "vue";
-import Simulator from "./Simulator.vue";
-import router from "./router/index";
+import App from "./App.vue";
+import router from "./router";
 import Argon from "./plugins/argon-kit";
-import vuetify from "./plugins/vuetify";
-import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
+import Vuelidate from "vuelidate";
+import './registerServiceWorker'
 import axios from "./axios.js";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
-import "./registerServiceWorker";
+import { store } from './store/store';
+import vuetify from './plugins/vuetify';
 
-import { store } from "./store/store";
-
-Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
+Vue.prototype.$http = axios;
 Vue.use(Argon);
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
+Vue.use(Vuelidate);
 
 new Vue({
   router,
   store,
   vuetify,
-  render: (h) => h(Simulator),
+  render: h => h(App)
 }).$mount("#app");

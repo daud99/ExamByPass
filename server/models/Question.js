@@ -21,10 +21,8 @@ const Question = db.define('question',{
     allow_shuffle_answers:DataTypes.INTEGER(1),
     task_image:DataTypes.TEXT,
    
-},{
-    freezeTableName: true,
-    underscored: true 
-})
+},{freezeTableName: true,
+    underscored: true })
 
 
 module.exports=Question

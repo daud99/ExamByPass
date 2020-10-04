@@ -1,14 +1,6 @@
 const Sequelize = require('sequelize')
 const db = require("../config/db.js")
 const { DataTypes } = require("sequelize"); // Import the built-in data types
-const Token = require('./Token')
-const Invoice = require('./Invoice')
-const discountApplicable = require('./discountApplicable')
-const Discount = require('./Discount')
-const Ticket = require('./Ticket')
-const Exam_Library = require('./examLibrary')
-const Reset_password_request = require('./resetPasswordRequest')
-
 
 const User = db.define('user',{
     id:{
@@ -30,12 +22,13 @@ const User = db.define('user',{
     },
     resetPasswordToken:DataTypes.STRING(100),
     resetPasswordExpire:DataTypes.STRING(30),
-    emailVerified:DataTypes.STRING(30),
-    archieved:DataTypes.STRING(30),
+    emailVerified:DataTypes.BOOLEAN(),
+    archieved:DataTypes.BOOLEAN(),
     modifiedId:DataTypes.STRING(20),
     
 },{freezeTableName: true,
     underscored: true })
+
 
 
 

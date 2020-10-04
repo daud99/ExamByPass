@@ -16,9 +16,7 @@ const structureEntry = db.define('structure_entry',{
     
   
    
-},{
-    freezeTableName: true,
-    underscored: true 
-})
+},{freezeTableName: true,
+    underscored: true })
 
 module.exports=structureEntry

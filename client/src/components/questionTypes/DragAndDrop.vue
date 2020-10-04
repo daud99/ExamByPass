@@ -51,6 +51,14 @@
         </v-sheet>
       </v-col>
     </v-row>
+    <v-radio-group v-model="radioGroup">
+      <v-radio
+        v-for="n in 3"
+        :key="n"
+        :label="`Radio ${n}`"
+        :value="n"
+      ></v-radio>
+    </v-radio-group>
   </v-container>
 </template>
 
@@ -65,6 +73,7 @@ export default {
   },
   data: () => {
     return {
+       radioGroup: 1,
       question: {
         id: 3,
         answers: {

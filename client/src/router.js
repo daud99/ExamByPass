@@ -2,6 +2,8 @@ import Vue from "vue";
 import Router from "vue-router";
 import LandingHeader from "./layout/landing/LandingHeader";
 import LandingFooter from "./layout/landing/LandingFooter";
+import DashboardHeader from "./layout/dashboard/DashboardHeader";
+import DashboardFooter from "./layout/dashboard/DashboardFooter";
 import LoginHeader from "./layout/login/LoginHeader"
 import RegisterHeader from "./layout/register/RegisterHeader"
 import Landing from "./views/landing/Landing.vue";
@@ -9,6 +11,14 @@ import Login from "./views/login/Login.vue";
 import Register from "./views/register/Register.vue";
 import Forget from "./views/forgetPassword/Forget-Password.vue";
 import Profile from "./views/profile/Profile.vue";
+import Dashboard from "./views/dashboard/dashboard.vue";
+import Guards from './guards.js';
+import SingleType from './components/questionTypes/Single.vue'
+import Multiple from './components/questionTypes/Multiple.vue'
+import FillInTheBlank from './components/questionTypes/FillInTheBlank.vue'
+import HotArea from './components/questionTypes/HotArea.vue'
+import DragAndDrop from './components/questionTypes/DragAndDrop.vue'
+import Main from './components/questionTypes/Main.vue'
 
 Vue.use(Router);
 
@@ -23,7 +33,8 @@ export default new Router({
         header: LandingHeader,
         default: Landing,
         footer: LandingFooter
-      }
+      },
+      beforeEnter: Guards.isNotAuthenticated
     },
     {
       path: "/login",
@@ -31,7 +42,8 @@ export default new Router({
       components: {
         header: LoginHeader,
         default: Login
-      }
+      },
+      beforeEnter: Guards.isNotAuthenticated
     },
     {
       path: "/register",
@@ -39,7 +51,8 @@ export default new Router({
       components: {
         header: RegisterHeader,
         default: Register
-      }
+      },
+      beforeEnter: Guards.isNotAuthenticated
     },
     {
       path: "/forget",
@@ -47,7 +60,8 @@ export default new Router({
       components: {
         header: LoginHeader,
         default: Forget
-      }
+      },
+      beforeEnter: Guards.isNotAuthenticated
     },
     {
       path: "/profile",
@@ -56,8 +70,64 @@ export default new Router({
         header: LandingHeader,
         default: Profile,
         footer: LandingFooter
+      },
+      beforeEnter: Guards.isUserOrAdmin
+    },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      components: {
+        header: DashboardHeader,
+        default: Dashboard,
+        footer: DashboardFooter
       }
-    }
+    },
+    {
+      path: '/single',
+      name: 'Single',
+      components: 
+      {
+        header: LandingHeader,
+        default: SingleType,
+        footer: LandingFooter
+      },
+    },
+    {
+      path: '/multiple',
+      name: 'Multiple',
+      components:{  default:Multiple,
+      header: LandingHeader,
+        footer: LandingFooter}
+    },
+    {
+      path: '/fillInTheBlank',
+      name: 'FillInTheBlank',
+      components: { default:FillInTheBlank,
+      header: LandingHeader,
+        footer: LandingFooter}
+    },
+    {
+      path: '/hotarea',
+      name: 'HotArea',
+      components: { default:HotArea,
+      header: LandingHeader,
+        footer: LandingFooter}
+    },
+    {
+      path: '/drag',
+      name: 'DragAndDrop',
+      components:{ default: DragAndDrop,
+      header: LandingHeader,
+        footer: LandingFooter}
+    },
+    
+    {
+      path: '/main',
+      name: 'Main',
+      components:{ default: Main,
+      header: LandingHeader,
+        footer: LandingFooter}
+    },
   ],
   scrollBehavior: to => {
     if (to.hash) {
@@ -67,3 +137,4 @@ export default new Router({
     }
   }
 });
+

@@ -1,18 +1,14 @@
 <template>
   <div v-if="is_data_fetched">
     <div v-if="questions[indexVar].type === 'SINGLE_CHOICE'">
-      <Single :questionn="questions[indexVar]" :is_called="true" />
+      <Single :questionn="questions[indexVar] " :is_called="true" />
     </div>
     <div v-else-if="questions[indexVar].type === 'MULTIPLE_CHOICE'">
       <Multiple :questionn="questions[indexVar]" />
     </div>
-    <button
-      :disabled="this.is_button_disabled"
-      type="button"
-      v-on:click="counter()"
-    >
-      Next
-    </button>
+  
+          <v-btn :disabled="this.is_button_disabled" class="ma-2" tile color="indigo" dark @click="counter()"
+          >next</v-btn>
   </div>
 </template>
 
@@ -43,6 +39,7 @@ export default {
   },
   methods: {
     getQuestions() {
+      this.questions = []
       axios
         .get("/questions/" + this.page)
         .then((resp) => {
@@ -60,8 +57,9 @@ export default {
       console.log(this.questions.length);
       let totalLength = this.questions.length;
 
-      if (this.counterL >= totalLength - 2) {
+      if (this.counterL >= totalLength - 1) {
         console.log("disable");
+        this.is_data_fetched = false
         this.page += 1;
         this.counterL = 0;
         this.is_button_disabled = true;
