@@ -19,6 +19,7 @@
     "vue": "^2.6.6",
     "vue-flatpickr-component": "^8.1.1",
     "vue-lazyload": "^1.2.6",
+    "vue-property-decorator": "^9.0.2",
     "vue-router": "^3.0.2",
     "vue2-transitions": "^0.2.3",
     "vuedraggable": "^2.24.1",
