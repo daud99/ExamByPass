@@ -15,7 +15,7 @@ npm install
 npm start
 ```
 
-### Running the vue app
+### Running the vue app for development
 ```sh
 cd client
 ```
@@ -23,5 +23,18 @@ cd client
 npm install
 ```
 ```sh
-npm run serve
+npm start
+```
+
+> By above way we will be able to test both node and vue running on single port 3000
+
+### Running the vue app for production
+```sh
+cd client
+```
+```sh
+npm install
+```
+```sh
+npm run build
 ```

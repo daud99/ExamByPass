@@ -1,8 +1,9 @@
+const db = require("../config/db.js");
+const { DataTypes } = require("sequelize");
 
-const db = require("../config/db.js")
-const { DataTypes } = require("sequelize") 
-
-const Session = db.define("Session", {
+const Session = db.define(
+  "Session",
+  {
     sid: {
       type: DataTypes.STRING,
       primaryKey: true,
@@ -10,8 +11,8 @@ const Session = db.define("Session", {
     userId: DataTypes.INTEGER,
     expires: DataTypes.DATE,
     data: DataTypes.TEXT,
-  },{freezeTableName: true,
-    underscored: true });
+  },
+  { freezeTableName: true, underscored: true }
+);
 
-
-module.exports=Session
+module.exports = Session;

@@ -4,27 +4,27 @@ import LandingHeader from "./layout/landing/LandingHeader";
 import LandingFooter from "./layout/landing/LandingFooter";
 import DashboardHeader from "./layout/dashboard/DashboardHeader";
 import DashboardFooter from "./layout/dashboard/DashboardFooter";
-import LoginHeader from "./layout/login/LoginHeader"
-import RegisterHeader from "./layout/register/RegisterHeader"
+import LoginHeader from "./layout/login/LoginHeader";
+import RegisterHeader from "./layout/register/RegisterHeader";
 import Landing from "./views/landing/Landing.vue";
 import Login from "./views/login/Login.vue";
 import Register from "./views/register/Register.vue";
 import Forget from "./views/forgetPassword/Forget-Password.vue";
 import Profile from "./views/profile/Profile.vue";
 import Dashboard from "./views/dashboard/dashboard.vue";
-import Guards from './guards.js';
-import SingleType from './components/questionTypes/Single.vue'
-import Multiple from './components/questionTypes/Multiple.vue'
-import FillInTheBlank from './components/questionTypes/FillInTheBlank.vue'
-import HotArea from './components/questionTypes/HotArea.vue'
-import DragAndDrop from './components/questionTypes/DragAndDrop.vue'
-import Main from './components/questionTypes/Main.vue'
+import Guards from "./guards.js";
+import SingleType from "./components/questionTypes/Single.vue";
+import Multiple from "./components/questionTypes/Multiple.vue";
+import FillInTheBlank from "./components/questionTypes/FillInTheBlank.vue";
+import HotArea from "./components/questionTypes/HotArea.vue";
+import DragAndDrop from "./components/questionTypes/DragAndDrop.vue";
+import Main from "./components/questionTypes/Main.vue";
 
 Vue.use(Router);
 
 export default new Router({
   linkExactActiveClass: "active",
-  mode: 'history',
+  mode: "history",
   routes: [
     {
       path: "/",
@@ -32,36 +32,36 @@ export default new Router({
       components: {
         header: LandingHeader,
         default: Landing,
-        footer: LandingFooter
+        footer: LandingFooter,
       },
-      beforeEnter: Guards.isNotAuthenticated
+      beforeEnter: Guards.isNotAuthenticated,
     },
     {
       path: "/login",
       name: "login",
       components: {
         header: LoginHeader,
-        default: Login
+        default: Login,
       },
-      beforeEnter: Guards.isNotAuthenticated
+      beforeEnter: Guards.isNotAuthenticated,
     },
     {
       path: "/register",
       name: "register",
       components: {
         header: RegisterHeader,
-        default: Register
+        default: Register,
       },
-      beforeEnter: Guards.isNotAuthenticated
+      beforeEnter: Guards.isNotAuthenticated,
     },
     {
       path: "/forget",
       name: "forget",
       components: {
         header: LoginHeader,
-        default: Forget
+        default: Forget,
       },
-      beforeEnter: Guards.isNotAuthenticated
+      beforeEnter: Guards.isNotAuthenticated,
     },
     {
       path: "/profile",
@@ -69,9 +69,9 @@ export default new Router({
       components: {
         header: LandingHeader,
         default: Profile,
-        footer: LandingFooter
+        footer: LandingFooter,
       },
-      beforeEnter: Guards.isUserOrAdmin
+      beforeEnter: Guards.isUserOrAdmin,
     },
     {
       path: "/dashboard",
@@ -79,62 +79,70 @@ export default new Router({
       components: {
         header: DashboardHeader,
         default: Dashboard,
-        footer: DashboardFooter
-      }
-    },
-    {
-      path: '/single',
-      name: 'Single',
-      components: 
-      {
-        header: LandingHeader,
-        default: SingleType,
-        footer: LandingFooter
+        footer: DashboardFooter,
       },
     },
     {
-      path: '/multiple',
-      name: 'Multiple',
-      components:{  default:Multiple,
-      header: LandingHeader,
-        footer: LandingFooter}
+      path: "/single",
+      name: "Single",
+      components: {
+        header: LandingHeader,
+        default: SingleType,
+        footer: LandingFooter,
+      },
     },
     {
-      path: '/fillInTheBlank',
-      name: 'FillInTheBlank',
-      components: { default:FillInTheBlank,
-      header: LandingHeader,
-        footer: LandingFooter}
+      path: "/multiple",
+      name: "Multiple",
+      components: {
+        default: Multiple,
+        header: LandingHeader,
+        footer: LandingFooter,
+      },
     },
     {
-      path: '/hotarea',
-      name: 'HotArea',
-      components: { default:HotArea,
-      header: LandingHeader,
-        footer: LandingFooter}
+      path: "/fillInTheBlank",
+      name: "FillInTheBlank",
+      components: {
+        default: FillInTheBlank,
+        header: LandingHeader,
+        footer: LandingFooter,
+      },
     },
     {
-      path: '/drag',
-      name: 'DragAndDrop',
-      components:{ default: DragAndDrop,
-      header: LandingHeader,
-        footer: LandingFooter}
+      path: "/hotarea",
+      name: "HotArea",
+      components: {
+        default: HotArea,
+        header: LandingHeader,
+        footer: LandingFooter,
+      },
     },
-    
     {
-      path: '/main',
-      name: 'Main',
-      components:{ default: Main,
-      header: LandingHeader,
-        footer: LandingFooter}
+      path: "/drag",
+      name: "DragAndDrop",
+      components: {
+        default: DragAndDrop,
+        header: LandingHeader,
+        footer: LandingFooter,
+      },
+    },
+
+    {
+      path: "/main",
+      name: "Main",
+      components: {
+        default: Main,
+        header: LandingHeader,
+        footer: LandingFooter,
+      },
     },
   ],
-  scrollBehavior: to => {
+  scrollBehavior: (to) => {
     if (to.hash) {
       return { selector: to.hash };
     } else {
       return { x: 0, y: 0 };
     }
-  }
+  },
 });
-
