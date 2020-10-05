@@ -4,6 +4,7 @@
       <div class="col px-0">
         <br />
         <br />
+<<<<<<< Updated upstream
         <br />
         <br />
         
@@ -26,6 +27,9 @@
           </div>
         </div>
         
+=======
+        <upload_files_dialog />
+>>>>>>> Stashed changes
         <br />
         <br />
         <br />
@@ -45,11 +49,13 @@
 <script>
 import card from "../../../components/Card";
 import carousel from "./FirstPageComponents/Carousel";
+import upload_files_dialog from "./FirstPageComponents/upload_files_dialog";
 
 export default {
   components: {
     card,
     carousel,
+    upload_files_dialog,
   },
 };
 </script>
