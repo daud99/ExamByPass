@@ -2,11 +2,11 @@
 <div>
   <router-view name="header"></router-view>
   <v-app>
-
     <v-main>
       <router-view/>
     </v-main>
   </v-app>
+  <router-view name="footer"></router-view>
 </div>
 </template>
 <script>

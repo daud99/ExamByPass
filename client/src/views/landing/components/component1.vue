@@ -1,20 +1,15 @@
 <template>
-<div id="pricingSection">
-    <div class="py-5 bg-secondary">
+  <div class="py-5" id="detailOneSection">
     <div class="container shape-container d-flex align-items-center">
       <div class="col px-0">
-          <v-layout justify-center>
-            <h5 style="text-weight:bolder">PRICING</h5>
-          </v-layout>
         <div class="row">
           <div class="col col-lg-4 col-md-4 col-xs-12">
-            <v-card class="mx-auto rounded-lg" max-width="344" color="LightGray" elevation="6">
+            <div class="mx-auto rounded-lg" max-width="344" color="LightGray" >
               <v-card-text>
+               <v-img height="250" src="https://res.cloudinary.com/de1v32nv0/image/upload/v1601898990/Usman/image1_pnxewr.jpg"></v-img>
+                <v-layout justify-center><v-card-title>Cafe Badilico</v-card-title></v-layout>
                 <v-layout justify-center>
-                  <h5 style="text-weight:bolder">One Exam File</h5>
-                </v-layout>
-                <v-layout justify-center>
-                  <p><h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>per VCE File</p>
+                  <p>One-time payment for this exam</p>
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -23,16 +18,15 @@
                   <p>Unlimited free retries forever.</p>
                 </v-layout>
               </v-card-text>
-            </v-card>
+            </div>
           </div>
           <div class="col col-lg-4 col-md-4 col-xs-12">
-            <v-card class="mx-auto rounded-lg" max-width="344" color="LightGray" elevation="6">
+            <div class="mx-auto rounded-lg" max-width="344" color="LightGray" >
               <v-card-text>
+               <v-img height="250" src="https://res.cloudinary.com/de1v32nv0/image/upload/v1601898991/Usman/image3_cx6mqv.png"></v-img>
+                <v-layout justify-center><v-card-title>Cafe Badilico</v-card-title></v-layout>
                 <v-layout justify-center>
-                  <h5 style="text-weight:bolder">One Exam File</h5>
-                </v-layout>
-                <v-layout justify-center>
-                  <p><h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>per VCE File</p>
+                  <p>One-time payment for this exam</p>
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -41,17 +35,15 @@
                   <p>Unlimited free retries forever.</p>
                 </v-layout>
               </v-card-text>
-            </v-card>
+            </div>
           </div>
-          
           <div class="col col-lg-4 col-md-4 col-xs-12">
-            <v-card class="mx-auto rounded-lg" max-width="344" color="LightGray" elevation="6">
+            <div class="mx-auto rounded-lg" max-width="344" color="LightGray" >
               <v-card-text>
+               <v-img height="250" src="https://res.cloudinary.com/de1v32nv0/image/upload/v1601898990/Usman/image2_h4zgv5.jpg"></v-img>
+                <v-layout justify-center><v-card-title>Cafe Badilico</v-card-title></v-layout>
                 <v-layout justify-center>
-                  <h5 style="text-weight:bolder">One Exam File</h5>
-                </v-layout>
-                <v-layout justify-center>
-                  <p><h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>per VCE File</p>
+                  <p>One-time payment for this exam</p>
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -60,25 +52,20 @@
                   <p>Unlimited free retries forever.</p>
                 </v-layout>
               </v-card-text>
-            </v-card>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-</div>
 </template>
 
 <script>
 import card from '../../../components/Card'
-import ComponentOne from "./component1";
-import ComponentTwo from "./component2";
+
 export default {
   components: {
-    card,
-    ComponentOne,
-    ComponentTwo
+    card
   }
 }
 </script>

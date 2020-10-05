@@ -4,16 +4,12 @@
     </div>
     <div class="col-lg-10 col-md-10 col-xs-12 mb-lg-auto">
       <div class="rounded shadow-lg overflow-hidden">
-        <b-carousel id="carousel1"
-                    controls
-                    indicators>
+        <b-carousel id="carousel1" controls indicators>
           <!-- Text slides with image -->
-          <b-carousel-slide img-src="img/theme/img-1-1200x1000.jpg"></b-carousel-slide>
-          <b-carousel-slide img-src="img/theme/img-2-1200x1000.jpg"></b-carousel-slide>
+          <b-carousel-slide img-src="https://vcetrainer.com/Content/Images/Dark%20Mode.png"></b-carousel-slide>
+          <b-carousel-slide img-src="https://res.cloudinary.com/de1v32nv0/image/upload/v1601900478/Usman/crouselImg_ewbiqp.png"></b-carousel-slide>
         </b-carousel>
       </div>
-    </div>
-    <div class="col-lg-1 col-md-1 col-xs-0">
     </div>
   </div>
 </template>
