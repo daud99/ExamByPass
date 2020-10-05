@@ -1,25 +1,16 @@
 <template>
-  <section class="section-shaped my-0">
-    <div class="shape shape-style-1 shape-primary">
-      <span class="span-150"></span>
-      <span class="span-50"></span>
-      <span class="span-50"></span>
-      <span class="span-75"></span>
-      <span class="span-100"></span>
-      <span class="span-75"></span>
-      <span class="span-50"></span>
-      <span class="span-100"></span>
-      <span class="span-50"></span>
-      <span class="span-100"></span>
-    </div>
+  <section :style="{backgroundImage:`url(${'https://res.cloudinary.com/de1v32nv0/image/upload/v1601894257/Usman/GettyImages_482204997-56a132995f9b58b7d0bcf644_nmqjge.jpg'})`}">
     <div class="container shape-container d-flex align-items-center">
       <div class="col px-0">
         <br />
         <br />
+        <br />
+        <br />
+        
         <div class="row">
           <div class="col col-lg-6 col-md-6 col-xs-12">
             <a v-on:click="submitFile()">
-              <card class="d-flex align-items-center">
+              <card class="d-flex align-items-center rounded-lg">
                 <h5>Upload .ete file</h5>
                 <p>Upload your file here</p>
               </card>
@@ -27,22 +18,25 @@
           </div>
           <div class="col col-lg-6 col-md-6 col-xs-12">
             <a>
-              <card class="d-flex align-items-center">
+              <card class="d-flex align-items-center rounded-lg">
                 <h5>Show my exams</h5>
                 <p>Show my uploaded files</p>
               </card>
             </a>
           </div>
         </div>
+        
         <br />
         <br />
         <br />
         <br />
+        
         <div class="row">
           <div class="col col-lg-12 col-md-12 col-xs-12">
             <carousel />
           </div>
         </div>
+        
       </div>
     </div>
   </section>
