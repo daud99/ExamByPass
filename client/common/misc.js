@@ -1,5 +1,4 @@
 const axios = require('axios')
-
     export const quickRequest = async (url, method, body) => {
        
         // var csrfToken = document

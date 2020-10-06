@@ -146,7 +146,7 @@ export default {
           email: this.email,
           password: this.password,
         };
-        let response = await quickRequest("/api/auth/log-in", "POST", login);
+        let response = await quickRequest("/auth/log-in", "POST", login);
         if ("error" in response) {
           Swal.fire({
             type: "error",

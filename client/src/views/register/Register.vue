@@ -185,7 +185,7 @@ export default {
           firstName: this.firstName,
           lastName: this.lastName,
         };
-        let response = await quickRequest("/api/auth/save-user", "POST", user);
+        let response = await quickRequest("/auth/save-user", "POST", user);
         if ("error" in response) {
           Swal.fire({
             type: "error",

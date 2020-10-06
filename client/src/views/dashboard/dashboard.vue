@@ -51,7 +51,7 @@ export default {
     ]),
     async getCurrentUser() {
       try {
-        let response = await quickRequest("/api/auth/get-user", "POST", {});
+        let response = await quickRequest("/auth/get-user", "POST", {});
         this['auth/setUser'](response);
       } 
       catch(e) {
