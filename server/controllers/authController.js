@@ -126,6 +126,90 @@ module.exports = new class {
             });
         }
     }
+    async recoverPassword(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+            const email = req.body.email;
+            try {
 
+                const result = await Auth.sendRecoveryEmail(email);
+                if(result === true) {
+                    res.send({
+                        data: {
+                            msg: "Email is sent successfully, Kindly check your email to reset password."
+                        }
+                    })
+                } else {
+                    res.send({
+                        data: {
+                            error: "Something went wrong while sending email"
+                        }
+                    })
+                }
+
+            } catch (e) {
+
+                res.status(401).send({
+                    error: 401,
+                });
+
+            }
+
+        } catch (e) {
+            res.status(400).send({
+                "status": 400,
+                "error": "Bad Request",
+            });
+        }
+
+    }
+
+    async updatePassword(req, res, next) {
+        try {
+            var password = req.body.password;
+            var token = req.body.token;
+
+            try {
+
+                const result = await Auth.updateRecoverPassword(password, token);
+
+                if(result === true) {
+                    res.send({
+                        data: {
+                            "msg": "Password is reset successfully!"
+                        }
+                    });
+                } else {
+                    res.send({
+                        data: {
+                            "error": "Something went wrong while the resetting the password!"
+                        }
+                    })
+                }
+               
+
+            } catch (e) {
+                console.log(e);
+                res.status(401).send({
+                    error: 401,
+                });
+
+            }
+
+        } catch (e) {
+            res.status(400).send({
+                "status": 400,
+                "error": "Bad Request",
+            });
+        }
+    }
     
 }

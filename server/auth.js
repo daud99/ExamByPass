@@ -1,3 +1,6 @@
+var ejs = require('ejs')
+var nodemailer = require("nodemailer")
+const fs = require('fs')
 const bcrypt = require("bcrypt");
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -7,6 +10,8 @@ const GoogleStrategy = require('passport-google-oauth20')
 const LocalStrategy = require('passport-local').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const GitHubStrategy = require('passport-github').Strategy
+const { Op } = require("sequelize")
+
 
 const session = require('express-session')
 // initalize sequelize with session store
@@ -15,7 +20,11 @@ var SequelizeStore = require("connect-session-sequelize")(session.Store)
 const User = require("./models/User")
 
 const Keys = require("./config/Keys")
+const EmailConfig = require("./config/email")
+const SiteConfig = require("./config/site")
 const Db = require("./config/db")
+const Misc = require("./misc")
+
 
 
 module.exports = new class {
@@ -217,11 +226,7 @@ module.exports = new class {
           
           return done(null, user.dataValues);
 
-      }));
-
-     
-      
-       
+      })); 
  
     }
 
@@ -259,6 +264,85 @@ module.exports = new class {
 
     });
   }
+
+  async sendRecoveryEmail(email) {
+        
+    var user = await User.findOne({
+      where: {email: email},
+    });
+
+    if(!user) {
+        return false;
+    }
+
+    var token = Misc.makeID(32);
+    
+    await user.update({
+      resetPasswordToken: token,
+      resetPasswordExpire: Date.now() + 3600000 // 1 hour
+    });
+
+    var template = fs.readFileSync("emails/notification.htm", 'utf-8');
+
+    var emailHTML = ejs.render(template, {
+      siteURL: `${SiteConfig.url}:${SiteConfig.port}/reset-password?token=${user.resetPasswordToken}`,
+      action: 'To reset the password, click the following link:',
+      btnText: 'Reset Password',
+      message: 'If you do not requested the password change,you can ignore and delete this email'
+  });
+
+    try {
+    
+        let transporter = nodemailer.createTransport({
+            host: EmailConfig.host,
+            port: EmailConfig.port,
+            secure: EmailConfig.secure,
+            auth: {
+                user: EmailConfig.username,
+                pass: EmailConfig.password
+            }
+        });
+        
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+            to: user.email, // list of receivers
+            subject: "Password Recovery", // Subject line
+            html: emailHTML // html body
+        });
+
+        return info.accepted.length > 0;
+
+    } catch(e) {
+
+        return false;
+
+    }
+
+}
+
+async updateRecoverPassword(newPassword, token) {
+
+    if(!token) {
+        throw "Token required for recovery.";
+    }
+    var user = await User.findOne({
+      where: {resetPasswordToken: token, resetPasswordExpire: {
+        [Op.gt]: Date.now()
+      }},
+    });
+    
+    if(!user) {
+        return false;
+    }
+
+    await user.update({
+      password: await this.hashPassword(newPassword),
+      resetPasswordToken: undefined,
+      resetPasswordExpire: undefined // 1 hour
+    });
+
+    return true;
+}
 
 
 }

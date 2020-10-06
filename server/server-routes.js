@@ -28,6 +28,8 @@ router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
 router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLoginUserInfo(), AuthController.tryLogin);
+router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword)
+router.post('/api/auth/update-password', [Auth.isNotAuthenticated], AuthController.updatePassword)
 router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
 //Route for questions
 router.get('/api/questions/:page', ParserController.getQuestions);
