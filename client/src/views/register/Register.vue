@@ -31,13 +31,13 @@
               </div>
               <div class="btn-wrapper text-center">
                 <base-button type="neutral">
-                  <img slot="icon" src="img/icons/common/github.svg" />
-                  Github
+                  <img slot="icon" src="img/icons/common/google.svg" />
+                  <a href="http://localhost:3000/login/google">Google</a>
                 </base-button>
 
-                <base-button type="neutral">
-                  <img slot="icon" src="img/icons/common/google.svg" />
-                  Google
+                 <base-button type="neutral">
+                  <img slot="icon" src="img/icons/common/facebook.png" class="fb-icon"/>
+                  <a href="http://localhost:3000/login/facebook">facebook</a>
                 </base-button>
               </div>
             </template>

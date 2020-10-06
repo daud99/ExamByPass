@@ -5,9 +5,12 @@ const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20')
 const LocalStrategy = require('passport-local').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
+const GitHubStrategy = require('passport-github').Strategy
+
 const session = require('express-session')
 // initalize sequelize with session store
-var SequelizeStore = require("connect-session-sequelize")(session.Store);
+var SequelizeStore = require("connect-session-sequelize")(session.Store)
 
 const User = require("./models/User")
 
@@ -94,6 +97,70 @@ module.exports = new class {
         })
 
       });
+
+      // GitHub OAuth
+      passport.use(new GitHubStrategy({
+        clientID: Keys.github.client_id,
+        clientSecret: Keys.github.client_secret,
+        callbackURL: "/login/github/return"
+      },
+      function(accessToken, refreshToken, profile, done) {
+        console.log("profile for github");
+        console.log(profile);
+        if(profile._json.email === null) {
+          done(null, false, { message: 'Email address is required in order to login but your github email address is private.' })
+        }
+        User.findAll({where: {email: profile._json.email}})
+        .then(user => {
+          if(user.length > 0) {
+            done(null, user[0]);
+          } else {
+            User.create({
+              email: profile._json.email,
+              emailVerified: profile._json.email_verified,
+              roles: 'user'
+            })
+            .then(result=> {
+              done(null, result);
+            })
+            .catch(err => {
+              console.log("err");
+              console.log(err);
+            })
+          }
+        }) 
+      }
+    ));
+
+      // Facebook OAuth
+      passport.use(new FacebookStrategy({
+        clientID: Keys.facebook.app_id,
+        clientSecret: Keys.facebook.apps_secret,
+        callbackURL: '/login/facebook/return',
+        profileFields: ['id', 'displayName', 'email']
+      },
+      (accessToken, refreshToken, profile, done) => {
+        // Handle facebook login
+        User.findAll({where: {email: profile._json.email}})
+          .then(user => {
+            if(user.length > 0) {
+              done(null, user[0]);
+            } else {
+              User.create({
+                email: profile._json.email,
+                emailVerified: profile._json.email_verified,
+                roles: 'user'
+              })
+              .then(result=> {
+                done(null, result);
+              })
+              .catch(err => {
+                console.log("err");
+                console.log(err);
+              })
+            }
+          }) 
+      }));
 
       // Google OAuth
 

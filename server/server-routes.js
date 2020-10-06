@@ -15,7 +15,11 @@ var csrfProtection = csrf({ cookie: true });
 // router.get('/dashboard', Auth.isAuthenticated);
 
 router.get('/login/google', passport.authenticate('google', { scope: ['email'] }));
-router.get('/login/google/return', [passport.authenticate('google')], AuthController.redirectToDashboard);
+router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/login/github', passport.authenticate('github', { scope: ['email'] }));
+router.get('/login/google/return', [passport.authenticate('google', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
+router.get('/login/facebook/return', [passport.authenticate('facebook', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
+router.get('/login/github/return', [passport.authenticate('github', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 
 
 router.get('/syncDB', DbController.syncDB);
