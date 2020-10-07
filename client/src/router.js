@@ -10,6 +10,7 @@ import Landing from "./views/landing/Landing.vue";
 import Login from "./views/login/Login.vue";
 import Register from "./views/register/Register.vue";
 import Forget from "./views/forgetPassword/Forget-Password.vue";
+import Reset from "./views/resetPassword/Reset-Password.vue";
 import Profile from "./views/profile/Profile.vue";
 import Dashboard from "./views/dashboard/dashboard.vue";
 import Guards from "./guards.js";
@@ -53,6 +54,14 @@ export default new Router({
         default: Register,
       },
       beforeEnter: Guards.isNotAuthenticated,
+    },
+    {
+      path: "/reset-password",
+      name: "reset",
+      components: {
+        header: RegisterHeader,
+        default: Reset
+      }
     },
     {
       path: "/forget",

@@ -14,7 +14,7 @@
                   <h5 style="text-weight:bolder">One Exam File</h5>
                 </v-layout>
                 <v-layout justify-center>
-                  <p><h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>per VCE File</p>
+                  <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;per VCE File</h5>
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -32,7 +32,7 @@
                   <h5 style="text-weight:bolder">One Exam File</h5>
                 </v-layout>
                 <v-layout justify-center>
-                  <p><h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>per VCE File</p>
+                  <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;per VCE File</h5>
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -51,7 +51,7 @@
                   <h5 style="text-weight:bolder">One Exam File</h5>
                 </v-layout>
                 <v-layout justify-center>
-                  <p><h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>per VCE File</p>
+                  <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;per VCE File</h5>
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>

@@ -21,7 +21,7 @@
                   <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong>About</strong></h6>
+                  ><strong><router-link :to="{path: '/login'}" class="nav-item">About</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -30,7 +30,7 @@
                   <h6
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong>Help</strong></h6>
+                  ><strong><router-link :to="{path: '/login'}" class="nav-item">Help</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -39,7 +39,7 @@
                   <h6
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}">Pricing</router-link></strong></h6>
+                  ><strong><router-link :to="{path: '/login'}" class="nav-item">Pricing</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -47,7 +47,9 @@
                 <li class="nav-item">
                    <base-dropdown >
                       <base-button slot="title" type="secondary" icon="fa fa-user">
-                        Daud
+                        {{
+                          _self["auth/getUser"].email
+                          }}
                       </base-button>
                        <a href="#!" class="dropdown-item">
                         <i class="ni ni-single-02"></i>
@@ -83,13 +85,21 @@ import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
 import {quickRequest} from "../../../common/misc";
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
   components: {
     BaseNav,
     CloseButton,
     BaseDropdown
+  },
+  // data() {
+  //   return {
+  //     user: {}
+  //   }
+  // },
+  computed: {
+    ...mapGetters(["auth/getUser"]),
   },
   methods: {
      ...mapActions([
@@ -106,7 +116,7 @@ export default {
     },
     async logout() {
       try {
-        let response = await quickRequest("/api/login/logout", "POST", {});
+        let response = await quickRequest("/login/logout", "POST", {});
         this['auth/setUser']({});
         localStorage.clear();
         this.$router.push("login");
@@ -124,4 +134,13 @@ export default {
 .navbar {
   padding: 1rem 1rem;
 }
+
+@media screen and (min-width: 989px) {
+  .navbar .nav-item {
+      color: white;
+      padding-top: 10px;
+      font-weight: bolder;
+  }
+}
+
 </style>

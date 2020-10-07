@@ -22,16 +22,20 @@
                             <div class="text-center text-muted mb-4">
                                 <small>Enter your email address</small>
                             </div>
-                            <form role="form">
-                                <base-input alternative
-                                            class="mb-3"
-                                            placeholder="Email"
-                                            addon-left-icon="ni ni-email-83">
-                                </base-input>
-                                <div class="text-center">
-                                    <base-button type="primary" class="my-4">Request recovery email</base-button>
-                                </div>
-                            </form>
+                              <base-input alternative
+                                          class="mb-3" v-model="email"
+                                          :valid="$v.email.email && $v.email.required"
+                                          @blur="$v.email.$touch()"
+                                          error="Enter a valid email address"
+                                          placeholder="Email"
+                                          addon-left-icon="ni ni-email-83">
+                              </base-input>
+                              <div class="text-center">
+                                  <base-button type="primary" 
+                                   :disabled="$v.$invalid"
+                                    @click="sendRecoveryEmail"
+                                  class="my-4">Request recovery email</base-button>
+                              </div>
                         </template>
                     </card>
                     <div class="row mt-3">
@@ -48,7 +52,55 @@
     </section>
 </template>
 <script>
-export default {};
+import { required, email } from "vuelidate/lib/validators";
+import Swal from "sweetalert2";
+import { quickRequest } from "../../../common/misc";
+export default {
+    name: "forget",
+    data() {
+        return {
+            email: ""
+        }
+    },
+    validations: {
+        email: {
+        required,
+        email,
+        }
+    },
+    methods: {
+    async sendRecoveryEmail() {
+      try {
+        const data = {
+          email: this.email
+        };
+        let response = await quickRequest("/auth/recover-password", "POST", data);
+        if ("error" in response) {
+          Swal.fire({
+            type: "error",
+            icon: "error",
+            title: "Error",
+            text: response.error,
+          });
+        } else if (response.msg) {
+          Swal.fire({
+            type: "success",
+            icon: "success",
+            title: "Email sent!",
+            text: response.msg,
+          });
+          this.$router.push("login");
+        }
+      } catch (e) {
+        Swal.fire({
+          type: "error",
+          title: "Error Fetching Information",
+          text: "Could not save user through the server.",
+        });
+      }
+    }
+    }
+};
 </script>
 <style>
 </style>

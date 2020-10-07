@@ -15,7 +15,11 @@ var csrfProtection = csrf({ cookie: true });
 // router.get('/dashboard', Auth.isAuthenticated);
 
 router.get('/login/google', passport.authenticate('google', { scope: ['email'] }));
-router.get('/login/google/return', [passport.authenticate('google')], AuthController.redirectToDashboard);
+router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/login/github', passport.authenticate('github', { scope: ['email'] }));
+router.get('/login/google/return', [passport.authenticate('google', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
+router.get('/login/facebook/return', [passport.authenticate('facebook', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
+router.get('/login/github/return', [passport.authenticate('github', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 
 
 router.get('/syncDB', DbController.syncDB);
@@ -24,6 +28,8 @@ router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
 router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLoginUserInfo(), AuthController.tryLogin);
+router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword)
+router.post('/api/auth/update-password', [Auth.isNotAuthenticated], AuthController.updatePassword)
 router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
 //Route for questions
 router.get('/api/questions/:page', ParserController.getQuestions);
