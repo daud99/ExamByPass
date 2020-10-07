@@ -14,7 +14,11 @@
                   <h5 style="text-weight:bolder">One Exam File</h5>
                 </v-layout>
                 <v-layout justify-center>
+<<<<<<< Updated upstream
                   <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;per VCE File</h5>
+=======
+                <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5>  <p>per VCE File</p>
+>>>>>>> Stashed changes
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -32,7 +36,11 @@
                   <h5 style="text-weight:bolder">One Exam File</h5>
                 </v-layout>
                 <v-layout justify-center>
+<<<<<<< Updated upstream
                   <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;per VCE File</h5>
+=======
+                 <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5> <p>per VCE File</p>
+>>>>>>> Stashed changes
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
@@ -51,7 +59,11 @@
                   <h5 style="text-weight:bolder">One Exam File</h5>
                 </v-layout>
                 <v-layout justify-center>
+<<<<<<< Updated upstream
                   <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;per VCE File</h5>
+=======
+                  <h5 style="text-weight:bolder">$9.99&nbsp;&nbsp;</h5><p>per VCE File</p>
+>>>>>>> Stashed changes
                 </v-layout>
                 <v-layout justify-center>
                   <p >One-time payment for this exam</p>
