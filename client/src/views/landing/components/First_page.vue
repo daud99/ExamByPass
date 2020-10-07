@@ -4,32 +4,7 @@
       <div class="col px-0">
         <br />
         <br />
-<<<<<<< Updated upstream
-        <br />
-        <br />
-        
-        <div class="row">
-          <div class="col col-lg-6 col-md-6 col-xs-12">
-            <a v-on:click="submitFile()">
-              <card class="d-flex align-items-center rounded-lg">
-                <h5>Upload .ete file</h5>
-                <p>Upload your file here</p>
-              </card>
-            </a>
-          </div>
-          <div class="col col-lg-6 col-md-6 col-xs-12">
-            <a>
-              <card class="d-flex align-items-center rounded-lg">
-                <h5>Show my exams</h5>
-                <p>Show my uploaded files</p>
-              </card>
-            </a>
-          </div>
-        </div>
-        
-=======
         <upload_files_dialog />
->>>>>>> Stashed changes
         <br />
         <br />
         <br />

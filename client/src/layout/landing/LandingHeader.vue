@@ -1,17 +1,9 @@
 <template>
-<<<<<<< Updated upstream
-    <header class="header-global">
-        <base-nav class="navbar-main" transparent type="" effect="light" expand>
-            <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-          <h3 v-bind:style="{ 'color': 'white' }">Exam</h3>
-            </router-link>
-=======
   <header class="header-global">
     <base-nav type="default" effect="dark" expand>
       <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
         <h3 v-bind:style="{ color: 'white' }">ExamByPass</h3>
       </router-link>
->>>>>>> Stashed changes
 
       <div class="row" slot="content-header" slot-scope="{ closeMenu }">
         <div class="col-6 collapse-brand">
