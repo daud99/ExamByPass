@@ -1,4 +1,5 @@
 <template>
+  <core-content :loading="loading">
   <section
     class="section section-shaped section-lg my-0"
     :style="{
@@ -113,6 +114,7 @@
       </div>
     </div>
   </section>
+  </core-content>
 </template>
 <style scoped>
 </style>
@@ -122,9 +124,12 @@ import { required, email, minLength } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import { quickRequest } from "../../../common/misc";
 import { mapActions, mapGetters } from "vuex";
+import PageMixin from "../page-mixin";
+
 
 export default {
   name: "login",
+  mixins: [PageMixin],
   data() {
     return {
       email: "",
@@ -141,6 +146,9 @@ export default {
       minLen: minLength(4),
     },
   },
+  beforeDestroy: function(){
+    document.getElementById("preloader-block").style.display = "none";
+  },
   computed: {
     ...mapGetters(["auth/getUser"]),
   },
@@ -152,6 +160,7 @@ export default {
           email: this.email,
           password: this.password,
         };
+        this.loading = true;
         let response = await quickRequest("/auth/log-in", "POST", login);
         if ("error" in response) {
           Swal.fire({
@@ -168,7 +177,6 @@ export default {
           localStorage.setItem("roles", response.user.roles);
           localStorage.setItem("uuid", response.user.uuid);
           this["auth/setUser"](response.user);
-          this.$router.push("dashboard");
         }
       } catch (e) {
         Swal.fire({
@@ -176,6 +184,9 @@ export default {
           title: "Error Fetching Information",
           text: "Could not save user through the server.",
         });
+      } finally {
+        this.loading = false;
+        this.$router.push("dashboard");
       }
     },
   },
