@@ -20,7 +20,8 @@ import FillInTheBlank from "./components/questionTypes/FillInTheBlank.vue";
 import HotArea from "./components/questionTypes/HotArea.vue";
 import DragAndDrop from "./components/questionTypes/DragAndDrop.vue";
 import Main from "./components/questionTypes/Main.vue";
-
+import Account from "./views/account/account.vue";
+import ChangePassword from './views/account/changePassword.vue'
 Vue.use(Router);
 
 export default new Router({
@@ -71,6 +72,26 @@ export default new Router({
         default: Forget,
       },
       beforeEnter: Guards.isNotAuthenticated,
+    },
+    {
+      path: "/account",
+      name: "account",
+      components: {
+        header: DashboardHeader,
+        default: Account,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isUserOrAdmin,
+    },
+    {
+      path: "/changePassword",
+      name: "account",
+      components: {
+        header: DashboardHeader,
+        default: ChangePassword,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isUserOrAdmin,
     },
     {
       path: "/profile",

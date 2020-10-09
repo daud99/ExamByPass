@@ -51,10 +51,11 @@
                           _self["auth/getUser"].email
                           }}
                       </base-button>
-                       <a href="#!" class="dropdown-item">
+                      <router-link class="dropdown-item" to="/account">
                         <i class="ni ni-single-02"></i>
                         <span>My Account</span>
-                      </a>
+                      </router-link>
+
                       <!-- <a href="#!" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
                         <span>Settings</span>
