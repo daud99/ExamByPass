@@ -24,11 +24,14 @@ import './registerServiceWorker'
 import axios from "./axios.js";
 import { store } from './store/store';
 import vuetify from './plugins/vuetify';
+import CoreContent from './components/Core-content';
+
 
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios;
 Vue.use(Argon);
 Vue.use(Vuelidate);
+Vue.component('core-content', CoreContent)
 
 new Vue({
   router,

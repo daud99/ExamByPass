@@ -1,5 +1,5 @@
 <template>
- <div>
+   <core-content :loading="loading">
      <div class="header bg-primary pb-6">
       <div class="container-fluid">
         <div class="header-body">
@@ -10,18 +10,17 @@
         </div>
       </div>
     </div>
- </div>
+ </core-content>
 </template>
 <script>
 
 import {mapActions, mapGetters} from 'vuex';
 import {quickRequest} from "../../../common/misc";
+import PageMixin from "../page-mixin";
 
 export default {
   name: "dashboard",
-  components: {
-    
-  },
+  mixins: [PageMixin],
   computed: {
     ...mapGetters([
       'auth/getUser'
