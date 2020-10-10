@@ -1,12 +1,14 @@
 var express = require('express')
 var csrf = require('csurf')
 var router = express.Router()
+const bodyParser = require('body-parser')
 const passport = require('passport')
 var Auth = require("./auth")
 var Middleware = require("./server-middleware")
 var ParserController = require('./controllers/parserController')
 var AuthController = require('./controllers/authController')
 var DbController = require('./controllers/dbController')
+const StripeController = require('./controllers/stripeController')
 
 // Local imports
 const upload = require('./config/multer').upload;
@@ -28,9 +30,16 @@ router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
 router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLoginUserInfo(), AuthController.tryLogin);
-router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword)
-router.post('/api/auth/update-password', [Auth.isNotAuthenticated], AuthController.updatePassword)
+router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword);
+router.post('/api/auth/change-password', [Auth.isAuthenticated], Middleware.checkChangePasswordInfo(), AuthController.changePassword);
+router.post('/api/auth/update-password', [Auth.isNotAuthenticated], AuthController.updatePassword);
 router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
+
+// routes for stripe 
+
+router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
+router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
+
 //Route for questions
 router.get('/api/questions/:page', ParserController.getQuestions);
 //Route for answers

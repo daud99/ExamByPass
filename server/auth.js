@@ -1,3 +1,23 @@
+const User = require("./models/User")
+const Comment = require("./models/Comment")
+const Discount = require("./models/Discount")
+const discountApplicable = require("./models/discountApplicable")
+const Invoice = require("./models/Invoice")
+const Subscription = require("./models/Subscription")
+const Ticket = require("./models/Ticket")
+const Session = require("./models/Session")
+const answerArea = require("./models/answerArea")
+const examLibrary = require('./models/examLibrary')
+const Question = require('./models/Question')
+const structureEntry = require('./models/structureEntry')
+const resetPasswordRequest = require('./models/resetPasswordRequest')
+const structureEntryQuestionLink = require('./models/structureEntryQuestionLink')
+const Testlet = require('./models/Testlet')
+const Answer = require('./models/Answer')
+
+
+
+
 var ejs = require('ejs')
 var nodemailer = require("nodemailer")
 const fs = require('fs')
@@ -17,7 +37,7 @@ const session = require('express-session')
 // initalize sequelize with session store
 var SequelizeStore = require("connect-session-sequelize")(session.Store)
 
-const User = require("./models/User")
+// const User = require("./models/User")
 
 const Keys = require("./config/Keys")
 const EmailConfig = require("./config/email")
@@ -30,11 +50,35 @@ const Misc = require("./misc")
 module.exports = new class {
 
     initialize(app) {
-      app.use(bodyParser.json());
+      app.use("/api/*", bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(cookieParser(Keys.secret));
       
       app.use(cors());
+
+      // db thing
+
+      User.hasMany(Session)
+      User.hasMany(Invoice)
+      User.hasMany(discountApplicable)
+      User.hasMany(Discount)
+      User.hasMany(Ticket)
+      User.hasMany(examLibrary)
+      User.hasMany(resetPasswordRequest)
+      User.hasOne(Subscription)
+      Subscription.belongsTo(User)
+      examLibrary.hasMany(Question)
+      examLibrary.hasMany(structureEntry)
+      examLibrary.hasMany(structureEntryQuestionLink)
+      examLibrary.hasMany(Testlet)
+      Question.hasMany(Answer)
+      Question.hasMany(structureEntryQuestionLink)
+      structureEntry.hasMany(structureEntryQuestionLink)
+      Testlet.hasMany(Question)
+      Ticket.hasMany(Comment)
+      Answer.hasMany(answerArea)
+
+
 
       function extendDefaultFields(defaults, session) {
          let r = {
@@ -262,87 +306,104 @@ module.exports = new class {
             });
         })({ body: { email, password } });
 
+      });
+    }
+
+    async sendRecoveryEmail(email) {
+          
+      var user = await User.findOne({
+        where: {email: email},
+      });
+
+      if(!user) {
+          return false;
+      }
+
+      var token = Misc.makeID(32);
+      
+      await user.update({
+        resetPasswordToken: token,
+        resetPasswordExpire: Date.now() + 3600000 // 1 hour
+      });
+
+      var template = fs.readFileSync("emails/notification.htm", 'utf-8');
+
+      var emailHTML = ejs.render(template, {
+        siteURL: `${SiteConfig.url}:${SiteConfig.port}/reset-password?token=${user.resetPasswordToken}`,
+        action: 'To reset the password, click the following link:',
+        btnText: 'Reset Password',
+        message: 'If you do not requested the password change,you can ignore and delete this email'
     });
+
+      try {
+      
+          let transporter = nodemailer.createTransport({
+              host: EmailConfig.host,
+              port: EmailConfig.port,
+              secure: EmailConfig.secure,
+              auth: {
+                  user: EmailConfig.username,
+                  pass: EmailConfig.password
+              }
+          });
+          
+          // send mail with defined transport object
+          let info = await transporter.sendMail({
+              to: user.email, // list of receivers
+              subject: "Password Recovery", // Subject line
+              html: emailHTML // html body
+          });
+
+          return info.accepted.length > 0;
+
+      } catch(e) {
+
+          return false;
+
+      }
+
   }
 
-  async sendRecoveryEmail(email) {
-        
+  async updateRecoverPassword(newPassword, token) {
+
+      if(!token) {
+          throw "Token required for recovery.";
+      }
+      var user = await User.findOne({
+        where: {resetPasswordToken: token, resetPasswordExpire: {
+          [Op.gt]: Date.now()
+        }},
+      });
+      
+      if(!user) {
+          return false;
+      }
+
+      await user.update({
+        password: await this.hashPassword(newPassword),
+        resetPasswordToken: undefined,
+        resetPasswordExpire: undefined // 1 hour
+      });
+
+      return true;
+  }
+
+  async changePassword(email, newPassword, oldPassword) {
+
     var user = await User.findOne({
-      where: {email: email},
-    });
-
-    if(!user) {
-        return false;
-    }
-
-    var token = Misc.makeID(32);
-    
-    await user.update({
-      resetPasswordToken: token,
-      resetPasswordExpire: Date.now() + 3600000 // 1 hour
-    });
-
-    var template = fs.readFileSync("emails/notification.htm", 'utf-8');
-
-    var emailHTML = ejs.render(template, {
-      siteURL: `${SiteConfig.url}:${SiteConfig.port}/reset-password?token=${user.resetPasswordToken}`,
-      action: 'To reset the password, click the following link:',
-      btnText: 'Reset Password',
-      message: 'If you do not requested the password change,you can ignore and delete this email'
-  });
-
-    try {
-    
-        let transporter = nodemailer.createTransport({
-            host: EmailConfig.host,
-            port: EmailConfig.port,
-            secure: EmailConfig.secure,
-            auth: {
-                user: EmailConfig.username,
-                pass: EmailConfig.password
-            }
-        });
-        
-        // send mail with defined transport object
-        let info = await transporter.sendMail({
-            to: user.email, // list of receivers
-            subject: "Password Recovery", // Subject line
-            html: emailHTML // html body
-        });
-
-        return info.accepted.length > 0;
-
-    } catch(e) {
-
-        return false;
-
-    }
-
-}
-
-async updateRecoverPassword(newPassword, token) {
-
-    if(!token) {
-        throw "Token required for recovery.";
-    }
-    var user = await User.findOne({
-      where: {resetPasswordToken: token, resetPasswordExpire: {
-        [Op.gt]: Date.now()
-      }},
+      where: {email: email}
     });
     
-    if(!user) {
+    if(!user || !await bcrypt.compare(oldPassword, user.dataValues.password)) {
         return false;
     }
 
     await user.update({
-      password: await this.hashPassword(newPassword),
-      resetPasswordToken: undefined,
-      resetPasswordExpire: undefined // 1 hour
+      password: await this.hashPassword(newPassword)
     });
 
     return true;
-}
+  }
 
 
 }
