@@ -8,24 +8,20 @@ var Middleware = require("./server-middleware")
 var ParserController = require('./controllers/parserController')
 var AuthController = require('./controllers/authController')
 var DbController = require('./controllers/dbController')
-const StripeController = require('./controllers/stripeController')
+var StripeController = require('./controllers/stripeController')
+var SubscriptionManagementController = require('./controllers/subscriptionManagementController')
 
 // Local imports
 const upload = require('./config/multer').upload;
 var csrfProtection = csrf({ cookie: true });
 
-// router.get('/dashboard', Auth.isAuthenticated);
-
-router.get('/login/google', passport.authenticate('google', { scope: ['email'] }));
+// Auth Routes
+router.get('/login/google', passport.authenticate('google', { scope: ['profile','email'] }));
 router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/login/github', passport.authenticate('github', { scope: ['email'] }));
 router.get('/login/google/return', [passport.authenticate('google', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.get('/login/facebook/return', [passport.authenticate('facebook', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.get('/login/github/return', [passport.authenticate('github', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
-
-
-router.get('/syncDB', DbController.syncDB);
-
 router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
@@ -33,16 +29,21 @@ router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLogin
 router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword);
 router.post('/api/auth/change-password', [Auth.isAuthenticated], Middleware.checkChangePasswordInfo(), AuthController.changePassword);
 router.post('/api/auth/update-password', [Auth.isNotAuthenticated], AuthController.updatePassword);
-router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
 
-// routes for stripe 
+// DB Routes
+router.get('/syncDB', DbController.syncDB);
 
+// Stripe Routes 
 router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
+router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
 router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
 
-//Route for questions
+// Subscription Management Routes
+router.post('/api/subscription-management/get-subscription-status', [Auth.isAuthenticated], SubscriptionManagementController.getSubscriptionStatus);
+
+// Parser Routes
+router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
 router.get('/api/questions/:page', ParserController.getQuestions);
-//Route for answers
 router.get('/api/answers/:question_id', ParserController.getAnswers);
 
 // Send CSRF token for session
@@ -51,8 +52,7 @@ router.get('/api/getcsrftoken', csrfProtection, function (req, res) {
 });
 
 router.use(function(err, req, res, next) {
-    console.log("here sending bad request");
-    res.status(400).send({
+   res.status(400).send({
         error: 400,
         message: "Bad Request.",
     });

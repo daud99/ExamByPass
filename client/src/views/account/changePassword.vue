@@ -75,7 +75,7 @@
                       
 
                       <v-btn
-                          class="mr-4"
+                          class="mr-4" :disabled="$v.$invalid"
                           @click="changePassword"
                           >
                           Change Password
@@ -169,10 +169,6 @@ export default {
   },
   methods: {
     async changePassword() {
-        console.log(this.oldpassword)
-        console.log(this.newpassword)
-        console.log(this.confirmpassword)
-        console.log(this.email)
       try {
         const data = {
           old_password: this.oldpassword,

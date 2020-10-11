@@ -8,7 +8,8 @@ const Subscription = db.define('subscription',{
         allowNull:false,
         primaryKey:true
     },
-    amount:DataTypes.STRING(15)
+    amount:DataTypes.STRING(15),
+    status: DataTypes.STRING(15)
     
 },{freezeTableName: true,
     underscored: true })

@@ -16,9 +16,7 @@
                         <AccountComponent/>
                     </v-tab-item>
                     <v-tab-item key="Subscriptions">
-                        <v-card flat>
-                            <v-card-text>Subscriptions</v-card-text>
-                        </v-card>
+                        <SubscriptionComponent/>
                     </v-tab-item>
                     <v-tab-item key="Payments">
                         <v-card flat>
@@ -35,17 +33,48 @@
 </template>
 
 <script>
-import card from '../../components/Card'
-import AccountComponent from './accountComponent'
+import card from '../../components/Card';
+import AccountComponent from './accountComponent';
+import SubscriptionComponent from './subscriptionComponent';
+import {mapActions, mapGetters} from 'vuex';
+import {quickRequest} from "../../../common/misc";
+
 export default {
   data () {
       return {
         tab: null,
     }
   },
+   async created() {
+    await this.getCurrentSubscriptionStatus();
+  },
   components: {
     card,
-    AccountComponent
+    AccountComponent,
+    SubscriptionComponent
+  },
+  computed: {
+    ...mapGetters([
+      'auth/getUser'
+    ])
+  },
+  methods: {
+     ...mapActions([
+      'auth/setUser'
+    ]),
+    async getCurrentSubscriptionStatus() {
+      try {
+        let res = await quickRequest("/subscription-management/get-subscription-status", "POST", {});
+        let response = this['auth/getUser'];
+        localStorage.setItem("subscription_status", res.subscription_status); 
+        response.subscription_status = res.subscription_status;
+        this['auth/setUser'](response);
+      } 
+      catch(e) {
+        console.log("error");
+        console.log(e);
+      }
+    }
   }
 }
 </script>

@@ -41,13 +41,15 @@ export default {
       const id = localStorage.getItem('id');
       const roles = localStorage.getItem('roles');
       const uuid = localStorage.getItem('uuid');
+      const subscription_status = localStorage.getItem('subscription_status');
       const user = {
         firstName,
         lastName,
         id,
         roles,
         uuid,
-        email
+        email,
+        subscription_status 
       }
       this['auth/setUser'](user);
     }
