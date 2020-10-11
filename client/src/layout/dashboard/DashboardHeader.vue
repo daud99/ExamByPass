@@ -39,7 +39,7 @@
                   <h6
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}" class="nav-item">Pricing</router-link></strong></h6>
+                  ><strong><router-link :to="{path: '/pricing'}" class="nav-item">Pricing</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;

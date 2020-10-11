@@ -21,7 +21,9 @@ import HotArea from "./components/questionTypes/HotArea.vue";
 import DragAndDrop from "./components/questionTypes/DragAndDrop.vue";
 import Main from "./components/questionTypes/Main.vue";
 import Account from "./views/account/account.vue";
-import ChangePassword from './views/account/changePassword.vue'
+import ChangePassword from './views/account/changePassword.vue';
+import StripeCheckout from './views/stripeCheckout/Stripe-Checkout.vue';
+import Pricing from  './views/pricing/Pricing-Page.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -30,13 +32,30 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "components",
+      name: "landing",
       components: {
         header: LandingHeader,
         default: Landing,
         footer: LandingFooter,
       },
       beforeEnter: Guards.isNotAuthenticated,
+    },
+    {
+      path: "/pricing",
+      name: "pricing",
+      components: {
+        header: DashboardHeader,
+        default: Pricing,
+        footer: DashboardFooter
+      },
+      beforeEnter: Guards.isUserOrAdmin,
+    },
+    {
+      path: "/checkout",
+      name: "checkout",
+      components: {
+        default: StripeCheckout,
+      }   
     },
     {
       path: "/login",
@@ -85,7 +104,7 @@ export default new Router({
     },
     {
       path: "/changePassword",
-      name: "account",
+      name: "changepassword",
       components: {
         header: DashboardHeader,
         default: ChangePassword,

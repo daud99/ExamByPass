@@ -2,7 +2,7 @@
   <div class="py-5" id="accountComponentSection">
     <v-card flat :style="{paddingLeft:'3%',paddingRight:'3%'}">
         <v-card-text>
-        <h4>Welcome, &nbsp;&nbsp;Usman!</h4><br><br>
+        <h4>Welcome,&nbsp;{{_self["auth/getUser"].email}}!</h4><br><br>
         <v-form lazy-validation>
             <v-text-field
                 v-model="firstname"
@@ -34,7 +34,7 @@
                 shaped
                 @input="$v.email.$touch()"
                 @blur="$v.email.$touch()"
-                required
+                required disabled
             ></v-text-field>
             <v-text-field
                 v-model="uuid"
@@ -79,10 +79,10 @@ export default {
     email: { required, email }
   },
   data: () => ({
-      firstname: 'Usman',
-      lastname: 'Asghar',
-      uuid: '725734573495739457345',
-      email: 'Usmanchattha199@gmail.com',
+      firstname: '',
+      lastname: '',
+      uuid: '',
+      email: '',
     }),
   components: {
     card
@@ -114,7 +114,10 @@ export default {
     }
   },
   created() {
-    console.log(this["auth/getUser"])
+    this.firstname = this["auth/getUser"].firstName;
+    this.lastname = this["auth/getUser"].lastName;
+    this.email = this["auth/getUser"].email;
+    this.uuid = this["auth/getUser"].uuid;
   },
   methods: {
     submit () {
@@ -126,7 +129,6 @@ export default {
         this.$v.$reset()
         this.firstname = ''
         this.lastname = ''
-        this.email = ''
     },
   },
 }

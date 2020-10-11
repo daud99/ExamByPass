@@ -30,6 +30,13 @@ module.exports = {
         return [
             check('password').exists().withMessage("Enter a valid Password").isString().isLength({ min: 4 }).withMessage("Enter a valid password length must be greater than 4"),
         ]
+    },
+    checkChangePasswordInfo: function() {
+        return module.exports.checkLoginUserInfo().concat(module.exports.checkOldPassword());
+    },
+    checkOldPassword: function() {
+        return [
+            check('old_password').exists().withMessage("Enter a valid old Password").isString().isLength({ min: 4 }).withMessage("Enter a valid old password length must be greater than 4")
+        ]
     }
-
 };

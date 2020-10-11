@@ -211,5 +211,57 @@ module.exports = new class {
             });
         }
     }
+
+    async changePassword(req, res, next) {
+        try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+
+            var email = req.body.email;
+            var password = req.body.password;
+            var old_password = req.body.old_password;
+
+            try {
+
+                const result = await Auth.changePassword(email, password, old_password);
+
+                if(result === true) {
+                    res.send({
+                        data: {
+                            "msg": "Password is change successfully!"
+                        }
+                    });
+                } else {
+                    res.send({
+                        data: {
+                            "error": "Make sure you enter the right old password!"
+                        }
+                    })
+                }
+               
+
+            } catch (e) {
+                console.log(e);
+                res.status(401).send({
+                    error: 401,
+                });
+
+            }
+
+        } catch (e) {
+            res.status(400).send({
+                "status": 400,
+                "error": "Bad Request",
+            });
+        }
+    }
     
 }
