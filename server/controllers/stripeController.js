@@ -68,6 +68,34 @@ module.exports = {
         }
     },
 
+    async cancelSubscription(req, res, next) {
+        try {
+            const sub = await req.user.getSubscription();
+            if(sub) {
+                if(sub.dataValues) {
+                    await stripe.subscriptions.update(sub.dataValues.subscription_id, {cancel_at_period_end: true});
+                    return res.send({
+                        data: {
+                            msg: "You will not be charge for this subscription any more."
+                        }
+                    })
+                } 
+            } 
+                res.send({
+                    data: {
+                        msg: "You do not have a subscription"
+                    }
+                })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+
 
     async webHook(req, res, next) {
         try {

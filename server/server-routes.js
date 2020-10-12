@@ -36,6 +36,7 @@ router.get('/syncDB', DbController.syncDB);
 // Stripe Routes 
 router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
 router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
+router.post('/api/cancel-subscription', [Auth.isAuthenticated], StripeController.cancelSubscription);
 router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
 
 // Subscription Management Routes
