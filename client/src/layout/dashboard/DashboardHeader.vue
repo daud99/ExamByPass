@@ -2,13 +2,13 @@
    <header class="header-global">
         <base-nav class="navbar navbar-horizontal navbar-expand-lg navbar-dark bg-primary border-bottom" transparent type="" effect="light" expand>
             <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-                <h3> Exam </h3>
+                <img src="img/brand/logovector.svg">
             </router-link>
 
             <div class="row" slot="content-header" slot-scope="{closeMenu}">
                 <div class="col-6 collapse-brand">
-                    <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/">
-                        <img src="img/brand/blue.png">
+                    <a href="#">
+                        <img src="img/brand/logovector.svg">
                     </a>
                 </div>
                 <div class="col-6 collapse-close">
