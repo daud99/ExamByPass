@@ -21,22 +21,49 @@ import FillInTheBlank from "./components/questionTypes/FillInTheBlank.vue";
 import HotArea from "./components/questionTypes/HotArea.vue";
 import DragAndDrop from "./components/questionTypes/DragAndDrop.vue";
 import Main from "./components/questionTypes/Main.vue";
-
+import Account from "./views/account/account.vue";
+import ChangePassword from './views/account/changePassword.vue';
+import StripeCheckout from './views/stripeCheckout/Stripe-Checkout.vue';
+import Pricing from  './views/pricing/Pricing-Page.vue';
+import ViewExam from './components/Exams/viewExam.vue';
+import About from './views/NewComponents/about.vue';
+import Faqs from './views/NewComponents/faq.vue';
+import ContactUs from './views/NewComponents/contactUs.vue'
 Vue.use(Router);
 
 export default new Router({
   linkExactActiveClass: "active",
   mode: "history",
   routes: [
+  
+     
+  
     {
       path: "/",
-      name: "components",
+      name: "landing",
       components: {
         header: LandingHeader,
         default: Landing,
         footer: LandingFooter,
       },
       beforeEnter: Guards.isNotAuthenticated,
+    },
+    {
+      path: "/pricing",
+      name: "pricing",
+      components: {
+        header: DashboardHeader,
+        default: Pricing,
+        footer: DashboardFooter
+      },
+      beforeEnter: Guards.isUserOrAdmin,
+    },
+    {
+      path: "/checkout",
+      name: "checkout",
+      components: {
+        default: StripeCheckout,
+      }   
     },
     {
       path: "/login",
@@ -74,6 +101,26 @@ export default new Router({
       beforeEnter: Guards.isNotAuthenticated,
     },
     {
+      path: "/account",
+      name: "account",
+      components: {
+        header: DashboardHeader,
+        default: Account,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isUserOrAdmin,
+    },
+    {
+      path: "/changePassword",
+      name: "changepassword",
+      components: {
+        header: DashboardHeader,
+        default: ChangePassword,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isUserOrAdmin,
+    },
+    {
       path: "/profile",
       name: "profile",
       components: {
@@ -108,6 +155,33 @@ export default new Router({
       components: {
         header: LandingHeader,
         default: SingleType,
+        footer: LandingFooter,
+      },
+    },
+    {
+      path: "/about",
+      name: "About",
+      components: {
+        header: LandingHeader,
+        default: About,
+        footer: LandingFooter,
+      },
+    },
+    {
+      path: "/faq",
+      name: "Faq",
+      components: {
+        header: LandingHeader,
+        default: Faqs,
+        footer: LandingFooter,
+      },
+    },
+    {
+      path: "/contactUs",
+      name: "ContactUs",
+      components: {
+        header: LandingHeader,
+        default: ContactUs,
         footer: LandingFooter,
       },
     },
@@ -157,6 +231,15 @@ export default new Router({
         header: LandingHeader,
         footer: LandingFooter,
      
+      },
+    },
+    {
+      path: "/viewexam",
+      name: "viewExam",
+      components: {
+        default: ViewExam,
+        header: LandingHeader,
+        footer: LandingFooter,
       },
     },
   ],

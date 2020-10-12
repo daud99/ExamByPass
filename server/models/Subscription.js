@@ -3,15 +3,14 @@ const db = require("../config/db.js")
 const { DataTypes } = require("sequelize"); // Import the built-in data types
 const User = require('../models/User')
 const Subscription = db.define('subscription',{
-    id:{
-        type:DataTypes.INTEGER ,
+    subscription_id:{
+        type:DataTypes.STRING(30),
         allowNull:false,
-        autoIncrement: true,
         primaryKey:true
     },
-    title:DataTypes.STRING(30),
-    duration:DataTypes.STRING(15),
     amount:DataTypes.STRING(15),
+    status: DataTypes.STRING(15)
+    
 },{freezeTableName: true,
     underscored: true })
 

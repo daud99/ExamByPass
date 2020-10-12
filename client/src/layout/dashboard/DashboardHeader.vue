@@ -2,13 +2,13 @@
    <header class="header-global">
         <base-nav class="navbar navbar-horizontal navbar-expand-lg navbar-dark bg-primary border-bottom" transparent type="" effect="light" expand>
             <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-                <h3> Exam </h3>
+                <img src="img/brand/logovector.svg">
             </router-link>
 
             <div class="row" slot="content-header" slot-scope="{closeMenu}">
                 <div class="col-6 collapse-brand">
-                    <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/">
-                        <img src="img/brand/blue.png">
+                    <a href="#">
+                        <img src="img/brand/logovector.svg">
                     </a>
                 </div>
                 <div class="col-6 collapse-close">
@@ -21,25 +21,35 @@
                   <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}" class="nav-item">About</router-link></strong></h6>
+                  ><strong><router-link style="color: white;" :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
                 &nbsp;
                 <li class="nav-item pointer">
-                  <h6
+                  <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}" class="nav-item">Help</router-link></strong></h6>
+                  ><strong><router-link style="color: white;" :to="{path: '/about'}" class="nav-item">About</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
                 &nbsp;
                 <li class="nav-item pointer">
+                  <h6 
+                    style="color: white; padding-top: 10px;"
+                    @click="h6"
+                  ><strong><router-link style="color: white;" :to="{path: '/faq'}" class="nav-item">FAQS</router-link></strong></h6>
+                </li>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+
+                <li class="nav-item pointer">
                   <h6
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}" class="nav-item">Pricing</router-link></strong></h6>
+                  ><strong><router-link :to="{path: '/pricing'}" class="nav-item">Pricing</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -51,10 +61,11 @@
                           _self["auth/getUser"].email
                           }}
                       </base-button>
-                       <a href="#!" class="dropdown-item">
+                      <router-link class="dropdown-item" to="/account">
                         <i class="ni ni-single-02"></i>
                         <span>My Account</span>
-                      </a>
+                      </router-link>
+
                       <!-- <a href="#!" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
                         <span>Settings</span>

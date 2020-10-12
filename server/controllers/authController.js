@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const User = require("../models/User");
 const Auth = require("../auth");
+const Subscription = require('../models/Subscription');
 
 module.exports = new class {
     redirectToDashboard(req, res, next) {
@@ -28,6 +29,9 @@ module.exports = new class {
     async getUser(req,res, next) {
         try {
             let response = req.user;
+            let subscription = await req.user.getSubscription();
+            subscription? response.dataValues.subscription_status = subscription.status: response.dataValues.subscription_status = 'not_subscribed';
+            response.dataValues.auth_type = 'OAuth';
             res.send({
                 data: response,
             });
@@ -104,6 +108,11 @@ module.exports = new class {
             var user = await Auth.tryLogin(req, email, password);
            
             if(user) {
+                let subscription = await Subscription.findOne({
+                    where: {user_id: user.id}
+                  });
+                subscription? user.subscription_status = subscription.status: user.subscription_status = 'not_subscribed';
+                user.auth_type = 'LocalAuth';
                 res.send({
                     data: {
                         user
@@ -191,6 +200,58 @@ module.exports = new class {
                     res.send({
                         data: {
                             "error": "Something went wrong while the resetting the password!"
+                        }
+                    })
+                }
+               
+
+            } catch (e) {
+                console.log(e);
+                res.status(401).send({
+                    error: 401,
+                });
+
+            }
+
+        } catch (e) {
+            res.status(400).send({
+                "status": 400,
+                "error": "Bad Request",
+            });
+        }
+    }
+
+    async changePassword(req, res, next) {
+        try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+
+            var email = req.body.email;
+            var password = req.body.password;
+            var old_password = req.body.old_password;
+
+            try {
+
+                const result = await Auth.changePassword(email, password, old_password);
+
+                if(result === true) {
+                    res.send({
+                        data: {
+                            "msg": "Password is change successfully!"
+                        }
+                    });
+                } else {
+                    res.send({
+                        data: {
+                            "error": "Make sure you enter the right old password!"
                         }
                     })
                 }

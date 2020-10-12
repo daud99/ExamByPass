@@ -1,5 +1,5 @@
 <template>
- <div>
+   <core-content :loading="loading">
      <div class="header bg-primary pb-6">
       <div class="container-fluid">
         <div class="header-body">
@@ -10,25 +10,23 @@
         </div>
       </div>
     </div>
- </div>
+ </core-content>
 </template>
 <script>
 
 import {mapActions, mapGetters} from 'vuex';
 import {quickRequest} from "../../../common/misc";
+import PageMixin from "../page-mixin";
 
 export default {
   name: "dashboard",
-  components: {
-    
-  },
+  mixins: [PageMixin],
   computed: {
     ...mapGetters([
       'auth/getUser'
     ])
   },
   async created() {
-    // this.getCurrentUser();
     let response = {};
     if(!(localStorage.getItem("email"))) {
       await this.getCurrentUser();
@@ -42,7 +40,12 @@ export default {
         localStorage.setItem("id", response.id);
         localStorage.setItem("roles", response.roles);
         localStorage.setItem("uuid", response.uuid);
+        localStorage.setItem("subscription_status", response.subscription_status); 
+        localStorage.setItem("auth_type", response.auth_type); 
       }
+      if(localStorage.getItem("redirectToPricing")) this.$router.push("pricing");
+    } else if(localStorage.getItem("redirectToPricing")) {
+      this.$router.push("pricing");
     }
   },
   methods: {

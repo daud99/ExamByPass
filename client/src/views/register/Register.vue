@@ -1,4 +1,5 @@
 <template>
+  <core-content :loading="loading">
   <section
     class="section section-shaped section-lg my-0"
     :style="{
@@ -139,14 +140,17 @@
       </div>
     </div>
   </section>
+</core-content>
 </template>
 <script>
 import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import { quickRequest } from "../../../common/misc";
+import PageMixin from "../page-mixin";
 
 export default {
   name: "register",
+  mixins: [PageMixin],
   data() {
     return {
       email: "",
@@ -155,6 +159,9 @@ export default {
       password: "",
       confirmPassword: "",
     };
+  },
+   beforeDestroy: function(){
+    document.getElementById("preloader-block").style.display = "none";
   },
   validations: {
     email: {
@@ -185,6 +192,7 @@ export default {
           firstName: this.firstName,
           lastName: this.lastName,
         };
+        this.loading = true;
         let response = await quickRequest("/auth/save-user", "POST", user);
         if ("error" in response) {
           Swal.fire({
@@ -194,6 +202,7 @@ export default {
             text: response.error,
           });
         } else if (response.msg) {
+          this.loading = false;
           this.$router.push("login");
         }
       } catch (e) {
