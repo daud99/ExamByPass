@@ -42,6 +42,7 @@ export default {
         localStorage.setItem("roles", response.roles);
         localStorage.setItem("uuid", response.uuid);
         localStorage.setItem("subscription_status", response.subscription_status); 
+        localStorage.setItem("auth_type", response.auth_type); 
       }
     }
   },

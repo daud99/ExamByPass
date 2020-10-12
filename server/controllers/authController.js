@@ -31,7 +31,7 @@ module.exports = new class {
             let response = req.user;
             let subscription = await req.user.getSubscription();
             subscription? response.dataValues.subscription_status = subscription.status: response.dataValues.subscription_status = 'not_subscribed';
-           
+            response.dataValues.auth_type = 'OAuth';
             res.send({
                 data: response,
             });
@@ -112,7 +112,7 @@ module.exports = new class {
                     where: {user_id: user.id}
                   });
                 subscription? user.subscription_status = subscription.status: user.subscription_status = 'not_subscribed';
-               
+                user.auth_type = 'LocalAuth';
                 res.send({
                     data: {
                         user
