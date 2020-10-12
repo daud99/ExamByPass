@@ -21,20 +21,30 @@
                   <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}" class="nav-item">About</router-link></strong></h6>
+                  ><strong><router-link style="color: white;" :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
                 &nbsp;
                 <li class="nav-item pointer">
-                  <h6
+                  <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link :to="{path: '/login'}" class="nav-item">Help</router-link></strong></h6>
+                  ><strong><router-link style="color: white;" :to="{path: '/about'}" class="nav-item">About</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
                 &nbsp;
+                <li class="nav-item pointer">
+                  <h6 
+                    style="color: white; padding-top: 10px;"
+                    @click="h6"
+                  ><strong><router-link style="color: white;" :to="{path: '/faq'}" class="nav-item">FAQS</router-link></strong></h6>
+                </li>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+
                 <li class="nav-item pointer">
                   <h6
                     style="color: white; padding-top: 10px;"
