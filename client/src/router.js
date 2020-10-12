@@ -24,12 +24,19 @@ import Account from "./views/account/account.vue";
 import ChangePassword from './views/account/changePassword.vue';
 import StripeCheckout from './views/stripeCheckout/Stripe-Checkout.vue';
 import Pricing from  './views/pricing/Pricing-Page.vue';
+import ViewExam from './components/Exams/viewExam.vue';
+import About from './views/NewComponents/about.vue';
+import Faqs from './views/NewComponents/faq.vue';
+import ContactUs from './views/NewComponents/contactUs.vue'
 Vue.use(Router);
 
 export default new Router({
   linkExactActiveClass: "active",
   mode: "history",
   routes: [
+  
+     
+  
     {
       path: "/",
       name: "landing",
@@ -141,6 +148,33 @@ export default new Router({
       },
     },
     {
+      path: "/about",
+      name: "About",
+      components: {
+        header: LandingHeader,
+        default: About,
+        footer: LandingFooter,
+      },
+    },
+    {
+      path: "/faq",
+      name: "Faq",
+      components: {
+        header: LandingHeader,
+        default: Faqs,
+        footer: LandingFooter,
+      },
+    },
+    {
+      path: "/contactUs",
+      name: "ContactUs",
+      components: {
+        header: LandingHeader,
+        default: ContactUs,
+        footer: LandingFooter,
+      },
+    },
+    {
       path: "/multiple",
       name: "Multiple",
       components: {
@@ -182,6 +216,15 @@ export default new Router({
       name: "Main",
       components: {
         default: Main,
+        header: LandingHeader,
+        footer: LandingFooter,
+      },
+    },
+    {
+      path: "/viewexam",
+      name: "viewExam",
+      components: {
+        default: ViewExam,
         header: LandingHeader,
         footer: LandingFooter,
       },
