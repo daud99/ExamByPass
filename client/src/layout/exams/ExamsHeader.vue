@@ -1,6 +1,6 @@
 <template>
 <header class="header-global">
-    <base-nav class="navbar-main" transparent type="" effect="light" expand>
+    <base-nav type="default" effect="dark" expand>
         <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
             <img src="img/brand/logovector.svg">
         </router-link>

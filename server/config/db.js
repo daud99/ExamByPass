@@ -9,7 +9,7 @@ module.exports = new Sequelize("exam", "root", "", {
     acquire: 6000,
     idle: 10000,
   },
-
+})
 
 
 // daud's DB configuration
