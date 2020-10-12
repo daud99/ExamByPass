@@ -2,15 +2,15 @@
   <header class="header-global">
     <base-nav type="default" effect="dark" expand>
       <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-        <h3 v-bind:style="{ color: 'white' }">ExamByPass</h3>
+        <img src="img/brand/logovector.svg">
       </router-link>
 
       <div class="row" slot="content-header" slot-scope="{ closeMenu }">
         <div class="col-6 collapse-brand">
           <a
-            href="https://demos.creative-tim.com/vue-argon-design-system/documentation/"
+            href="#"
           >
-            <img src="img/brand/blue.png" />
+            <img src="img/brand/logovector.svg">
           </a>
         </div>
         <div class="col-6 collapse-close">
