@@ -25,6 +25,17 @@ export default {
             });
         }
     },
+    isUserSubscribed(to, from, next) {
+        const type = localStorage.getItem('roles')
+        const  subsription_status = localStorage.getItem('subscription_status')
+        if (type === 'user' && subsription_status === 'paid') {
+            next()
+        } else {
+            next({
+                path: "/dashboard"
+            });
+        }
+    },
 
     isNotAuthenticated(to, from, next) {
         if(!localStorage.getItem('email')) {

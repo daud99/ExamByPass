@@ -6,9 +6,7 @@ module.exports = {
 
     async createCheckoutSession(req, res, next) {
         try {
-            console.log("email of logged in user is "+req.user.email);
             const type = req.body.type;
-            console.log("type here is "+type);
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items: [
@@ -20,7 +18,7 @@ module.exports = {
                   },
                 ],
                 mode: 'subscription',
-                success_url: 'http://localhost:3000/',
+                success_url: 'http://localhost:3000/account',
                 cancel_url: 'http://localhost:3000/login',
                 customer_email: req.user.email
               });
@@ -30,6 +28,62 @@ module.exports = {
                     data: {
                         id: session.id,
                         key: process.env.STRIPE_PUBLIC_KEY
+                    }
+                })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+
+    async getSubscription(req, res, next) {
+        try {
+            const sub = await req.user.getSubscription();
+            if(sub) {
+                if(sub.dataValues) {
+                    const subscription = await stripe.subscriptions.retrieve(sub.dataValues.subscription_id);
+                    return res.send({
+                        data: {
+                            subscription: subscription
+                        }
+                    })
+                }
+            } 
+                res.send({
+                    data: {
+                        msg: "You do not have a subscription"
+                    }
+                })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+
+    async cancelSubscription(req, res, next) {
+        try {
+            const sub = await req.user.getSubscription();
+            if(sub) {
+                if(sub.dataValues) {
+                    await stripe.subscriptions.update(sub.dataValues.subscription_id, {cancel_at_period_end: true});
+                    return res.send({
+                        data: {
+                            msg: "You will not be charge for this subscription any more."
+                        }
+                    })
+                } 
+            } 
+                res.send({
+                    data: {
+                        msg: "You do not have a subscription"
                     }
                 })
         }
@@ -54,6 +108,7 @@ module.exports = {
             try {
                 event = stripe.webhooks.constructEvent(payload, sig, process.env.STRIPE_WEBHOOK_SECRET);
             } catch (err) {
+                console.log("error for the event in webhook");
                 console.log(err);
                 return res.status(400).send(`Webhook Error: ${err.message}`);
             }
@@ -66,11 +121,11 @@ module.exports = {
                         where: {email: session.customer_email}
                         });
                     if(user) {
-
                         if(!await user.getSubscription()) {
                             await user.createSubscription({
                                 amount: session.amount_total/100,
-                                subscription_id: session.subscription
+                                subscription_id: session.subscription,
+                                status: "paid"
                             });
                         } else {
                             let sub = await Subscription.findOne({
@@ -78,7 +133,8 @@ module.exports = {
                             });
                             await sub.update({
                                 amount: session.amount_total/100,
-                                subscription_id: session.subscription 
+                                subscription_id: session.subscription ,
+                                status: "paid"
                             });
                         }
                         
@@ -86,6 +142,45 @@ module.exports = {
                     }
 
                   break;
+                }
+
+                case 'invoice.paid': {
+                    const invoice = event.data.object;
+                    const subscriptionId = invoice.subscription;
+              
+                    const subscription = await Subscription.findOne({
+                        where: {subscription_id: subscriptionId}
+                    });
+              
+                    // Check if this is the first invoice or a later invoice in the
+                    // subscription lifecycle.
+                    const firstInvoice = invoice.billing_reason === 'subscription_create';
+              
+                    // You already handle marking the first invoice as paid in the
+                    // `checkout.session.completed` handler.
+                    //
+                    // Only use this for the 2nd invoice and later, so it doesn't conflict.
+                    if (!firstInvoice) {
+                        await subscription.update({
+                            status: "paid"
+                        });
+                    }
+              
+                    break;
+                }
+
+                case 'invoice.payment_failed': {
+                    const invoice = event.data.object;
+                    const subscriptionId = invoice.subscription;
+                
+                    const subscription = await Subscription.findOne({
+                        where: {subscription_id: subscriptionId}
+                    });
+                    await subscription.update({
+                        status: "unpaid"
+                    });
+                
+                    break;
                 }
 
               }

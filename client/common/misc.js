@@ -13,7 +13,7 @@ const axios = require('axios')
                 'Content-Type': 'application/json',
             }
         });
-        
+
         if (response.status >= 400 && response.status < 600) {
             
             throw new Error("Bad response from server");

@@ -27,7 +27,6 @@ export default {
     ])
   },
   async created() {
-    // this.getCurrentUser();
     let response = {};
     if(!(localStorage.getItem("email"))) {
       await this.getCurrentUser();
@@ -41,7 +40,12 @@ export default {
         localStorage.setItem("id", response.id);
         localStorage.setItem("roles", response.roles);
         localStorage.setItem("uuid", response.uuid);
+        localStorage.setItem("subscription_status", response.subscription_status); 
+        localStorage.setItem("auth_type", response.auth_type); 
       }
+      if(localStorage.getItem("redirectToPricing")) this.$router.push("pricing");
+    } else if(localStorage.getItem("redirectToPricing")) {
+      this.$router.push("pricing");
     }
   },
   methods: {

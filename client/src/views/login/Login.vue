@@ -176,6 +176,8 @@ export default {
           localStorage.setItem("id", response.user.id);
           localStorage.setItem("roles", response.user.roles);
           localStorage.setItem("uuid", response.user.uuid);
+          localStorage.setItem("subscription_status", response.user.subscription_status); 
+          localStorage.setItem("auth_type", response.user.auth_type); 
           this["auth/setUser"](response.user);
         }
       } catch (e) {

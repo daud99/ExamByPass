@@ -126,7 +126,8 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+    <login-signup-dialog :visible="showDialog" @close="showDialog=false" />
   </core-content>
   
 </template>
@@ -139,6 +140,8 @@ import Swal from "sweetalert2";
 import PageMixin from "../../page-mixin";
 import { StripeCheckout } from 'vue-stripe-checkout';
 import { quickRequest } from "../../../../common/misc";
+import {mapGetters} from 'vuex';
+import LoginSignupDialog from "./FirstPageComponents/login_signup_dialog";
 
 
 export default {
@@ -147,33 +150,43 @@ export default {
     card,
     ComponentOne,
     ComponentTwo,
-    StripeCheckout
+    StripeCheckout,
+    LoginSignupDialog
   },
   data()  {
     return {
       publishableKey: '',
-      sessionId: ''
+      sessionId: '',
+      showDialog: false
     }
+  },
+   computed: {
+    ...mapGetters(["auth/isAuthenticated"]),
   },
   methods: {
     async subscribe(subscription_type) {
       try {
-         let data = {
-        type: subscription_type
-      };
-      this.loading = true;
-       let response = await quickRequest("/create-checkout-session", "POST", data);
-       if(response.id && response.key) {
-         this.sessionId = response.id;
-         this.publishableKey = response.key;
-         this.$refs.sessionRef.redirectToCheckout();
-       } else {
-         Swal.fire({
-          type: "error",
-          title: "Subscription failed!",
-          text: "Could not subscribe through the server.",
-        });
-       }
+        if(this["auth/isAuthenticated"]) {
+          let data = {
+            type: subscription_type
+          };
+          this.loading = true;
+          let response = await quickRequest("/create-checkout-session", "POST", data);
+          if(response.id && response.key) {
+            this.sessionId = response.id;
+            this.publishableKey = response.key;
+            this.$refs.sessionRef.redirectToCheckout();
+          } else {
+            Swal.fire({
+              type: "error",
+              title: "Subscription failed!",
+              text: "Could not subscribe through the server.",
+            });
+          }
+        } else {
+          localStorage.setItem("redirectToPricing", true);
+          this.showDialog = true;
+        }
       } catch (e) {
         Swal.fire({
           type: "error",

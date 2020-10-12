@@ -117,10 +117,6 @@ module.exports = new class {
         })
       );  
       
-      // app.use({
-
-      // })
-
       app.use(passport.initialize());
       app.use(passport.session());
 
@@ -158,8 +154,6 @@ module.exports = new class {
         callbackURL: "/login/github/return"
       },
       function(accessToken, refreshToken, profile, done) {
-        console.log("profile for github");
-        console.log(profile);
         if(profile._json.email === null) {
           done(null, false, { message: 'Email address is required in order to login but your github email address is private.' })
         }
@@ -190,7 +184,7 @@ module.exports = new class {
         clientID: Keys.facebook.app_id,
         clientSecret: Keys.facebook.apps_secret,
         callbackURL: '/login/facebook/return',
-        profileFields: ['id', 'displayName', 'email']
+        profileFields: ['id', 'displayName', 'email', 'name']
       },
       (accessToken, refreshToken, profile, done) => {
         // Handle facebook login
@@ -202,6 +196,8 @@ module.exports = new class {
               User.create({
                 email: profile._json.email,
                 emailVerified: profile._json.email_verified,
+                firstName: profile._json.first_name,
+                lastName: profile._json.last_name,
                 roles: 'user'
               })
               .then(result=> {
@@ -231,6 +227,8 @@ module.exports = new class {
               User.create({
                 email: profile._json.email,
                 emailVerified: profile._json.email_verified,
+                firstName: profile._json.given_name,
+                lastName: profile._json.family_name,
                 roles: 'user'
               })
               .then(result=> {
@@ -280,33 +278,68 @@ module.exports = new class {
       } else {
           res.redirect("/login");
       }
-  }
+    }
 
-  isNotAuthenticated(req,res,next){
-      if(!req.isAuthenticated()){
+    isNotAuthenticated(req,res,next){
+        if(!req.isAuthenticated()){
+            next();
+        } else{
+            res.redirect("/dashboard");
+        }
+    }
+
+    async isSubscribed(req,res,next) {
+      const subscription = await req.user.getSubscription();
+      if(subscription) {
+        if(req.isAuthenticated() && subscription.status === 'paid'){
           next();
-      } else{
-          res.redirect("/dashboard");
+      } else {
+          res.status(400).send({
+            error: 400,
+            message: "You are not subscribed.",
+          });
+        }
+      } else {
+          res.status(400).send({
+            error: 400,
+            message: "You are not subscribed.",
+          });
+        }
+    }
+
+    async isUnSubscribed(req,res,next) {
+      const subscription = await req.user.getSubscription();
+      if(subscription) {
+        if(req.isAuthenticated() && subscription.status === 'unpaid'){
+          next();
+      } else {
+          res.status(400).send({
+            error: 400,
+            message: "You are subscribed.",
+          });
+        }
+      } else {
+        next();
       }
-  }
+    }
 
-  async hashPassword(password) {
-    return await bcrypt.hash(password, 10);
-  }
+    async hashPassword(password) {
+      return await bcrypt.hash(password, 10);
+    }
 
-  tryLogin(req, email, password) {
-    return new Promise((resolve, reject) => {
-        passport.authenticate('local', (err, user) => {
+    tryLogin(req, email, password) {
+      return new Promise((resolve, reject) => {
+          passport.authenticate('local', (err, user) => {
 
-            if (err) { resolve(false); }
-            if (!user) { resolve(false); }
+              if (err) { resolve(false); }
+              if (!user) { resolve(false); }
 
-            req.login(user, () => {
-                return resolve(user);
-            });
-        })({ body: { email, password } });
+              req.login(user, () => {
+                  return resolve(user);
+              });
+          })({ body: { email, password } });
 
-      });
+        });
     }
 
     async sendRecoveryEmail(email) {
@@ -362,48 +395,48 @@ module.exports = new class {
 
       }
 
-  }
+    }
 
-  async updateRecoverPassword(newPassword, token) {
+    async updateRecoverPassword(newPassword, token) {
 
-      if(!token) {
-          throw "Token required for recovery.";
-      }
+        if(!token) {
+            throw "Token required for recovery.";
+        }
+        var user = await User.findOne({
+          where: {resetPasswordToken: token, resetPasswordExpire: {
+            [Op.gt]: Date.now()
+          }},
+        });
+        
+        if(!user) {
+            return false;
+        }
+
+        await user.update({
+          password: await this.hashPassword(newPassword),
+          resetPasswordToken: undefined,
+          resetPasswordExpire: undefined // 1 hour
+        });
+
+        return true;
+    }
+
+    async changePassword(email, newPassword, oldPassword) {
+
       var user = await User.findOne({
-        where: {resetPasswordToken: token, resetPasswordExpire: {
-          [Op.gt]: Date.now()
-        }},
+        where: {email: email}
       });
       
-      if(!user) {
+      if(!user || !await bcrypt.compare(oldPassword, user.dataValues.password)) {
           return false;
       }
 
       await user.update({
-        password: await this.hashPassword(newPassword),
-        resetPasswordToken: undefined,
-        resetPasswordExpire: undefined // 1 hour
+        password: await this.hashPassword(newPassword)
       });
 
       return true;
-  }
-
-  async changePassword(email, newPassword, oldPassword) {
-
-    var user = await User.findOne({
-      where: {email: email}
-    });
-    
-    if(!user || !await bcrypt.compare(oldPassword, user.dataValues.password)) {
-        return false;
     }
-
-    await user.update({
-      password: await this.hashPassword(newPassword)
-    });
-
-    return true;
-  }
 
 
 }

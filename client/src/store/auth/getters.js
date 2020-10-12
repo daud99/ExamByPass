@@ -3,7 +3,7 @@ const getters = {
         return state.user;
     },
     isAuthenticated: state => {
-        return state.user.emailVerified === true;
+        return state.user.email? true: false;
     }
 };
 
