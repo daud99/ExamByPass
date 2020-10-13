@@ -81,6 +81,45 @@ export default {
     },
     computed: {
         ...mapGetters(["auth/getUser"]),
+         firstnameErrors () {
+        const errors = []
+        if (!this.$v.firstname.$dirty) return errors
+        !this.$v.firstname.maxLength && errors.push('First Name must be at most 20 characters long')
+        !this.$v.firstname.minLength && errors.push('First Name must be at least 1 characters long')
+        !this.$v.firstname.required && errors.push('First Name is required.')
+        return errors
+    },
+    lastnameErrors () {
+        const errors = []
+        if (!this.$v.lastname.$dirty) return errors
+        !this.$v.lastname.maxLength && errors.push('Last Name must be at most 20 characters long')
+        !this.$v.lastname.minLength && errors.push('Last Name must be at least 1 characters long')
+        !this.$v.lastname.required && errors.push('Last Name is required.')
+        return errors
+    },
+    problemTypeErrors () {
+        const errors = []
+        if (!this.$v.problemType.$dirty) return errors
+        !this.$v.problemType.maxLength && errors.push('Problem Type must be at most 20 characters long')
+        !this.$v.problemType.minLength && errors.push('Problem Type must be at least 1 characters long')
+        !this.$v.problemType.required && errors.push('Problem Type is required.')
+        return errors
+    },
+    messageErrors () {
+        const errors = []
+        if (!this.$v.message.$dirty) return errors
+        !this.$v.message.maxLength && errors.push('Message must be at most 200 characters long')
+        !this.$v.message.minLength && errors.push('Message must be at least 1 characters long')
+        !this.$v.message.required && errors.push('Message is required.')
+        return errors
+    },
+    emailErrors () {
+        const errors = []
+        if (!this.$v.email.$dirty) return errors
+        !this.$v.email.email && errors.push('Must be valid e-mail')
+        !this.$v.email.required && errors.push('E-mail is required')
+        return errors
+    }
 
     },
     created() {
