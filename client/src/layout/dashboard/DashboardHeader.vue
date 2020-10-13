@@ -15,6 +15,7 @@
                     <close-button @click="closeMenu"></close-button>
                 </div>
             </div>
+        </div>
 
             <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                 <li class="nav-item pointer">
@@ -84,17 +85,17 @@
                         {{
                           _self["auth/getUser"].email
                           }}
-                      </base-button>
-                      <router-link class="dropdown-item" to="/account">
+                    </base-button>
+                    <router-link class="dropdown-item" to="/account">
                         <i class="ni ni-single-02"></i>
                         <span>My Account</span>
-                      </router-link>
+                    </router-link>
 
-                      <!-- <a href="#!" class="dropdown-item">
+                    <!-- <a href="#!" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
                         <span>Settings</span>
                       </a> -->
-                      <a href="#!" class="dropdown-item">
+                    <a href="#!" class="dropdown-item">
                         <i class="ni ni-single-copy-04"></i>
                         <span>My Exams</span>
                       </a>
@@ -113,12 +114,18 @@
         </base-nav>
     </header>
 </template>
+
 <script>
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
-import {quickRequest} from "../../../common/misc";
-import {mapActions, mapGetters} from 'vuex';
+import {
+    quickRequest
+} from "../../../common/misc";
+import {
+    mapActions,
+    mapGetters
+} from 'vuex';
 
 export default {
   components: {
@@ -145,36 +152,55 @@ export default {
         element_id.scrollIntoView({ block: "end", behavior: "smooth" });
       }
     },
-    h6() {
-      this.scrollToElement()
+    // data() {
+    //   return {
+    //     user: {}
+    //   }
+    // },
+    computed: {
+        ...mapGetters(["auth/getUser"]),
     },
-    async logout() {
-      try {
-        let response = await quickRequest("/login/logout", "POST", {});
-        this['auth/setUser']({});
-        localStorage.clear();
-        this.$router.push("login");
-      } 
-      catch(e) {
-        console.log("error");
-        console.log(e);
-      }
+    methods: {
+        ...mapActions([
+            'auth/setUser'
+        ]),
+        scrollToElement() {
+            let element_id = document.getElementById("pricingSection");
+            if (element_id) {
+                element_id.scrollIntoView({
+                    block: "end",
+                    behavior: "smooth"
+                });
+            }
+        },
+        h6() {
+            this.scrollToElement()
+        },
+        async logout() {
+            try {
+                let response = await quickRequest("/login/logout", "POST", {});
+                this['auth/setUser']({});
+                localStorage.clear();
+                this.$router.push("login");
+            } catch (e) {
+                console.log("error");
+                console.log(e);
+            }
+        }
     }
-  }
 };
 </script>
 
 <style scoped>
 .navbar {
-  padding: 1rem 1rem;
+    padding: 1rem 1rem;
 }
 
 @media screen and (min-width: 989px) {
-  .navbar .nav-item {
-      color: white;
-      padding-top: 10px;
-      font-weight: bolder;
-  }
+    .navbar .nav-item {
+        color: white;
+        padding-top: 10px;
+        font-weight: bolder;
+    }
 }
-
 </style>

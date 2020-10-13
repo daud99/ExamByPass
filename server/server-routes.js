@@ -1,3 +1,4 @@
+
 var express = require('express')
 var csrf = require('csurf')
 var router = express.Router()
@@ -11,9 +12,11 @@ var DbController = require('./controllers/dbController')
 var StripeController = require('./controllers/stripeController')
 var SubscriptionManagementController = require('./controllers/subscriptionManagementController')
 
+
 // Local imports
-const upload = require('./config/multer').upload;
+const upload = require("./config/multer").upload;
 var csrfProtection = csrf({ cookie: true });
+
 
 // Auth Routes
 router.get('/login/google', passport.authenticate('google', { scope: ['profile','email'] }));
@@ -44,13 +47,20 @@ router.post('/api/subscription-management/get-subscription-status', [Auth.isAuth
 
 // Parser Routes
 router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
-router.get('/api/questions/:page', ParserController.getQuestions);
-router.get('/api/answers/:question_id', ParserController.getAnswers);
+//Route for allExams
+router.get("/api/exams", ParserController.getExams);
+//Route for questions
+router.get("/api/questions/:page/:examId", ParserController.getQuestions);
+//Route for answers
+router.get("/api/answers/:question_id", ParserController.getAnswers);
+//Route for answers_area
+router.get("/api/answers_area/:answer_id", ParserController.getAnswersArea);
 
 // Send CSRF token for session
-router.get('/api/getcsrftoken', csrfProtection, function (req, res) {
-    return res.json({ csrfToken: req.csrfToken() });
+router.get("/api/getcsrftoken", csrfProtection, function (req, res) {
+  return res.json({ csrfToken: req.csrfToken() });
 });
+
 
 router.use(function(err, req, res, next) {
    res.status(400).send({

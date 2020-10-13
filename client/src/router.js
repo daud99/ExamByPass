@@ -6,6 +6,7 @@ import DashboardHeader from "./layout/dashboard/DashboardHeader";
 import DashboardFooter from "./layout/dashboard/DashboardFooter";
 import LoginHeader from "./layout/login/LoginHeader";
 import RegisterHeader from "./layout/register/RegisterHeader";
+import ExamsHeader from "./layout/exams/ExamsHeader";
 import Landing from "./views/landing/Landing.vue";
 import Login from "./views/login/Login.vue";
 import Register from "./views/register/Register.vue";
@@ -14,6 +15,7 @@ import Reset from "./views/resetPassword/Reset-Password.vue";
 import Profile from "./views/profile/Profile.vue";
 import Dashboard from "./views/dashboard/dashboard.vue";
 import Guards from "./guards.js";
+import Exams from "./components/Exams/Exams.vue";
 import SingleType from "./components/questionTypes/Single.vue";
 import Multiple from "./components/questionTypes/Multiple.vue";
 import FillInTheBlank from "./components/questionTypes/FillInTheBlank.vue";
@@ -138,6 +140,16 @@ export default new Router({
         footer: DashboardFooter,
       },
     },
+     {
+      path: "/exams",
+      name: "exams",
+      components: {
+        header: ExamsHeader,
+        default: Exams,
+        footer: LandingFooter,
+        
+      },
+    },
     {
       path: "/single",
       name: "Single",
@@ -213,7 +225,8 @@ export default new Router({
 
     {
       path: "/main",
-      name: "Main",
+      name: "main",
+     
       components: {
         default: Main,
         header: DashboardHeader,

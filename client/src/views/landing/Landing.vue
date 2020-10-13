@@ -1,25 +1,26 @@
 <template>
-  <div>
+<div>
+
     <FirstPage />
     <br />
     <br />
-    <abovePrice/>
+    <abovePrice />
     <br><br>
     <PricingPage />
-  </div>
+</div>
 </template>
+
 <script>
 import FirstPage from "./components/First_page";
 import PricingPage from './components/Pricing';
 import abovePrice from './components/priceAbove';
 
-
 export default {
-  name: "landing",
-  components: {
-    FirstPage,
-    PricingPage,
-    abovePrice
-  }
+    name: "landing",
+    components: {
+        FirstPage,
+        PricingPage,
+        abovePrice
+    }
 };
 </script>

@@ -1,76 +1,95 @@
 <template>
-  <div v-if="is_data_fetched">
+<div v-if="is_data_fetched">
     <div v-if="questions[indexVar].type === 'SINGLE_CHOICE'">
-      <Single :questionn="questions[indexVar] " :is_called="true" />
+        <Single :questionn="questions[indexVar]" :is_called="true" />
     </div>
     <div v-else-if="questions[indexVar].type === 'MULTIPLE_CHOICE'">
-      <Multiple :questionn="questions[indexVar]" />
+        <Multiple :questionn="questions[indexVar]" />
     </div>
-  
-          <v-btn :disabled="this.is_button_disabled" class="ma-2" tile color="indigo" dark @click="counter()"
-          >next</v-btn>
-  </div>
+    <div v-else-if="questions[indexVar].type === 'SELECT_AND_PLACE'">
+        <DragAndDrop :questionn="questions[indexVar]" />
+    </div>
+    <div v-else-if="questions[indexVar].type === 'FILL_IN_THE_BLANK'">
+        <FillInTheBlank :questionn="questions[indexVar]" />
+    </div>
+    <div v-else-if="questions[indexVar].type === 'HOT_AREA'">
+        <HotArea :questionn="questions[indexVar]" />
+    </div>
+    <v-btn :disabled="this.is_button_disabled" class="ma-2" tile color="indigo" dark @click="counter()">next</v-btn>
+</div>
 </template>
 
 <script>
 import Single from "./Single.vue";
 import Multiple from "./Multiple.vue";
+import DragAndDrop from "./DragAndDrop";
+import FillInTheBlank from './FillInTheBlank'
+import HotArea from './HotArea'
 import axios from "axios";
 //import Vue from "vue";
 
 export default {
-  components: { Single, Multiple },
-
-  data() {
-    return {
-      questions: [],
-      au: [],
-      error: " ",
-      page: 1,
-      is_data_fetched: false,
-      is_button_disabled: false,
-      indexVar: 0,
-      counterL: 0,
-    };
-  },
-
-  created() {
-    this.getQuestions();
-  },
-  methods: {
-    getQuestions() {
-      this.questions = []
-      axios
-        .get("/questions/" + this.page)
-        .then((resp) => {
-          console.log(resp);
-          this.questions = resp.data;
-          this.is_data_fetched = true;
-          this.is_button_disabled = false;
-          console.log(this.questions);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    components: {
+        Single,
+        Multiple,
+        DragAndDrop,
+        FillInTheBlank,
+        HotArea
     },
-    counter() {
-      console.log(this.questions.length);
-      let totalLength = this.questions.length;
+    props: {
+        examId: Number
+    },
+    data() {
+        return {
+            questions: [],
+            au: [],
+            error: " ",
+            page: 1,
+            is_data_fetched: false,
+            is_button_disabled: false,
+            indexVar: 0,
+            counterL: 0,
+        };
+    },
 
-      if (this.counterL >= totalLength - 1) {
-        console.log("disable");
-        this.is_data_fetched = false
-        this.page += 1;
-        this.counterL = 0;
-        this.is_button_disabled = true;
+    created() {
         this.getQuestions();
-      } else {
-        this.counterL++;
-      }
-      console.log(this.indexVar, this.counterL);
-      this.indexVar = this.counterL;
+        console.log(this.examId)
     },
-  },
+    methods: {
+        getQuestions() {
+            this.questions = [];
+            axios
+                .get("/questions/" + this.page + "/" + this.examId)
+                .then((resp) => {
+                    console.log(resp);
+                    this.questions = resp.data;
+                    this.is_data_fetched = true;
+                    this.is_button_disabled = false;
+                    console.log(this.questions);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        counter() {
+            console.log(this.questions.length);
+            let totalLength = this.questions.length;
+
+            if (this.counterL >= totalLength - 1) {
+                console.log("disable");
+                this.is_data_fetched = false;
+                this.page += 1;
+                this.counterL = 0;
+                this.is_button_disabled = true;
+                this.getQuestions();
+            } else {
+                this.counterL++;
+            }
+            console.log(this.indexVar, this.counterL);
+            this.indexVar = this.counterL;
+        },
+    },
 };
 
 //   computed: {
