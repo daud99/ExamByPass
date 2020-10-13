@@ -53,7 +53,8 @@
             <v-btn class="mr-4" @click="clear">
                 Clear
             </v-btn>
-            <router-link to="/ChangePassword">
+            
+            <router-link v-if="canShow" to="/ChangePassword">
             <v-btn class="mr-4" @click="clear">
                 CHANGE PASSWORD
             </v-btn>
@@ -83,6 +84,7 @@ export default {
       lastname: '',
       uuid: '',
       email: '',
+      canShow:false
     }),
   components: {
     card
@@ -114,6 +116,11 @@ export default {
     }
   },
   created() {
+    if(this["auth/getUser"].auth_type =='LocalAuth'){
+      this.canShow=true
+    }else{
+      this.canShow=false
+    }
     this.firstname = this["auth/getUser"].firstName;
     this.lastname = this["auth/getUser"].lastName;
     this.email = this["auth/getUser"].email;

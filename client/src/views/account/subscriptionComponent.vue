@@ -18,10 +18,25 @@ import PageMixin from "../page-mixin";
 
 export default {
   data: () => ({
-      firstname: '',
-      lastname: '',
-      uuid: '',
-      email: '',
+      subData={
+        created: '',
+        current_period_end: '',
+        current_period_start: '',
+        quantity: '',
+
+        data=[].
+      }
+
+      dataObj={
+        amount: '',
+        currency: '',
+        billing_scheme: '',
+        interval: '',
+        interval_count:'',
+        usage_type:'',
+        active:null
+      }
+      
     }),
   components: {
     card
@@ -33,6 +48,23 @@ export default {
     try {
         // this.loading = true;
         let response = await quickRequest("/get-subscription", "POST", {});
+        console.log(response)
+        this.subData.created= response.subscription.created
+        this.subData.current_period_end= response.subscription.current_period_end
+        this.subData.current_period_start= response.subscription.current_period_start
+        this.subData.quantity= response.subscription.quantity
+        for(var index=0;index<response.subscription.items.data.length;index++){
+          this.dataObj.amount= response.subscription.items.data[index].plan.amount
+          this.dataObj.currency= response.subscription.items.data[index].plan.currency
+          this.dataObj.billing_scheme= response.subscription.items.data[index].plan.billing_scheme
+          this.dataObj.interval= response.subscription.items.data[index].plan.interval
+          this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
+          this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
+          this.dataObj.active=response.subscription.items.data[index].price.active
+
+          
+        }
+        
       } catch (e) {
         Swal.fire({
           type: "error",

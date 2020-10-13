@@ -1,14 +1,14 @@
 <template>
    <header class="header-global">
-        <base-nav class="navbar navbar-horizontal navbar-expand-lg navbar-dark bg-primary border-bottom" transparent type="" effect="light" expand>
+    <base-nav type="default" effect="dark" expand>
             <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-                <img src="img/brand/logovector.svg">
+                <img src="img/brand/ExamByPass.png" width="150" height="100">
             </router-link>
 
             <div class="row" slot="content-header" slot-scope="{closeMenu}">
                 <div class="col-6 collapse-brand">
                     <a href="#">
-                        <img src="img/brand/logovector.svg">
+                        <img src="img/brand/ExamByPass.png" width="150" height="100">
                     </a>
                 </div>
                 <div class="col-6 collapse-close">
@@ -21,7 +21,7 @@
                   <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link style="color: white;" :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link></strong></h6>
+                  ><strong><router-link :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -30,7 +30,7 @@
                   <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link style="color: white;" :to="{path: '/about'}" class="nav-item">About</router-link></strong></h6>
+                  ><strong><router-link :to="{path: '/about'}" class="nav-item">About</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -39,7 +39,7 @@
                   <h6 
                     style="color: white; padding-top: 10px;"
                     @click="h6"
-                  ><strong><router-link style="color: white;" :to="{path: '/faq'}" class="nav-item">FAQS</router-link></strong></h6>
+                  ><strong><router-link :to="{path: '/faq'}" class="nav-item">FAQS</router-link></strong></h6>
                 </li>
                 &nbsp;
                 &nbsp;
@@ -54,7 +54,31 @@
                 &nbsp;
                 &nbsp;
                 &nbsp;
-                <li class="nav-item">
+                
+
+                <li v-if="!_self['auth/isAuthenticated']" class="nav-item pointer">
+                  <h6 style="color: white; padding-top: 10px" @click="h6">
+                    <strong>EDITOR</strong>
+                  </h6>
+                </li>
+                &nbsp; &nbsp; &nbsp;
+                <li v-if="!_self['auth/isAuthenticated']" class="nav-item">
+                  <base-button
+                    tag="a"
+                    @click="
+                      () => {
+                        this.$router.push({ name: 'login' });
+                      }
+                    "
+                    class="mb-3 mb-sm-0"
+                    icon="fa fa-sign-in"
+                  >
+                    Login
+                  </base-button>
+                </li>&nbsp; &nbsp; &nbsp;
+
+
+                <li v-if="_self['auth/isAuthenticated']" class="nav-item">
                    <base-dropdown >
                       <base-button slot="title" type="secondary" icon="fa fa-user">
                         {{
@@ -74,19 +98,17 @@
                         <i class="ni ni-single-copy-04"></i>
                         <span>My Exams</span>
                       </a>
-                      <a href="#!" class="dropdown-item">
-                        <i class="ni ni-lock-circle-open"></i>
-                        <span>Change Password</span>
-                      </a>
+
+                     
+
                       <div class="dropdown-divider"></div>
                       <a href="#!" class="dropdown-item" @click="logout">
                         <i class="ni ni-user-run"></i>
                         <span>Logout</span>
                       </a>
                     </base-dropdown>
-                    
-
                 </li>
+
             </ul>
         </base-nav>
     </header>
@@ -111,6 +133,7 @@ export default {
   // },
   computed: {
     ...mapGetters(["auth/getUser"]),
+    ...mapGetters(["auth/isAuthenticated"]),
   },
   methods: {
      ...mapActions([

@@ -162,6 +162,9 @@ export default {
     }
   },
   created() {
+    if(this["auth/getUser"].auth_type !='LocalAuth'){
+      this.$router.push('/')
+    }
     this.email = this["auth/getUser"].email;
   },
   beforeDestroy: function(){
