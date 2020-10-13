@@ -18,16 +18,16 @@ import PageMixin from "../page-mixin";
 
 export default {
   data: () => ({
-      subData={
+      subData:{
         created: '',
         current_period_end: '',
         current_period_start: '',
         quantity: '',
 
-        data=[].
-      }
+        data:[]
+      },
 
-      dataObj={
+      dataObj:{
         amount: '',
         currency: '',
         billing_scheme: '',

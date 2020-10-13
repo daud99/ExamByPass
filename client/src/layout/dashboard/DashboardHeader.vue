@@ -15,7 +15,6 @@
                     <close-button @click="closeMenu"></close-button>
                 </div>
             </div>
-        </div>
 
             <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                 <li class="nav-item pointer">
@@ -142,53 +141,36 @@ export default {
     ...mapGetters(["auth/getUser"]),
     ...mapGetters(["auth/isAuthenticated"]),
   },
+
   methods: {
-     ...mapActions([
-      'auth/setUser'
+    ...mapActions([
+        'auth/setUser'
     ]),
     scrollToElement() {
-      let element_id = document.getElementById("pricingSection");
-      if (element_id) {
-        element_id.scrollIntoView({ block: "end", behavior: "smooth" });
-      }
+        let element_id = document.getElementById("pricingSection");
+        if (element_id) {
+            element_id.scrollIntoView({
+                block: "end",
+                behavior: "smooth"
+            });
+        }
     },
-    // data() {
-    //   return {
-    //     user: {}
-    //   }
-    // },
-    computed: {
-        ...mapGetters(["auth/getUser"]),
+    h6() {
+        this.scrollToElement()
     },
-    methods: {
-        ...mapActions([
-            'auth/setUser'
-        ]),
-        scrollToElement() {
-            let element_id = document.getElementById("pricingSection");
-            if (element_id) {
-                element_id.scrollIntoView({
-                    block: "end",
-                    behavior: "smooth"
-                });
-            }
-        },
-        h6() {
-            this.scrollToElement()
-        },
-        async logout() {
-            try {
-                let response = await quickRequest("/login/logout", "POST", {});
-                this['auth/setUser']({});
-                localStorage.clear();
-                this.$router.push("login");
-            } catch (e) {
-                console.log("error");
-                console.log(e);
-            }
+    async logout() {
+        try {
+            let response = await quickRequest("/login/logout", "POST", {});
+            this['auth/setUser']({});
+            localStorage.clear();
+            this.$router.push("login");
+        } catch (e) {
+            console.log("error");
+            console.log(e);
         }
     }
-};
+  }
+}
 </script>
 
 <style scoped>
