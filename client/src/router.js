@@ -43,9 +43,9 @@ export default new Router({
       path: "/",
       name: "landing",
       components: {
-        header: LandingHeader,
+        header: DashboardHeader,
         default: Landing,
-        footer: LandingFooter,
+        footer: DashboardFooter,
       },
       beforeEnter: Guards.isNotAuthenticated,
     },
@@ -125,9 +125,9 @@ export default new Router({
       path: "/profile",
       name: "profile",
       components: {
-        header: LandingHeader,
+        header: DashboardHeader,
         default: Profile,
-        footer: LandingFooter,
+        footer: DashboardFooter,
       },
       beforeEnter: Guards.isUserOrAdmin,
     },
@@ -154,36 +154,36 @@ export default new Router({
       path: "/single",
       name: "Single",
       components: {
-        header: LandingHeader,
+        header: DashboardHeader,
         default: SingleType,
-        footer: LandingFooter,
+        footer: DashboardFooter,
       },
     },
     {
       path: "/about",
       name: "About",
       components: {
-        header: ExamsHeader,
+        header: DashboardHeader,
         default: About,
-        footer: LandingFooter,
+        footer: DashboardFooter,
       },
     },
     {
       path: "/faq",
       name: "Faq",
       components: {
-        header: ExamsHeader,
+        header: DashboardHeader,
         default: Faqs,
-        footer: LandingFooter,
+        footer: DashboardFooter,
       },
     },
     {
       path: "/contactUs",
       name: "ContactUs",
       components: {
-        header: ExamsHeader,
+        header: DashboardHeader,
         default: ContactUs,
-        footer: LandingFooter,
+        footer: DashboardFooter,
       },
     },
     {
@@ -191,8 +191,8 @@ export default new Router({
       name: "Multiple",
       components: {
         default: Multiple,
-        header: LandingHeader,
-        footer: LandingFooter,
+        header: DashboardHeader,
+        footer: DashboardFooter,
       },
     },
     {
@@ -200,8 +200,8 @@ export default new Router({
       name: "FillInTheBlank",
       components: {
         default: FillInTheBlank,
-        header: LandingHeader,
-        footer: LandingFooter,
+        header: DashboardHeader,
+        footer: DashboardFooter,
       },
     },
     {
@@ -209,8 +209,8 @@ export default new Router({
       name: "HotArea",
       components: {
         default: HotArea,
-        header: LandingHeader,
-        footer: LandingFooter,
+        header: DashboardHeader,
+        footer: DashboardFooter,
       },
     },
     {
@@ -218,8 +218,8 @@ export default new Router({
       name: "DragAndDrop",
       components: {
         default: DragAndDrop,
-        header: LandingHeader,
-        footer: LandingFooter,
+        header: DashboardHeader,
+        footer: DashboardFooter,
       },
     },
 
@@ -229,9 +229,8 @@ export default new Router({
      
       components: {
         default: Main,
-        header: LandingHeader,
-        footer: LandingFooter,
-     
+        header: DashboardHeader,
+        footer: DashboardFooter,
       },
     },
     {
@@ -239,8 +238,8 @@ export default new Router({
       name: "viewExam",
       components: {
         default: ViewExam,
-        header: LandingHeader,
-        footer: LandingFooter,
+        header: DashboardHeader,
+        footer: DashboardFooter,
       },
     },
   ],
