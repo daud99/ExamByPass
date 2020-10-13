@@ -3,6 +3,59 @@
     <v-card flat :style="{paddingLeft:'3%',paddingRight:'3%'}">
         <v-card-text>
             <h4>Welcome,&nbsp;{{_self["auth/getUser"].email}}!</h4><br><br>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <h6>Created At:&nbsp;{{dateGet(subData.created)}}</h6>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <h6>Quantity:&nbsp;{{subData.quantity}}</h6>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <h6>Current Period End:&nbsp;{{dateGet(subData.current_period_end)}}</h6>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <h6>Current Period Start:&nbsp;{{dateGet(subData.current_period_start)}}</h6>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <v-card
+                    v-for="(item, index) in subData.data" :key="index"
+                    class="mx-auto rounded-lg"
+                    max-width="344"
+                    color="LightGray"
+                    elevation="6"
+                  >
+                    <v-card-text>
+                      <v-layout justify-left>
+                        <h5 style="text-weight: bolder">Amount:&nbsp;<span style="color:green;">{{item.amount}}&nbsp;&nbsp;{{item.currency}}</span></h5>
+                      </v-layout>
+                      <v-layout justify-right>
+                        <h5 style="text-weight: bolder">Billing Scheme:&nbsp;<span style="color:red;">{{item.billing_scheme}}</span></h5>
+                      </v-layout>
+                      <v-layout justify-left>
+                        <p style="font-weight: bolder">Interval:&nbsp;{{item.interval}}</p>
+                      </v-layout>
+                      <v-layout justify-right>
+                        <p style="font-weight: bolder">Interval Count:&nbsp;{{item.interval_count}}</p>
+                      </v-layout>
+
+                      <v-layout justify-left>
+                        <p style="font-weight: bolder">Active:&nbsp;<span style="color:green;">{{item.active}}</span></p>
+                      </v-layout>
+                      <v-layout justify-right>
+                        <p style="font-weight: bolder">Usage Type:&nbsp;<span style="color:green;">{{item.usage_type}}</span></p>
+                      </v-layout>
+
+                    </v-card-text>
+                  </v-card>
+                </div>
+              </div>
+            </div>
+            
             
         </v-card-text>
     </v-card>
@@ -15,6 +68,7 @@ import {mapActions, mapGetters} from 'vuex';
 import Swal from "sweetalert2";
 import { quickRequest } from "../../../common/misc";
 import PageMixin from "../page-mixin";
+import moment from 'moment';
 
 export default {
   data: () => ({
@@ -45,10 +99,11 @@ export default {
     ...mapGetters(["auth/getUser"])
   },
   async mounted() {
+    this.subData.Data=[]
     try {
         // this.loading = true;
         let response = await quickRequest("/get-subscription", "POST", {});
-        console.log(response)
+        // console.log(response)
         this.subData.created= response.subscription.created
         this.subData.current_period_end= response.subscription.current_period_end
         this.subData.current_period_start= response.subscription.current_period_start
@@ -61,9 +116,16 @@ export default {
           this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
           this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
           this.dataObj.active=response.subscription.items.data[index].price.active
-
-          
+          this.subData.data.push(this.dataObj)
+          // this.dataObj.amount= ''
+          // this.dataObj.currency=''
+          // this.dataObj.billing_scheme= ''
+          // this.dataObj.interval= ''
+          // this.dataObj.interval_count=''
+          // this.dataObj.usage_type=''
+          // this.dataObj.active=''
         }
+        console.log(this.subData)
         
       } catch (e) {
         Swal.fire({
@@ -82,6 +144,11 @@ export default {
     this.uuid = this["auth/getUser"].uuid;
   },
   methods: {
+    dateGet(numS){
+      let dat=moment(numS,"x").format("DD MMM YYYY hh:mm a")
+      // console.log(dat)
+      return dat
+    },
     submit () {
         console.log(this.firstname)
         console.log(this.lastname)
