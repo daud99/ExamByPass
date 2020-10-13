@@ -26,18 +26,32 @@
             </template>
             <v-card>
                 <v-alert v-if="this.files_check" type="success">File Uploaded</v-alert>
+                <v-alert v-if="this.show_alert" color="red" type="error" dark>
+                    No Files Selected
+                </v-alert>
                 <v-card-title class="section_header">
                     <span class="headline">Upload a new Exam</span>
                 </v-card-title>
-                <v-file-input small-chips label="File input w/ small chips" ref="myfile" v-model="files"></v-file-input>
-                <v-btn color="primary" text @click="submitFiles()">Submit</v-btn>
+                <v-file-input color="deep-purple accent-4" counter label="File input" prepend-icon="mdi-paperclip" :show-size="1000" ref="myfile" v-model="files">
+
+                    <template v-slot:selection="{ index, text }">
+                        <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
+                            {{ text }}
+                        </v-chip>
+
+                        <span v-else-if="index === 2" class="overline grey--text text--darken-3 mx-2">
+                            +{{ files.length - 2 }} File(s)
+                        </span>
+                    </template>
+                </v-file-input>
+
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="dialog = false">
                         Close
                     </v-btn>
-                    <v-btn color="blue darken-1" text @click="dialog = false">
-                        Save
+                    <v-btn color="blue darken-1" text @click="submitFiles()">
+                        Submit
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -60,10 +74,13 @@ export default {
         dialog: false,
         files: null,
         files_check: false,
+        show_alert: false,
     }),
 
     methods: {
         submitFiles() {
+            this.show_alert = false
+            this.files_check = false
             let formData = new FormData();
 
             if (this.files) {
@@ -80,6 +97,7 @@ export default {
                     .then((response) => {
                         console.log("Success!");
                         this.files_check = true;
+
                         console.log({
                             response
                         });
@@ -90,6 +108,7 @@ export default {
                         });
                     });
             } else {
+                this.show_alert = true
                 console.log("there are no files.");
             }
         },

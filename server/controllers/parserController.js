@@ -49,19 +49,20 @@ module.exports = new (class {
       let limit = 5; // number of records per page
       let offset = 0;
 
-      Question.findAndCountAll({ where: { exam_library_id: 2 } }).then(
+      Question.findAndCountAll({ where: { exam_library_id: req.params.examId} }).then(
         (question) => {
           let page = req.params.page; // page number
           let pages = Math.ceil(question.count / limit);
           offset = limit * (page - 1);
+          console.log("exam id is",req.params.examId)
 
           Question.findAll({
             limit: limit,
             offset: offset,
             $sort: { id: 1 },
             where: {
-              type: {
-                [Op.eq]: "HOT_AREA",
+              exam_library_id: {
+                [Op.eq]: req.params.examId,
               },
             },
           }).then((question) => {

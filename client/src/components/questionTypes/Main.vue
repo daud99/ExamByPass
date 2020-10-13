@@ -37,7 +37,7 @@ export default {
         HotArea
     },
     props: {
-        myprop: Object
+        examId: Number
     },
     data() {
         return {
@@ -54,13 +54,13 @@ export default {
 
     created() {
         this.getQuestions();
-        console.log(this.myprop, this.$route.params.myprop)
+        console.log(this.examId)
     },
     methods: {
         getQuestions() {
             this.questions = [];
             axios
-                .get("/questions/" + this.page)
+                .get("/questions/" + this.page + "/" + this.examId)
                 .then((resp) => {
                     console.log(resp);
                     this.questions = resp.data;

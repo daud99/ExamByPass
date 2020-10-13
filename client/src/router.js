@@ -163,7 +163,7 @@ export default new Router({
       path: "/about",
       name: "About",
       components: {
-        header: LandingHeader,
+        header: ExamsHeader,
         default: About,
         footer: LandingFooter,
       },
@@ -172,7 +172,7 @@ export default new Router({
       path: "/faq",
       name: "Faq",
       components: {
-        header: LandingHeader,
+        header: ExamsHeader,
         default: Faqs,
         footer: LandingFooter,
       },
@@ -181,7 +181,7 @@ export default new Router({
       path: "/contactUs",
       name: "ContactUs",
       components: {
-        header: LandingHeader,
+        header: ExamsHeader,
         default: ContactUs,
         footer: LandingFooter,
       },
