@@ -201,6 +201,7 @@ export default {
             title: "Error",
             text: response.error,
           });
+          this.loading = false;
         } else if (response.msg) {
           this.loading = false;
           this.$router.push("login");

@@ -1,48 +1,31 @@
 <template>
+<core-content :loading="loading">
   <div class="py-5" id="accountComponentSection">
     <v-card flat :style="{paddingLeft:'3%',paddingRight:'3%'}">
         <v-card-text>
-            <h4>Welcome,&nbsp;{{_self["auth/getUser"].email}}!</h4><br><br>
-            <div class="container-fluid">
+            <h4 v-if="msg">{{msg}}</h4><br><br>
+            <div class="container-fluid" v-if="!msg">
               <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Created At:&nbsp;{{dateGet(subData.created)}}</h6>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Quantity:&nbsp;{{subData.quantity}}</h6>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Current Period End:&nbsp;{{dateGet(subData.current_period_end)}}</h6>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Current Period Start:&nbsp;{{dateGet(subData.current_period_start)}}</h6>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="col-lg-12 col-md-12 col-sm-12">
                   <v-card
                     v-for="(item, index) in subData.data" :key="index"
-                    class="mx-auto rounded-lg"
-                    max-width="344"
+                    class="mx-auto rounded-lg text-center"
                     color="LightGray"
                     elevation="6"
                   >
-                    <v-card-text>
+                    <v-card-text class="text-al">
+                       <v-layout>
+                        <h5 style="text-weight: bolder">Subscription Started:&nbsp;<span style="color:green;">{{dateGet(subData.current_period_start)}}</span></h5>
+                      </v-layout>
+                      <v-layout justify-left>
+                        <h5 style="text-weight: bolder">Subscription End:&nbsp;<span style="color:green;">{{dateGet(subData.current_period_end)}}</span></h5>
+                      </v-layout>
                       <v-layout justify-left>
                         <h5 style="text-weight: bolder">Amount:&nbsp;<span style="color:green;">{{item.amount}}&nbsp;&nbsp;{{item.currency}}</span></h5>
                       </v-layout>
-                      <v-layout justify-right>
-                        <h5 style="text-weight: bolder">Billing Scheme:&nbsp;<span style="color:red;">{{item.billing_scheme}}</span></h5>
-                      </v-layout>
                       <v-layout justify-left>
-                        <p style="font-weight: bolder">Interval:&nbsp;{{item.interval}}</p>
+                        <p style="font-weight: bolder">Interval:&nbsp;{{item.interval_count}}&nbsp;{{item.interval}}</p>
                       </v-layout>
-                      <v-layout justify-right>
-                        <p style="font-weight: bolder">Interval Count:&nbsp;{{item.interval_count}}</p>
-                      </v-layout>
-
                       <v-layout justify-left>
                         <p style="font-weight: bolder">Active:&nbsp;<span style="color:green;">{{item.active}}</span></p>
                       </v-layout>
@@ -60,6 +43,7 @@
         </v-card-text>
     </v-card>
   </div>
+</core-content>
 </template>
 
 <script>
@@ -71,6 +55,7 @@ import PageMixin from "../page-mixin";
 import moment from 'moment';
 
 export default {
+  mixins: [PageMixin],
   data: () => ({
       subData:{
         created: '',
@@ -89,7 +74,8 @@ export default {
         interval_count:'',
         usage_type:'',
         active:null
-      }
+      },
+      msg: ''
       
     }),
   components: {
@@ -99,34 +85,31 @@ export default {
     ...mapGetters(["auth/getUser"])
   },
   async mounted() {
+    this.loading = true;
     this.subData.Data=[]
     try {
         // this.loading = true;
         let response = await quickRequest("/get-subscription", "POST", {});
         // console.log(response)
-        this.subData.created= response.subscription.created
-        this.subData.current_period_end= response.subscription.current_period_end
-        this.subData.current_period_start= response.subscription.current_period_start
-        this.subData.quantity= response.subscription.quantity
-        for(var index=0;index<response.subscription.items.data.length;index++){
-          this.dataObj.amount= response.subscription.items.data[index].plan.amount
-          this.dataObj.currency= response.subscription.items.data[index].plan.currency
-          this.dataObj.billing_scheme= response.subscription.items.data[index].plan.billing_scheme
-          this.dataObj.interval= response.subscription.items.data[index].plan.interval
-          this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
-          this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
-          this.dataObj.active=response.subscription.items.data[index].price.active
-          this.subData.data.push(this.dataObj)
-          // this.dataObj.amount= ''
-          // this.dataObj.currency=''
-          // this.dataObj.billing_scheme= ''
-          // this.dataObj.interval= ''
-          // this.dataObj.interval_count=''
-          // this.dataObj.usage_type=''
-          // this.dataObj.active=''
+        if(response.msg) {
+          this.msg = response.msg;
+        } else {
+            this.subData.created= response.subscription.created
+            this.subData.current_period_end= response.subscription.current_period_end
+            this.subData.current_period_start= response.subscription.current_period_start
+            this.subData.quantity= response.subscription.quantity
+            for(var index=0;index<response.subscription.items.data.length;index++){
+              this.dataObj.amount= response.subscription.items.data[index].plan.amount/100
+              this.dataObj.currency= response.subscription.items.data[index].plan.currency
+              this.dataObj.billing_scheme= response.subscription.items.data[index].plan.billing_scheme
+              this.dataObj.interval= response.subscription.items.data[index].plan.interval
+              this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
+              this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
+              this.dataObj.active=response.subscription.items.data[index].price.active
+              this.subData.data.push(this.dataObj)
+            }
+            console.log(this.subData)
         }
-        console.log(this.subData)
-        
       } catch (e) {
         Swal.fire({
           type: "error",
@@ -134,7 +117,7 @@ export default {
           text: "Could not fetch subscription through the server.",
         });
       } finally {
-        // this.loading = false;
+        this.loading = false;
       }
   },
   created() {
