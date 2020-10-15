@@ -1,4 +1,5 @@
 <template>
+<core-content :loading="loading">
   <div class="py-5" id="accountComponentSection">
     <v-card flat :style="{paddingLeft:'3%',paddingRight:'3%'}">
         <v-card-text>
@@ -46,6 +47,7 @@
 
             <v-btn
                 class="mr-4"
+                :disabled="$v.$invalid"
                 @click="submit"
                 >
                 Submit
@@ -64,6 +66,7 @@
         </v-card-text>
     </v-card>
   </div>
+  </core-content>
 </template>
 
 <script>
@@ -71,7 +74,8 @@ import card from '../../components/Card'
 import {mapActions, mapGetters} from 'vuex';
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, minLength, email } from 'vuelidate/lib/validators'
-
+import { quickRequest } from "../../../common/misc";
+import Swal from "sweetalert2";
 export default {
   mixins: [validationMixin],
   validations: {
@@ -80,11 +84,12 @@ export default {
     email: { required, email }
   },
   data: () => ({
-      firstname: '',
-      lastname: '',
-      uuid: '',
-      email: '',
-      canShow:false
+    loading:false,
+    firstname: '',
+    lastname: '',
+    uuid: '',
+    email: '',
+    canShow:false
     }),
   components: {
     card
@@ -127,10 +132,47 @@ export default {
     this.uuid = this["auth/getUser"].uuid;
   },
   methods: {
-    submit () {
+    async submit () {
         console.log(this.firstname)
         console.log(this.lastname)
         console.log(this.email)
+        try {
+        const data = {
+          firstName: this.firstname,
+          lastName: this.lastname,
+          email: this.email
+        };
+        this.loading = true;
+        let response = await quickRequest("/auth/updateuser", "POST", data);
+        if ("error" in response) {
+          Swal.fire({
+            type: "error",
+            icon: "error",
+            title: "Error",
+            text: response.error,
+          });
+        } else if (response.msg) {
+          Swal.fire({
+            type: "success",
+            icon: "success",
+            title: "Message",
+            text: response.msg,
+          });
+          if(response.record){
+            console.log(response.record)
+          }
+          this.loading = false;
+          this.$router.push("dashboard");
+        }
+      } catch (e) {
+        Swal.fire({
+          type: "error",
+          title: "Error Fetching Information",
+          text: "Could not update through the server.",
+        });
+      } finally {
+        this.loading = false;
+      }
     },
     clear () {
         this.$v.$reset()

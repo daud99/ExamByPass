@@ -16,7 +16,7 @@
     "moment": "^2.29.1",
     "nouislider": "^11.1.0",
     "register-service-worker": "^1.5.2",
-    "sweetalert2": "^10.3.5",
+    "sweetalert2": "^10.5.1",
     "vue": "^2.6.6",
     "vue-flatpickr-component": "^8.1.1",
     "vue-lazyload": "^1.2.6",
