@@ -3,47 +3,29 @@
   <div class="py-5" id="accountComponentSection">
     <v-card flat :style="{paddingLeft:'3%',paddingRight:'3%'}">
         <v-card-text>
-            <h4>Welcome,&nbsp;{{_self["auth/getUser"].email}}!</h4><br><br>
-            <div class="container-fluid">
+            <h4 v-if="msg">{{msg}}</h4><br><br>
+            <div class="container-fluid" v-if="!msg">
               <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Created At:&nbsp;{{dateGet(subData.created)}}</h6>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Quantity:&nbsp;{{subData.quantity}}</h6>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Current Period End:&nbsp;{{dateGet(subData.current_period_end)}}</h6>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                  <h6>Current Period Start:&nbsp;{{dateGet(subData.current_period_start)}}</h6>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="col-lg-12 col-md-12 col-sm-12">
                   <v-card
                     v-for="(item, index) in subData.data" :key="index"
-                    class="mx-auto rounded-lg"
-                    max-width="344"
+                    class="mx-auto rounded-lg text-center"
                     color="LightGray"
                     elevation="6"
                   >
-                    <v-card-text>
+                    <v-card-text class="text-al">
+                       <v-layout>
+                        <h5 style="text-weight: bolder">Subscription Started:&nbsp;<span style="color:green;">{{dateGet(subData.current_period_start)}}</span></h5>
+                      </v-layout>
+                      <v-layout justify-left>
+                        <h5 style="text-weight: bolder">Subscription End:&nbsp;<span style="color:green;">{{dateGet(subData.current_period_end)}}</span></h5>
+                      </v-layout>
                       <v-layout justify-left>
                         <h5 style="text-weight: bolder">Amount:&nbsp;<span style="color:green;">{{item.amount}}&nbsp;&nbsp;{{item.currency}}</span></h5>
                       </v-layout>
-                      <v-layout justify-right>
-                        <h5 style="text-weight: bolder">Billing Scheme:&nbsp;<span style="color:red;">{{item.billing_scheme}}</span></h5>
-                      </v-layout>
                       <v-layout justify-left>
-                        <p style="font-weight: bolder">Interval:&nbsp;{{item.interval}}</p>
+                        <p style="font-weight: bolder">Interval:&nbsp;{{item.interval_count}}&nbsp;{{item.interval}}</p>
                       </v-layout>
-                      <v-layout justify-right>
-                        <p style="font-weight: bolder">Interval Count:&nbsp;{{item.interval_count}}</p>
-                      </v-layout>
-
                       <v-layout justify-left>
                         <p style="font-weight: bolder">Active:&nbsp;<span style="color:green;">{{item.active}}</span></p>
                       </v-layout>
@@ -76,6 +58,7 @@ import PageMixin from "../page-mixin";
 import moment from 'moment';
 
 export default {
+  mixins: [PageMixin],
   data: () => ({
       loading:false,
       subData:{
@@ -95,7 +78,8 @@ export default {
         interval_count:'',
         usage_type:'',
         active:null
-      }
+      },
+      msg: ''
       
     }),
   components: {
@@ -105,6 +89,7 @@ export default {
     ...mapGetters(["auth/getUser"])
   },
   async mounted() {
+    this.loading = true;
     this.subData.Data=[]
     try {
         // this.loading = true;
@@ -157,7 +142,7 @@ export default {
           text: "Could not fetch subscription through the server.",
         });
       } finally {
-        // this.loading = false;
+        this.loading = false;
       }
   },
   created() {

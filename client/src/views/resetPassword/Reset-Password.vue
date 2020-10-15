@@ -1,4 +1,5 @@
 <template>
+<core-content :loading="loading">
   <section
     class="section section-shaped section-lg my-0"
     :style="{
@@ -69,14 +70,17 @@
       </div>
     </div>
   </section>
+</core-content>
 </template>
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import { quickRequest } from "../../../common/misc";
+import PageMixin from "../page-mixin";
 
 export default {
   name: "reset-password",
+  mixins: [PageMixin],
   data() {
     return {
       password: "",
@@ -96,6 +100,7 @@ export default {
   },
   methods: {
     async resetPassword() {
+      this.loading = true;
       try {
         const data = {
           password: this.password,
@@ -125,6 +130,8 @@ export default {
           title: "Error Fetching Information",
           text: "Could not update password through the server.",
         });
+      } finally {
+        this.loading = false;
       }
     },
   },
