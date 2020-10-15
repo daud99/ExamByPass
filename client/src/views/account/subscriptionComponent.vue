@@ -1,4 +1,5 @@
 <template>
+  <core-content :loading="loading">
   <div class="py-5" id="accountComponentSection">
     <v-card flat :style="{paddingLeft:'3%',paddingRight:'3%'}">
         <v-card-text>
@@ -49,6 +50,9 @@
                       <v-layout justify-right>
                         <p style="font-weight: bolder">Usage Type:&nbsp;<span style="color:green;">{{item.usage_type}}</span></p>
                       </v-layout>
+                      <v-layout justify-center>
+                        <button type="button" class="btn btn-danger btn-block" @click="cancelSub">Cancel Renewal Of Subscription</button>
+                      </v-layout>
 
                     </v-card-text>
                   </v-card>
@@ -60,6 +64,7 @@
         </v-card-text>
     </v-card>
   </div>
+  </core-content>
 </template>
 
 <script>
@@ -72,6 +77,7 @@ import moment from 'moment';
 
 export default {
   data: () => ({
+      loading:false,
       subData:{
         created: '',
         current_period_end: '',
@@ -103,29 +109,46 @@ export default {
     try {
         // this.loading = true;
         let response = await quickRequest("/get-subscription", "POST", {});
-        // console.log(response)
-        this.subData.created= response.subscription.created
-        this.subData.current_period_end= response.subscription.current_period_end
-        this.subData.current_period_start= response.subscription.current_period_start
-        this.subData.quantity= response.subscription.quantity
-        for(var index=0;index<response.subscription.items.data.length;index++){
-          this.dataObj.amount= response.subscription.items.data[index].plan.amount
-          this.dataObj.currency= response.subscription.items.data[index].plan.currency
-          this.dataObj.billing_scheme= response.subscription.items.data[index].plan.billing_scheme
-          this.dataObj.interval= response.subscription.items.data[index].plan.interval
-          this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
-          this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
-          this.dataObj.active=response.subscription.items.data[index].price.active
-          this.subData.data.push(this.dataObj)
-          // this.dataObj.amount= ''
-          // this.dataObj.currency=''
-          // this.dataObj.billing_scheme= ''
-          // this.dataObj.interval= ''
-          // this.dataObj.interval_count=''
-          // this.dataObj.usage_type=''
-          // this.dataObj.active=''
+        if ("error" in response) {
+          Swal.fire({
+            type: "error",
+            icon: "error",
+            title: "Error",
+            text: response.error,
+          });
+        } else if (response.msg) {
+          Swal.fire({
+            type: "error",
+            icon: "error",
+            title: "Error",
+            text: response.msg,
+          });
+        }else if(response.subscription){
+          this.subData.created= response.subscription.created
+          this.subData.current_period_end= response.subscription.current_period_end
+          this.subData.current_period_start= response.subscription.current_period_start
+          this.subData.quantity= response.subscription.quantity
+          for(var index=0;index<response.subscription.items.data.length;index++){
+            this.dataObj.amount= response.subscription.items.data[index].plan.amount
+            this.dataObj.currency= response.subscription.items.data[index].plan.currency
+            this.dataObj.billing_scheme= response.subscription.items.data[index].plan.billing_scheme
+            this.dataObj.interval= response.subscription.items.data[index].plan.interval
+            this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
+            this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
+            this.dataObj.active=response.subscription.items.data[index].price.active
+            this.subData.data.push(this.dataObj)
+            // this.dataObj.amount= ''
+            // this.dataObj.currency=''
+            // this.dataObj.billing_scheme= ''
+            // this.dataObj.interval= ''
+            // this.dataObj.interval_count=''
+            // this.dataObj.usage_type=''
+            // this.dataObj.active=''
+          }
+        // console.log(this.subData)
         }
-        console.log(this.subData)
+        // console.log(response)
+        
         
       } catch (e) {
         Swal.fire({
@@ -159,6 +182,35 @@ export default {
         this.firstname = ''
         this.lastname = ''
     },
+    async cancelSub(){
+      try {
+        this.loading = true;
+        let response = await quickRequest("/cancel-subscription", "POST", {});
+        if ("error" in response) {
+          Swal.fire({
+            type: "error",
+            icon: "error",
+            title: "Error",
+            text: response.error,
+          });
+        } else if (response.msg) {
+          Swal.fire({
+            type: "success",
+            icon: "success",
+            title: "Message",
+            text: response.msg,
+          });
+        }
+        } catch (e) {
+        Swal.fire({
+          type: "error",
+          title: "Error Fetching Information",
+          text: "Error while performing this action",
+        });
+      } finally {
+        this.loading = false;
+      }
+    }
   },
 }
 </script>

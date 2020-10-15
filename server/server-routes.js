@@ -26,6 +26,9 @@ router.get('/login/google/return', [passport.authenticate('google', { failureRed
 router.get('/login/facebook/return', [passport.authenticate('facebook', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.get('/login/github/return', [passport.authenticate('github', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
+
+router.post('/api/auth/updateuser', [Auth.isAuthenticated],Middleware.checkBasicUserInfo(), AuthController.updateUser);
+
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
 router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLoginUserInfo(), AuthController.tryLogin);
