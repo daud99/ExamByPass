@@ -93,7 +93,6 @@ module.exports = new class {
     }
 
     async updateUser(req,res, next) {
-        console.log(req.body)
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -104,12 +103,12 @@ module.exports = new class {
                         } 
                     });
             }
-            const user = await User.find({
+            const user = await User.findOne({
                 where: {email: req.body.email}
             });
 
             if(user) {
-                const uUser = await user.update({
+                const updateUser = await user.update({
                     emial: req.body.email,
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
@@ -117,18 +116,20 @@ module.exports = new class {
                   res.send({
                     data: {
                         msg: "User updated successfully",
-                        record:uUser
+                        record: updateUser
                     }
                 }) 
             } else {
                 res.send({
                     data: {
-                        msg: "User doesnot exist"
+                        msg: "User doesn't exist"
                     }
                 })
             }
         }
         catch(e) {
+            console.log("error");
+            console.log(e);
             res.status(400).send({
             "status": 400,
             "error": "Bad Request",
