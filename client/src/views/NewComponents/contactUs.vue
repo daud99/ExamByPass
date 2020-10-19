@@ -1,4 +1,5 @@
 <template>
+<core-content :loading="loading">
 <div class="py-5" id="aboutSection" :style="{marginTop:'100px'}">
     <div class="container-fluid">
         <div class="row">
@@ -12,9 +13,9 @@
 
                     <v-text-field :error-messages="problemTypeErrors" v-model="problemType" :counter="20" label="Problem Type" outlined shaped @input="$v.problemType.$touch()" @blur="$v.problemType.$touch()" required></v-text-field>
 
-                    <v-textarea :error-messages="messageErrors" v-model="message" :counter="200" label="Message" outlined shaped @input="$v.message.$touch()" @blur="$v.message.$touch()" required></v-textarea>
+                    <v-textarea :error-messages="messageErrors" v-model="message" :counter="2000" label="Message" outlined shaped @input="$v.message.$touch()" @blur="$v.message.$touch()" required></v-textarea>
 
-                    <v-btn class="mr-4">
+                    <v-btn class="mr-4" :disabled="$v.$invalid" @click="submitContactUs">
                         Submit
                     </v-btn>
 
@@ -23,10 +24,13 @@
         </div>
     </div>
 </div>
+</core-content>
 </template>
 
 <script>
 import card from '../../components/Card'
+import Swal from "sweetalert2";
+import { quickRequest } from "../../../common/misc.js";
 import {
     mapActions,
     mapGetters
@@ -61,7 +65,7 @@ export default {
         },
         message: {
             required,
-            maxLength: maxLength(20),
+            maxLength: maxLength(2000),
             minLength: minLength(1)
         },
         email: {
@@ -70,6 +74,7 @@ export default {
         }
     },
     data: () => ({
+        loading:false,
         firstname: '',
         lastname: '',
         email: '',
@@ -81,6 +86,7 @@ export default {
     },
     computed: {
         ...mapGetters(["auth/getUser"]),
+        ...mapGetters(["auth/isAuthenticated"]),
          firstnameErrors () {
         const errors = []
         if (!this.$v.firstname.$dirty) return errors
@@ -108,7 +114,7 @@ export default {
     messageErrors () {
         const errors = []
         if (!this.$v.message.$dirty) return errors
-        !this.$v.message.maxLength && errors.push('Message must be at most 200 characters long')
+        !this.$v.message.maxLength && errors.push('Message must be at most 2000 characters long')
         !this.$v.message.minLength && errors.push('Message must be at least 1 characters long')
         !this.$v.message.required && errors.push('Message is required.')
         return errors
@@ -123,15 +129,64 @@ export default {
 
     },
     created() {
-        this.firstname = this["auth/getUser"].firstName;
-        this.lastname = this["auth/getUser"].lastName;
-        this.email = this["auth/getUser"].email;
+        if(this.["auth/isAuthenticated"]){
+            this.firstname = this["auth/getUser"].firstName;
+            this.lastname = this["auth/getUser"].lastName;
+            this.email = this["auth/getUser"].email;
+        }else{
+            this.firstname = '';
+            this.lastname = '';
+            this.email = '';
+        }
+        
     },
     methods: {
-        submit() {
+        async submitContactUs() {
             console.log(this.firstname)
             console.log(this.lastname)
             console.log(this.email)
+            console.log(this.problemType)
+            console.log(this.message)
+            try {
+                const data = {
+                firstName: this.firstname,
+                lastName: this.lastname,
+                email: this.email,
+                problemType: this.problemType,
+                message: this.message
+                };
+                this.loading = true;
+                let response = await quickRequest("/contactUs", "POST", data);
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                } else if (response.msg) {
+                Swal.fire({
+                    type: "success",
+                    icon: "success",
+                    title: "Message",
+                    text: response.msg,
+                });
+                if(response.record){
+                    console.log(response.record)
+                }
+                this.loading = false;
+                // this.$router.push("dashboard");
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Fetching Information",
+                text: "Could not update through the server.",
+                });
+            } finally {
+                this.loading = false;
+            }
         },
         clear() {
             this.$v.$reset()
