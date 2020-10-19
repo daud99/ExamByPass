@@ -1,5 +1,5 @@
 <template>
-<v-container fluid>
+<div>
     <v-row>
         <v-col>
             <v-sheet class="pa-12" color="grey lighten-3">
@@ -24,7 +24,7 @@
             </v-sheet>
         </v-col>
     </v-row>
-</v-container>
+</div>
 </template>
 
 <script>
@@ -421,7 +421,7 @@ export default {
                     height: height
                 });
 
-                //console.log("answer area is", this.answer_area, answer_area2)
+                console.log("answer area is", this.answer_area, answer_area2)
                 answer_area2.data.forEach((answer) => {
                     let rectSpecs = answer;
                     console.log(rectSpecs)
@@ -435,7 +435,7 @@ export default {
                         chosen: false,
                         id: answer.id,
                     });
-
+                    console.log(rect)
                     canvas.add(rect);
                 });
                 document.getElementById("myCanvas").fabric = canvas;
@@ -518,12 +518,14 @@ export default {
 <style>
 .task-image {
     position: absolute;
+
     z-index: 1;
 }
 
 #myCanvas {
     position: relative;
     z-index: 2;
+
 }
 
 .explanation div img:first-child {

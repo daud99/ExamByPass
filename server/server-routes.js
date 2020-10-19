@@ -11,7 +11,7 @@ var AuthController = require('./controllers/authController')
 var DbController = require('./controllers/dbController')
 var StripeController = require('./controllers/stripeController')
 var SubscriptionManagementController = require('./controllers/subscriptionManagementController')
-
+var contactUsController = require('./controllers/contactUsController')
 
 // Local imports
 const upload = require("./config/multer").upload;
@@ -28,6 +28,7 @@ router.get('/login/github/return', [passport.authenticate('github', { failureRed
 router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
 
 router.post('/api/auth/updateuser', [Auth.isAuthenticated],Middleware.checkBasicUserInfo(), AuthController.updateUser);
+router.post('/api/contactUs', Middleware.checkBasicUserInfo(), contactUsController.saveContactUs);
 
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
@@ -53,7 +54,9 @@ router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.
 //Route for allExams
 router.get("/api/exams", ParserController.getExams);
 //Route for questions
-router.get("/api/questions/:page/:examId", ParserController.getQuestions);
+router.get("/api/questions/:page/:examId/:selectedCheck", ParserController.getQuestions);
+//Route for questions types
+router.get("/api/types/:examId", ParserController.getTypes);
 //Route for answers
 router.get("/api/answers/:question_id", ParserController.getAnswers);
 //Route for answers_area
