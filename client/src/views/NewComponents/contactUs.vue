@@ -129,7 +129,7 @@ export default {
 
     },
     created() {
-        if(this.["auth/isAuthenticated"]){
+        if(this["auth/isAuthenticated"]){
             this.firstname = this["auth/getUser"].firstName;
             this.lastname = this["auth/getUser"].lastName;
             this.email = this["auth/getUser"].email;
@@ -139,6 +139,9 @@ export default {
             this.email = '';
         }
         
+    },
+    beforeDestroy: function(){
+        document.getElementById("preloader-block").style.display = "none";
     },
     methods: {
         async submitContactUs() {
@@ -175,7 +178,7 @@ export default {
                     console.log(response.record)
                 }
                 this.loading = false;
-                // this.$router.push("dashboard");
+                this["auth/isAuthenticated"]? this.$router.push("dashboard"): this.$router.push("/");
                 }
             } catch (e) {
                 console.log(e)
