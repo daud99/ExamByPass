@@ -27,6 +27,7 @@ import ChangePassword from './views/account/changePassword.vue';
 import StripeCheckout from './views/stripeCheckout/Stripe-Checkout.vue';
 import Pricing from  './views/pricing/Pricing-Page.vue';
 import ViewExam from './components/Exams/viewExam.vue';
+import Evaluation from './components/Exams/Evaluation.vue';
 import About from './views/NewComponents/about.vue';
 import Faqs from './views/NewComponents/faq.vue';
 import ContactUs from './views/NewComponents/contactUs.vue'
@@ -146,7 +147,7 @@ export default new Router({
       components: {
         header: ExamsHeader,
         default: Exams,
-        footer: LandingFooter,
+       
         
       },
     },
@@ -155,8 +156,9 @@ export default new Router({
       name: "Single",
       components: {
         header: DashboardHeader,
-        default: SingleType,
+        default: SingleType,   
         footer: DashboardFooter,
+
       },
     },
     {
@@ -229,8 +231,9 @@ export default new Router({
      
       components: {
         default: Main,
-        header: DashboardHeader,
+        header: LandingHeader,               
         footer: DashboardFooter,
+
       },
     },
     {
@@ -240,6 +243,15 @@ export default new Router({
         default: ViewExam,
         header: DashboardHeader,
         footer: DashboardFooter,
+      },
+    },
+    {
+      path: "/Evaluation",
+      name: "Evaluation",
+      components: {
+        default: Evaluation,
+        header: ExamsHeader,
+        footer: LandingFooter,
       },
     },
   ],

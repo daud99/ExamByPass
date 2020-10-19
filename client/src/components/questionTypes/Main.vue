@@ -1,10 +1,10 @@
 <template>
 <div v-if="is_data_fetched">
     <div v-if="questions[indexVar].type === 'SINGLE_CHOICE'">
-        <Single :questionn="questions[indexVar]" :is_called="true" />
+        <Single :questionn="questions[indexVar]" :is_called="true" :allowShuffleAnswer='allowShuffleAnswer' />
     </div>
     <div v-else-if="questions[indexVar].type === 'MULTIPLE_CHOICE'">
-        <Multiple :questionn="questions[indexVar]" />
+        <Multiple :questionn="questions[indexVar]" :allowShuffleAnswer='allowShuffleAnswer' />
     </div>
     <div v-else-if="questions[indexVar].type === 'SELECT_AND_PLACE'">
         <DragAndDrop :questionn="questions[indexVar]" />
@@ -15,7 +15,8 @@
     <div v-else-if="questions[indexVar].type === 'HOT_AREA'">
         <HotArea :questionn="questions[indexVar]" />
     </div>
-    <v-btn :disabled="this.is_button_disabled" class="ma-2" tile color="indigo" dark @click="counter()">next</v-btn>
+
+    <Footer :counter='this.counterL' :totalQuestions='this.totalQuestions' />
 </div>
 </template>
 
@@ -26,6 +27,7 @@ import DragAndDrop from "./DragAndDrop";
 import FillInTheBlank from './FillInTheBlank'
 import HotArea from './HotArea'
 import axios from "axios";
+import Footer from "./Footer"
 //import Vue from "vue";
 
 export default {
@@ -34,10 +36,13 @@ export default {
         Multiple,
         DragAndDrop,
         FillInTheBlank,
-        HotArea
+        HotArea,
+        Footer
     },
     props: {
-        examId: Number
+        examId: Number,
+        selectedCheck: Array,
+        selectedRandomAnswer: Array
     },
     data() {
         return {
@@ -49,24 +54,42 @@ export default {
             is_button_disabled: false,
             indexVar: 0,
             counterL: 0,
+            totalQuestions: 0,
+            allowShuffleAnswer: Boolean,
+            wrongQuestion: [],
+            correctQuestion: []
         };
     },
 
     created() {
+        if (this.selectedRandomAnswer[0] === 'Answer order') {
+            console.log("true")
+            this.allowShuffleAnswer = true
+        } else {
+            this.allowShuffleAnswer = false
+        }
         this.getQuestions();
-        console.log(this.examId)
+        console.log(this.examId, this.selectedRandomAnswer)
     },
+    // watch: {
+    //     counterL: function () {
+
+    //     },
+    // },
     methods: {
         getQuestions() {
-            this.questions = [];
+
             axios
-                .get("/questions/" + this.page + "/" + this.examId)
+                .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck)
                 .then((resp) => {
                     console.log(resp);
-                    this.questions = resp.data;
+
+                    this.questions = this.questions.concat(resp.data)
+                    this.questions.pop()
                     this.is_data_fetched = true;
                     this.is_button_disabled = false;
-                    console.log(this.questions);
+                    this.totalQuestions = resp.data[resp.data.length - 1].count
+                    console.log(this.questions, this.questions[this.questions.length - 1].count);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -80,7 +103,8 @@ export default {
                 console.log("disable");
                 this.is_data_fetched = false;
                 this.page += 1;
-                this.counterL = 0;
+                this.counterL++;
+
                 this.is_button_disabled = true;
                 this.getQuestions();
             } else {
@@ -89,6 +113,71 @@ export default {
             console.log(this.indexVar, this.counterL);
             this.indexVar = this.counterL;
         },
+        decrement() {
+            this.counterL--
+            this.indexVar = this.counterL;
+        },
+        getWrongQuestion() {
+            //  const array1 = JSON.parse(JSON.stringify(this.wrongProp))
+
+            this.wrongQuestion = this.wrongQuestion.concat(this.questions[this.indexVar])
+            let uniqueAddresses = Array.from(new Set(this.wrongQuestion.map(a => a.id)))
+                .map(id => {
+                    return this.wrongQuestion.find(a => a.id === id)
+                })
+            this.wrongQuestion = uniqueAddresses
+
+        },
+        getCorrectQuestion() {
+            this.correctQuestion = this.correctQuestion.concat(this.questions[this.indexVar])
+            let uniqueAddresses = Array.from(new Set(this.correctQuestion.map(a => a.id)))
+                .map(id => {
+                    return this.correctQuestion.find(a => a.id === id)
+                })
+            this.correctQuestion = uniqueAddresses
+        },
+        stop() {
+
+            let wrong = this.wrongQuestion.map((elem) => {
+                let json = {}
+                json.id = elem.id
+                json.content = elem.content
+                json.explanation = elem.explanation
+                json.description = elem.description
+                json.type = elem.type
+                json.task_image = elem.task_image
+                json.exam_library_id = elem.exam_library_id
+                json.testlet_id = elem.testlet_id
+                json.condition = false
+                return json
+
+            })
+            let correct = this.correctQuestion.map((elem) => {
+                let json = {}
+                json.id = elem.id
+                json.content = elem.content
+                json.explanation = elem.explanation
+                json.description = elem.description
+                json.type = elem.type
+                json.task_image = elem.task_image
+                json.exam_library_id = elem.exam_library_id
+                json.testlet_id = elem.testlet_id
+                json.condition = true
+                return json
+
+            })
+
+            this.$router.push({
+                name: "Evaluation",
+                params: {
+                    wrongQuestions: wrong,
+                    correctQuestions: correct,
+                    totalQuestions: this.totalQuestions
+                }
+            });
+            console.log(this.wrongQuestion)
+        }
+
     },
 };
 
@@ -184,3 +273,9 @@ export default {
 //   }
 // };
 </script>
+
+<style scoped>
+body {
+    overflow: hidden !important;
+}
+</style>

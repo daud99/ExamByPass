@@ -7,6 +7,7 @@ const Answer = require("../models/Answer.js");
 const AnswerArea = require("../models/answerArea.js");
 const ExamLibrary = require("../models/examLibrary.js");
 const { Op } = require("sequelize");
+const Sequelize = require("sequelize");
 module.exports = new (class {
   async uploadFile(req, res, next) {
     console.log("i am here", req.file);
@@ -41,20 +42,25 @@ module.exports = new (class {
     }
   }
   async getQuestions(req, res, next) {
+   
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      let limit = 5; // number of records per page
+      let limit = 4; // number of records per page
       let offset = 0;
-
-      Question.findAndCountAll({ where: { exam_library_id: req.params.examId} }).then(
+     
+      var selectedCheck = req.params.selectedCheck.split(',');
+      console.log("hello world",selectedCheck)
+      Question.findAndCountAll({ where: { exam_library_id: req.params.examId , type:{[Op.in]: selectedCheck}} }).then(
         (question) => {
+          
+          let totalQuestions = question.count
           let page = req.params.page; // page number
           let pages = Math.ceil(question.count / limit);
           offset = limit * (page - 1);
-          console.log("exam id is",req.params.examId)
+         
 
           Question.findAll({
             limit: limit,
@@ -64,11 +70,43 @@ module.exports = new (class {
               exam_library_id: {
                 [Op.eq]: req.params.examId,
               },
+              type:{[Op.in]: selectedCheck}
             },
           }).then((question) => {
             console.log(question);
-            res.send(question);
+            let questionsCount 
+            questionsCount = question.concat({count:totalQuestions});
+            questionsCount = [...question, {count:totalQuestions}];
+            res.send(questionsCount);
           });
+        }
+      );
+    } catch (e) {
+      console.log(e);
+      res.status(400).send({
+        status: 400,
+        error: "Bad Request",
+      });
+    }
+  }
+  async getTypes(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      Question.findAll({
+        attributes: [
+          [Sequelize.fn('DISTINCT', Sequelize.col('type')), 'type'],
+        ],
+        where: { exam_library_id: req.params.examId} }).then(
+        (answer) => {
+          //console.log(answer)
+          answer.forEach((item, i) => {
+            item.id = i + 1;
+          });
+          res.send(answer);
         }
       );
     } catch (e) {
@@ -132,7 +170,7 @@ module.exports = new (class {
 
       ExamLibrary.findAll(
       ).then((exams) => {
-        //console.log(answer)
+        console.log("i am exam",exams)
 
         res.send(exams);
       });

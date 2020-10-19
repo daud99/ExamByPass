@@ -54,7 +54,9 @@ router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.
 //Route for allExams
 router.get("/api/exams", ParserController.getExams);
 //Route for questions
-router.get("/api/questions/:page/:examId", ParserController.getQuestions);
+router.get("/api/questions/:page/:examId/:selectedCheck", ParserController.getQuestions);
+//Route for questions types
+router.get("/api/types/:examId", ParserController.getTypes);
 //Route for answers
 router.get("/api/answers/:question_id", ParserController.getAnswers);
 //Route for answers_area
