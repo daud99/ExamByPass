@@ -102,12 +102,7 @@ export default {
             text: response.error,
           });
         } else if (response.msg) {
-          Swal.fire({
-            type: "error",
-            icon: "error",
-            title: "Error",
-            text: response.msg,
-          });
+         this.msg = response.msg;
         }else if(response.subscription){
           this.subData.created= response.subscription.created
           this.subData.current_period_end= response.subscription.current_period_end

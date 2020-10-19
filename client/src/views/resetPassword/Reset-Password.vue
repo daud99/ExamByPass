@@ -98,6 +98,9 @@ export default {
       sameAs: sameAs("password"),
     },
   },
+  beforeDestroy: function(){
+    document.getElementById("preloader-block").style.display = "none";
+  },
   methods: {
     async resetPassword() {
       this.loading = true;

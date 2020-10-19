@@ -48,6 +48,9 @@ export default {
    async created() {
     await this.getCurrentSubscriptionStatus();
   },
+   beforeDestroy: function(){
+    document.getElementById("preloader-block").style.display = "none";
+  },
   components: {
     card,
     AccountComponent,

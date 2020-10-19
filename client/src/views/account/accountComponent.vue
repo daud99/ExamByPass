@@ -132,6 +132,7 @@ export default {
     this.uuid = this["auth/getUser"].uuid;
   },
   methods: {
+    ...mapActions(["auth/setUser"]),
     async submit () {
         console.log(this.firstname)
         console.log(this.lastname)
@@ -143,7 +144,7 @@ export default {
           email: this.email
         };
         this.loading = true;
-        let response = await quickRequest("/auth/updateuser", "POST", data);
+        let response = await quickRequest("/auth/update-user", "POST", data);
         if ("error" in response) {
           Swal.fire({
             type: "error",
@@ -160,6 +161,9 @@ export default {
           });
           if(response.record){
             console.log(response.record)
+            localStorage.setItem("firstName", response.record.firstName);
+            localStorage.setItem("lastName", response.record.lastName);
+             this["auth/setUser"](response.record);
           }
           this.loading = false;
           this.$router.push("dashboard");

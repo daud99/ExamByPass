@@ -103,7 +103,7 @@ import {mapActions, mapGetters} from 'vuex';
 import Swal from "sweetalert2";
 import { quickRequest } from "../../../common/misc";
 import { validationMixin } from 'vuelidate';
-import { required, maxLength, minLength, email } from 'vuelidate/lib/validators';
+import { required, maxLength, minLength, email, sameAs } from 'vuelidate/lib/validators';
 import PageMixin from "../page-mixin";
 
 
@@ -113,7 +113,11 @@ export default {
   validations: {
     oldpassword: { required, minLength: minLength(4) },
     newpassword: { required, minLength: minLength(4) },
-    confirmpassword: { required, minLength: minLength(4) },
+    confirmpassword: { 
+      required,
+      sameAs: sameAs("newpassword"),
+      minLength: minLength(4)
+    },
     email: { required, email }
   },
   data: () => ({

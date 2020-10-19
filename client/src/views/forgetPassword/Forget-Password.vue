@@ -1,4 +1,5 @@
 <template>
+  <core-content :loading="loading">
     <section class="section section-shaped section-lg my-0">
         <div class="shape shape-style-1 bg-gradient-default">
             <span></span>
@@ -50,13 +51,17 @@
             </div>
         </div>
     </section>
+  </core-content>
 </template>
 <script>
 import { required, email } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import { quickRequest } from "../../../common/misc";
+import PageMixin from "../page-mixin";
+
 export default {
     name: "forget",
+    mixins: [PageMixin],
     data() {
         return {
             email: ""
@@ -68,8 +73,12 @@ export default {
         email,
         }
     },
+    beforeDestroy: function(){
+      document.getElementById("preloader-block").style.display = "none";
+    },
     methods: {
     async sendRecoveryEmail() {
+      this.loading = true;
       try {
         const data = {
           email: this.email
@@ -97,8 +106,10 @@ export default {
           title: "Error Fetching Information",
           text: "Could not save user through the server.",
         });
+      } finally {
+        this.loading = false;
       }
-    }
+    } 
     }
 };
 </script>
