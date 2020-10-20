@@ -29,6 +29,8 @@ router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
 
 router.post('/api/auth/update-user', [Auth.isAuthenticated],Middleware.checkBasicUserInfo(), AuthController.updateUser);
 router.post('/api/contactUs', Middleware.checkBasicUserInfo(), contactUsController.saveContactUs);
+router.get('/api/getMessages', contactUsController.getAllMessages);
+router.post('/api/deleteMessages', contactUsController.deleteMessages);
 
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);

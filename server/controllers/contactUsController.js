@@ -22,7 +22,7 @@ async saveContactUs(req,res, next) {
         })
         res.send({
             data: {
-                msg: "Your Message is sent Successfully!"
+                msg: "Message Sent Successfully!"
             }
         })
     }
@@ -33,5 +33,48 @@ async saveContactUs(req,res, next) {
         "error": "Bad Request",
         });
     }
+    }
+    
+    async getAllMessages(req,res, next) {
+        try {
+            const messages = await Contact.findAll({});
+            console.log(messages)
+            res.send({
+                data: {
+                    messages
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+
+    async deleteMessages(req,res, next) {
+        try {
+            const messages = await Contact.destroy({
+                where: {
+                    id: req.body.id
+                }
+            });
+            console.log(messages)
+            res.send({
+                data: {
+                    msg: "Message deleted Successfully!",
+                    messages
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
     }
 }
