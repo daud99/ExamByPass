@@ -30,7 +30,8 @@ import ViewExam from './components/Exams/viewExam.vue';
 import Evaluation from './components/Exams/Evaluation.vue';
 import About from './views/NewComponents/about.vue';
 import Faqs from './views/NewComponents/faq.vue';
-import ContactUs from './views/NewComponents/contactUs.vue'
+import ContactUs from './views/NewComponents/contactUs.vue';
+import ViewMessage from './views/NewComponents/viewAllMessages.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -131,6 +132,16 @@ export default new Router({
         footer: DashboardFooter,
       },
       beforeEnter: Guards.isUserOrAdmin,
+    },
+    {
+      path: "/messages",
+      name: "messages",
+      components: {
+        header: DashboardHeader,
+        default: ViewMessage,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
     },
     {
       path: "/dashboard",

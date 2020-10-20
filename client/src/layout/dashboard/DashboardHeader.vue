@@ -55,6 +55,15 @@
                 &nbsp;
                 &nbsp;
                 
+                <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
+                  <h6
+                    style="color: white; padding-top: 10px;"
+                    @click="h6"
+                  ><strong><router-link :to="{path: '/messages'}" class="nav-item">Messages</router-link></strong></h6>
+                </li>
+                &nbsp;
+                &nbsp;
+                &nbsp;
 
                 <li v-if="!_self['auth/isAuthenticated']" class="nav-item pointer">
                   <h6 style="color: white; padding-top: 10px" @click="h6">
@@ -132,14 +141,14 @@ export default {
     CloseButton,
     BaseDropdown
   },
-  // data() {
-  //   return {
-  //     user: {}
-  //   }
-  // },
+  data() {
+    return {
+      canViewMessages:false
+    }
+  },
   computed: {
     ...mapGetters(["auth/getUser"]),
-    ...mapGetters(["auth/isAuthenticated"]),
+    ...mapGetters(["auth/isAuthenticated"])
   },
 
   methods: {
