@@ -32,6 +32,7 @@ import About from './views/NewComponents/about.vue';
 import Faqs from './views/NewComponents/faq.vue';
 import ContactUs from './views/NewComponents/contactUs.vue';
 import ViewMessage from './views/NewComponents/viewAllMessages.vue';
+import ViewUsers from './views/NewComponents/viewAllUsers';
 Vue.use(Router);
 
 export default new Router({
@@ -139,6 +140,16 @@ export default new Router({
       components: {
         header: DashboardHeader,
         default: ViewMessage,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/users",
+      name: "users",
+      components: {
+        header: DashboardHeader,
+        default: ViewUsers,
         footer: DashboardFooter,
       },
       beforeEnter: Guards.isAdmin,
