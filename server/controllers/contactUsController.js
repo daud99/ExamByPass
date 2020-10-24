@@ -38,7 +38,6 @@ async saveContactUs(req,res, next) {
     async getAllMessages(req,res, next) {
         try {
             const messages = await Contact.findAll({});
-            console.log(messages)
             res.send({
                 data: {
                     messages

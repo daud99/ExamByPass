@@ -65,6 +65,16 @@
                 &nbsp;
                 &nbsp;
 
+                <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
+                  <h6
+                    style="color: white; padding-top: 10px;"
+                    @click="h6"
+                  ><strong><router-link :to="{path: '/users'}" class="nav-item">All Users</router-link></strong></h6>
+                </li>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+
                 <li v-if="!_self['auth/isAuthenticated']" class="nav-item pointer">
                   <h6 style="color: white; padding-top: 10px" @click="h6">
                     <strong>EDITOR</strong>

@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const User = require("../models/User");
 const Auth = require("../auth");
 const Subscription = require('../models/Subscription');
+const Session = require('../models/Session');
 
 module.exports = new class {
     redirectToDashboard(req, res, next) {
@@ -91,7 +92,48 @@ module.exports = new class {
             });
         }
     }
-
+    
+    async getAllusers(req,res, next) {
+        try {
+            const users = await User.findAll({include:[Subscription,Session]});
+            console.log(users)
+            res.send({
+                data: {
+                    users
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+    async deleteUser(req,res, next) {
+        try {
+            const messages = await User.destroy({
+                where: {
+                    id: req.body.id
+                }
+            });
+            res.send({
+                data: {
+                    msg: "User deleted Successfully!",
+                    messages
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+    
     async updateUser(req,res, next) {
         try {
             const errors = validationResult(req);
