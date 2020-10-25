@@ -10,7 +10,21 @@
                 <v-spacer></v-spacer>
 
             </v-toolbar>
-            <Single :questionn='this.sendQuestion' :detailsDialog='true' />
+            <div v-if="this.sendQuestion.type==='SINGLE_CHOICE'">
+                <Single :questionn='this.sendQuestion' :detailsDialog='true' />
+            </div>
+            <div v-if="this.sendQuestion.type==='MULTIPLE_CHOICE'">
+                <Multiple :questionn='this.sendQuestion' :detailsDialog='true' />
+            </div>
+            <div v-if="this.sendQuestion.type==='SELECT_AND_PLACE'">
+                <DragAndDrop :questionn='this.sendQuestion' :detailsDialog='true' />
+            </div>
+            <div v-if="this.sendQuestion.type==='FILL_IN_THE_BLANK'">
+                <FillInTheBlank :questionn='this.sendQuestion' :detailsDialog='true' />
+            </div>
+            <div v-if="this.sendQuestion.type==='HOT_AREA'">
+                <HotArea :questionn='this.sendQuestion' :detailsDialog='true' />
+            </div>
         </v-card>
 
     </v-dialog>
@@ -19,9 +33,17 @@
 
 <script>
 import Single from "../questionTypes/Single.vue";
+import Multiple from "../questionTypes/Multiple";
+import DragAndDrop from "../questionTypes/DragAndDrop";
+import FillInTheBlank from "../questionTypes/FillInTheBlank";
+import HotArea from "../questionTypes/HotArea";
 export default {
     components: {
-        Single
+        Single,
+        Multiple,
+        DragAndDrop,
+        FillInTheBlank,
+        HotArea
     },
     props: {
 

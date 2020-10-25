@@ -13,7 +13,9 @@
     </v-row>
     <v-row>
         <v-col>
-            <v-btn class="ma-2" tile color="indigo" dark @click="submit(userAnswer)">Answer</v-btn>
+            <div v-if="this.detailsDialog===true">
+                <v-btn class="ma-2" tile color="indigo" dark @click="submit(userAnswer)">Answer</v-btn>
+            </div>
             <div v-if="!this.detailsDialog">
                 <v-btn class="ma-2" tile color="indigo" dark @click="stop()">stop</v-btn>
             </div>
@@ -21,7 +23,7 @@
         </v-col>
     </v-row>
     <v-row>
-        <v-col v-show="showAnswer">
+        <v-col v-show="showAnswer" v-if="this.selectedTab === 0 || this.detailsDialog===true ">
             <v-sheet class="pa-12" color="red lighten-3">
                 {{ message }}
                 <div v-html="questionn.explanation"></div>
@@ -39,7 +41,8 @@ export default {
     props: {
         questionn: Object,
         allowShuffleAnswer: Boolean,
-        detailsDialog: Boolean
+        detailsDialog: Boolean,
+        selectedTab: Number
     },
     name: "Single",
     components: {
@@ -53,83 +56,7 @@ export default {
             correctProp: [],
             wrongProp: [],
             unansweredProp: [],
-            question: {
-                id: 3,
-                answers: {
-                    members: {
-                        answers: {
-                            elements: [{
-                                    id: "1",
-                                    styleAfterSubmit: "",
-                                    members: {
-                                        isCorrect: {
-                                            value: true,
-                                        },
-                                        content: {
-                                            value: "The file extension is not registered as an allowed asset MIMES in the OSGI config, Day CQ DAM Asset Upload Restriction.",
-                                        },
-                                    },
-                                },
-                                {
-                                    id: "2",
-                                    styleAfterSubmit: "",
-                                    members: {
-                                        isCorrect: {
-                                            value: false,
-                                        },
-                                        content: {
-                                            value: "The file extension is case-sensitive and should be all lower case.",
-                                        },
-                                    },
-                                },
-                                {
-                                    id: "3",
-                                    styleAfterSubmit: "",
-                                    members: {
-                                        isCorrect: {
-                                            value: false,
-                                        },
-                                        content: {
-                                            value: "The user does not have permission to upload an asset with the specific file extension.",
-                                        },
-                                    },
-                                },
-                                {
-                                    id: "4",
-                                    styleAfterSubmit: "",
-                                    members: {
-                                        isCorrect: {
-                                            value: false,
-                                        },
-                                        content: {
-                                            value: "The MIME Type mapping setup for the file extension does not exist in OSGI config, Day CQ Scene7 Asset Mime type Service.",
-                                        },
-                                    },
-                                },
-                            ],
-                        },
-                        allowShuffleAnswers: {
-                            value: true,
-                        },
-                    },
-                },
-                content: "An author uploads a PDF document and receives a “Restricted Files” error.<br /><br />What is causing this problem?",
-                examLibraryItemId: 1,
-                explanation: 'Reference: <a href="https://community.adobe.com/t5/photoshop-elements/elements-9-organizer-only-imports-one-folder-at-a-time/m-p/3144080?page=3"><u>https://community.adobe.com/t5/photoshop-elements/elements-9-organizer-only-imports-one-folder-at-a-time/m-p/3144080?page=3</u></a>',
-                extras: null,
-                hasExhibits: false,
-                isAccessibleInDemoVersion: true,
-                offset: 94515,
-                testletId: null,
-                type: "SINGLE_CHOICE",
-                typeId: 1,
-            },
-            correctAnswer2: {
-                value: {
-                    id: "1",
-                    content: "The file extension is not registered as an allowed asset MIMES in the OSGI config, Day CQ DAM Asset Upload Restriction.",
-                },
-            },
+
             userAnswer: "1",
             message: "",
             styleAfterSubmit: "",
@@ -176,6 +103,7 @@ export default {
                     // });
                     const result = resp.data.filter((entry) => entry.is_correct === 1);
                     this.correctAnswer = result;
+                    this.$parent.openDialogOnEntry()
                 })
                 .catch((err) => {
                     console.log(err);
@@ -195,24 +123,24 @@ export default {
         getAnswerElementById(id) {
             return this.answers.find((el) => el.id == id);
         },
-        submit(userAnswer) {
-            console.log(userAnswer);
+        submit() {
+
             this.answers.forEach((el) => {
                 el.styleAfterSubmit = "background-color: transparent";
             });
-            console.log(this.correctAnswer);
+
             this.showAnswer = true;
             console.log(this.getAnswerElementById(this.correctAnswer[0].id));
             this.getAnswerElementById(this.correctAnswer[0].id).styleAfterSubmit =
                 "background-color: green";
             //DOTO AJAX call to get the right answer
-            if (userAnswer == this.correctAnswer[0].id) {
+            if (this.userAnswer == this.correctAnswer[0].id) {
                 this.message = "CORRECT ANSWER";
                 if (!this.detailsDialog) {
                     this.$parent.getCorrectQuestion();
                 }
             } else {
-                this.getAnswerElementById(userAnswer).styleAfterSubmit =
+                this.getAnswerElementById(this.userAnswer).styleAfterSubmit =
                     "background-color: red";
                 if (!this.detailsDialog) {
                     this.$parent.getWrongQuestion();

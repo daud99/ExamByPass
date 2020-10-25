@@ -6,7 +6,7 @@ const Sequelize = require("sequelize");
 
 // usman's DB configuration
 module.exports = new Sequelize("exam", "root", "", {
-  host: "127.0.0.1",
+  host: "localhost",
   dialect: "mysql",
   pool: {
     max: 5,

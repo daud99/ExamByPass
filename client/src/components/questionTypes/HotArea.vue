@@ -13,11 +13,17 @@
     </v-row>
     <v-row>
         <v-col>
-            <v-btn class="ma-2" tile color="indigo" dark @click="submit">Answer</v-btn>
+
+            <div v-if="this.detailsDialog===true">
+                <v-btn class="ma-2" tile color="indigo" dark @click="submit">Answer</v-btn>
+            </div>
+            <div v-if="!this.detailsDialog">
+                <v-btn class="ma-2" tile color="indigo" dark @click="stop()">stop</v-btn>
+            </div>
         </v-col>
     </v-row>
     <v-row>
-        <v-col v-show="showAnswer">
+        <v-col v-show="showAnswer" v-if="this.selectedTab === 0 || this.detailsDialog===true ">
             <v-sheet class="pa-12" color="red lighten-3">
                 {{ message }}
                 <div class="explanation" v-html="questionn.explanation"></div>
@@ -36,6 +42,8 @@ import axios from "axios";
 export default {
     props: {
         questionn: Object,
+        detailsDialog: Boolean,
+        selectedTab: Number
     },
     name: "HotArea",
     data: () => {
@@ -340,6 +348,8 @@ export default {
     watch: {
         questionn: function () {
             this.showAnswer = false;
+            this.chosenAnswers = []
+            console.log("watcher")
             this.getAnswers();
         },
     },
@@ -347,6 +357,7 @@ export default {
 
         getAnswers() {
             this.answers = [];
+            this.chosenAnswers = []
             axios
                 .get("/answers/" + this.questionn.id, {})
                 .then((resp) => {
@@ -361,6 +372,7 @@ export default {
                     ) {
                         this.getAnswerArea();
                     }
+                    this.$parent.openDialogOnEntry()
 
                 })
                 .catch((err) => {
@@ -475,6 +487,7 @@ export default {
             return false;
         },
         submit() {
+
             this.showAnswer = true;
             // TODO send this chosen Answers IDs to check it with correct one from server side
             this.rightAnswers = [1, 4, 7, 8];
@@ -505,12 +518,24 @@ export default {
             }
 
             if (wrongAnswered) {
+                if (!this.detailsDialog && this.chosenAnswers.length !== 0) {
+                    this.$parent.getWrongQuestion();
+                }
                 this.message = "WRONG ANSWER";
             } else {
+                if (!this.detailsDialog) {
+                    this.$parent.getCorrectQuestion();
+                }
                 this.message = "CORRECT ANSWER";
+            }
+            if (this.chosenAnswers.length === 0) {
+                this.$parent.getunansweredQuestion();
             }
             canvas.renderAll();
         },
+        stop() {
+            this.$parent.stop();
+        }
     },
 };
 </script>
