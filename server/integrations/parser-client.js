@@ -15,6 +15,7 @@ module.exports = new class {
                                     url:url,
                                     data:packet.data
                                     });
+                                    console.log("response is",packet.data)
       try {
           await fs.unlinkSync(packet.file_path);
       }

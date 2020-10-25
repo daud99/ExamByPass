@@ -6,6 +6,7 @@
                 mdi-arrow-left-circle
             </v-icon>
         </v-btn>
+
         <v-chip class="ma-2 " color="primary" label style="font-size:18px">
 
             Question <span style="font-size:px;padding-left:30px">{{counter+1}} / {{totalQuestions}}</span>
@@ -18,6 +19,7 @@
         </v-btn>
 
         <v-col class="primary lighten-2 py-0 text-center white--text" cols="12" style="font-size:22px">
+
             <v-chip outlined class="ma-2 " color="white" label style="font-size:18px">
 
                 <strong>Score</strong> : {{this.obtainScore}}/{{this.totalScore}}
@@ -40,13 +42,15 @@ export default {
             countQuestion: 0,
             totalScore: 800,
             obtainScore: 0,
+            count: 0
         }
     },
     methods: {
+        submit() {},
         nextQuestion() {
             if (this.counter + 1 < this.totalQuestions) {
                 console.log(this.counter + 1, this.totalQuestions)
-                this.$parent.counter();
+                this.$parent.submit();
             }
 
         },

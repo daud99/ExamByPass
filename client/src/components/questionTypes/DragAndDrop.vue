@@ -16,11 +16,16 @@
     </v-row>
     <v-row>
         <v-col>
-            <v-btn class="ma-2" tile color="indigo" dark @click="submit()">Answer</v-btn>
+            <div v-if="this.detailsDialog===true">
+                <v-btn class="ma-2" tile color="indigo" dark @click="submit(userAnswers)">Answer</v-btn>
+            </div>
+            <div v-if="!this.detailsDialog">
+                <v-btn class="ma-2" tile color="indigo" dark @click="stop()">stop</v-btn>
+            </div>
         </v-col>
     </v-row>
     <v-row>
-        <v-col v-show="showAnswer">
+        <v-col v-show="showAnswer" v-if="this.selectedTab === 0 || this.detailsDialog===true ">
             <v-sheet class="pa-12" color="red lighten-3">
                 {{ message }}
                 <v-responsive v-if="wrongAnswered">
@@ -51,6 +56,8 @@ export default {
     },
     props: {
         questionn: Object,
+        detailsDialog: Boolean,
+        selectedTab: Number
     },
     data: () => {
         return {
@@ -170,6 +177,7 @@ export default {
 
                     const result = resp.data.filter((entry) => entry.is_correct === 1);
                     this.correctAnswer = result;
+                    this.$parent.openDialogOnEntry()
                 })
                 .catch((err) => {
                     console.log(err);
@@ -360,11 +368,20 @@ export default {
             }
 
             if (this.wrongAnswered) {
+                if (!this.detailsDialog) {
+                    this.$parent.getWrongQuestion();
+                }
                 this.message = "WRONG ANSWER";
                 this.showAnswerImage(this.getAllElements);
             } else {
+                if (!this.detailsDialog) {
+                    this.$parent.getCorrectQuestion();
+                }
                 this.message = "CORRECT ANSWER";
             }
+        },
+        stop() {
+            this.$parent.stop();
         },
         showAnswerImage(answers) {
             const image = new Image();

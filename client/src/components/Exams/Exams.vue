@@ -53,7 +53,7 @@
                     <v-card>
 
                         <v-toolbar dark color="primary">
-                            <v-btn icon dark @click="dialog = false">
+                            <v-btn icon dark @click="close()">
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                             <v-toolbar-title>{{this.examName}}</v-toolbar-title>
@@ -106,7 +106,7 @@
                                             <div class="col col-lg-12 col-md-12 col-xs-12">
                                                 <h6>Candidate Name</h6>
 
-                                                <v-text-field hide-details="auto"></v-text-field>
+                                                <v-text-field v-model="candidateName" hide-details="auto"></v-text-field>
                                             </div>
                                         </div>
                                         <div class="row" v-if="toggle_exclusive===2">
@@ -159,7 +159,7 @@
                                         <div class="row">
                                             <div class="col col-lg-4 col-md-4 col-xs-4" v-for="checkbox in checkBox" :key="checkbox.id">
 
-                                                <v-switch v-model="selected_check" color="primary" :label="checkbox.type" :value='checkbox.type'></v-switch>
+                                                <v-switch v-model="selected_check" aria-checked="false" color="primary" :label="checkbox.type" :value='checkbox.type'></v-switch>
                                             </div>
 
                                         </div>
@@ -189,7 +189,7 @@
 
     </v-card>
     <div class="scrolll" v-else-if="!this.showList">
-        <Main :examId="examId" :selectedCheck="selected_check" :selectedRandomAnswer="selectedRandomAnswer" />
+        <Main :examId="examId" :selectedCheck="selected_check" :selectedRandomAnswer="selectedRandomAnswer" :candidateName='this.candidateName' :selectedTab='this.tab' />
     </div>
 
 </div>
@@ -206,6 +206,8 @@ export default {
     data: () => {
         return {
             dialog: false,
+            candidateName: '',
+
             exams: [],
             examName: "",
             tab: null,
@@ -273,6 +275,7 @@ export default {
         },
         gettypes(id) {
             console.log("i am types")
+            this.checkBox = []
             axios
                 .get("/types/" + id)
                 .then((resp) => {
@@ -300,10 +303,14 @@ export default {
         startExam() {
             this.showList = false
             this.dialog = false
+        },
+        close() {
+            this.dialog = false
+
         }
     },
     updated() {
-        console.log("i am updated", this.selected_check, this.selectedRandomAnswer)
+        console.log("i am updated", this.selected_check)
     }
 }
 </script>

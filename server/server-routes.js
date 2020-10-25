@@ -62,6 +62,8 @@ router.get("/api/exams", ParserController.getExams);
 router.get("/api/questions/:page/:examId/:selectedCheck", ParserController.getQuestions);
 //Route for questions types
 router.get("/api/types/:examId", ParserController.getTypes);
+//Route for case study(Testlet)
+router.get("/api/testlet/:examId", ParserController.getTestlet);
 //Route for answers
 router.get("/api/answers/:question_id", ParserController.getAnswers);
 //Route for answers_area

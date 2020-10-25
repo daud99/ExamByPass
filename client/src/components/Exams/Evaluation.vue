@@ -14,10 +14,10 @@
                         </v-chip>
                     </span></p>
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-6">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-6" v-if="candidateName!==''">
                 <p class="text-lg-h6">Candidate <span>
                         <v-chip class="ma-2" color="green" label>
-                            Umar
+                            {{this.candidateName}}
                         </v-chip>
 
                     </span></p>
@@ -27,14 +27,14 @@
             <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-6">
                 <p class="text-lg-h6">Your Score <span>
                         <v-chip class="ma-2" color="blue" label outlined>
-                            0/100
+                            {{this.obtainScore}}/1000
                         </v-chip>
                     </span></p>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-6">
                 <p class="text-lg-h6">Pass Score <span>
                         <v-chip class="ma-2" color="blue" label outlined>
-                            80/100
+                            800/1000
                         </v-chip>
                     </span></p>
             </div>
@@ -85,15 +85,20 @@
                     <tr v-for="question in totalQuestions" :key="question.id" class="text-md-body-1">
                         <td>{{ question.id }}</td>
                         <td>{{ question.type }}</td>
-                        <td>{{ question.content }}</td>
-                        <td v-if="question.condition ">
+                        <td v-html="question.content"></td>
+                        <td v-if="question.condition === 'true' ">
                             <v-chip class="ma-2" color="green" label text-color="white" v-on:click="getDetails(question)">
                                 Correct
                             </v-chip>
                         </td>
-                        <td v-else-if='!question.condition'>
+                        <td v-else-if="question.condition === 'false'">
                             <v-chip class="ma-2" color="red" label text-color="white" v-on:click="getDetails(question)">
                                 Incorrect
+                            </v-chip>
+                        </td>
+                        <td v-else-if="question.condition === 'unanswered'">
+                            <v-chip class="ma-2" color="yellow" label text-color="white" v-on:click="getDetails(question)">
+                                Unanswered
                             </v-chip>
                         </td>
                     </tr>
@@ -189,6 +194,7 @@ export default {
 
             correctQuestions: [],
             wrongQuestions: [],
+            unansweredQuestion: [],
             totalQuestionsCount: Number,
             totalQuestions: [],
             filter: ['Correct Answers', 'Incorrect Answers'],
@@ -196,18 +202,39 @@ export default {
             questionId: Number,
             correctAnswer: [],
             clickme: false,
-            sendQuestion: []
+            sendQuestion: [],
+            candidateName: '',
         }
 
     },
-    updated() {
-        console.log(" ia m updated", this.filter)
-    },
+
     created() {
-        //   console.log()
+
         this.correctQuestions = this.$route.params.correctQuestions
         this.wrongQuestions = this.$route.params.wrongQuestions
+        this.unansweredQuestion = this.$route.params.unansweredQuestion
         this.totalQuestionsCount = this.$route.params.totalQuestions
+        this.candidateName = this.$route.params.candidateName
+
+        let score = 1000 / this.totalQuestionsCount
+        let int_part = Math.trunc(score); // returns 3
+        let float_part = Number((score - int_part).toFixed(2));
+        let ceilScore = Math.ceil(score)
+        let floorScore = Math.floor(score)
+        if (float_part > .5) {
+
+            this.obtainScore = ceilScore * this.correctQuestions.length
+
+        } else if (float_part <= .5) {
+
+            this.obtainScore = floorScore * this.correctQuestions.length
+        }
+        if (this.obtainScore < 800) {
+            this.result = false
+        } else {
+            this.result = true
+        }
+
         // this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
 
         if (this.filter[0] === 'Correct Answers') {
@@ -218,28 +245,18 @@ export default {
         }
 
         if (this.filter[0] === 'Incorrect Answers' && this.filter[1] === 'Correct Answers' || this.filter[1] === 'Incorrect Answers' && this.filter[0] === 'Correct Answers') {
-            console.log('i am else if')
+
             this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
         }
-        if (this.filter === 'Unanswered Questions') {
-
-        }
-        if (this.filter === 'Incorrect Answers' && this.filter === 'Unanswered Questions') {
-
-        }
-        if (this.filter === 'Unanswered Questions' && this.filter === 'Correct Answers') {
-
-        }
-        if (this.filter === 'Incorrect Answers' && this.filter === 'Correct Answers' && this.filter === 'Unanswered Questions') {
+        if (this.filter[0] === 'Unanswered Questions') {
+            this.totalQuestions = this.unansweredQuestion
 
         }
 
-        //console.log(this.totalQuestions)
-        console.log(this.wrongQuestions, this.correctQuestions, this.totalQuestions)
     },
     methods: {
         getDetails(question) {
-            console.log(question)
+
             this.sendQuestion = question
             this.clickme = true
         },
@@ -250,8 +267,8 @@ export default {
         handleChange: function (e) {
             this.correctQuestions = this.$route.params.correctQuestions
             this.wrongQuestions = this.$route.params.wrongQuestions
+            this.unansweredQuestion = this.$route.params.unansweredQuestion
             this.totalQuestionsCount = this.$route.params.totalQuestions
-            // this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
 
             if (this.filter[0] === 'Correct Answers') {
                 this.totalQuestions = this.correctQuestions
@@ -259,10 +276,31 @@ export default {
             if (this.filter[0] === 'Incorrect Answers') {
                 this.totalQuestions = this.wrongQuestions
             }
+            if (this.filter[0] === 'Unanswered Questions') {
+                this.totalQuestions = this.unansweredQuestion
 
+            }
             if (this.filter[0] === 'Incorrect Answers' && this.filter[1] === 'Correct Answers' || this.filter[1] === 'Incorrect Answers' && this.filter[0] === 'Correct Answers') {
-                console.log('i am else if')
+
                 this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
+            }
+            if (this.filter[0] === 'Incorrect Answers' && this.filter[1] === 'Unanswered Questions' || this.filter[1] === 'Incorrect Answers' && this.filter[0] === 'Unanswered Questions') {
+
+                this.totalQuestions = this.unansweredQuestion.concat(this.wrongQuestions)
+            }
+            if (this.filter[0] === 'Correct Answers' && this.filter[1] === 'Unanswered Questions' || this.filter[1] === 'Correct Answers' && this.filter[0] === 'Unanswered Questions') {
+
+                this.totalQuestions = this.unansweredQuestion.concat(this.correctQuestions)
+            }
+            if (this.filter[0] === 'Incorrect Answers' && this.filter[1] === 'Correct Answers' && this.filter[2] === 'Unanswered Questions' ||
+                this.filter[1] === 'Incorrect Answers' && this.filter[0] === 'Correct Answers' && this.filter[2] === 'Unanswered Questions' ||
+                this.filter[1] === 'Incorrect Answers' && this.filter[2] === 'Correct Answers' && this.filter[0] === 'Unanswered Questions' ||
+                this.filter[2] === 'Incorrect Answers' && this.filter[1] === 'Correct Answers' && this.filter[0] === 'Unanswered Questions' ||
+                this.filter[2] === 'Incorrect Answers' && this.filter[0] === 'Correct Answers' && this.filter[1] === 'Unanswered Questions' ||
+                this.filter[0] === 'Incorrect Answers' && this.filter[2] === 'Correct Answers' && this.filter[1] === 'Unanswered Questions') {
+
+                this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
+                this.totalQuestions = this.totalQuestions.concat(this.unansweredQuestion)
             }
             if (this.filter.length === 0) {
                 this.totalQuestions = []
