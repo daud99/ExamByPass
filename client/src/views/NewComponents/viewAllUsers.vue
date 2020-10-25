@@ -1,20 +1,20 @@
 <template>
 <core-content :loading="loading">
     <div class="py-5" id="getMessageSection">
-      <div class="container shape-container d-flex align-items-center">
-        <div class="col px-0">
+      <div class="container-fluid">
           <div class="row">
-            <div class="col offset-lg-1 offset-md-1 col-lg-10 col-md-10 col-xs-12">
+            <div class="col col-lg-12 col-md-12 col-xs-12">
                 <v-layout justify-center>
                     <h4>All User Messages</h4>
                 </v-layout><br><br>
+                <v-layout justify-center>
                     <v-text-field
                         v-model="search"
                         append-icon="mdi-magnify"
                         label="Search By All Fields (Any type of query)"
-                        single-line
-                        hide-details
+                        outlined shaped
                     ></v-text-field>
+                </v-layout>
                     <v-data-table
                         :headers="headers"
                         :items="userArray"
@@ -51,9 +51,17 @@
                             mdi-delete
                         </v-icon>
                         </template>
+
+                        <template v-slot:item.archive="{ item }">
+                        <button v-if="item.archieved" type="button" class="btn btn-sm btn-danger" @click="setArchive(item,false)">
+                          Disable
+                        </button>
+                        <button v-if="!item.archieved" type="button" class="btn btn-sm btn-success" @click="setArchive(item,true)">
+                          Enable
+                        </button>
+                        </template>
                     </v-data-table>
                   </div>
-      </div>
       </div>
       </div>
     </div>
@@ -72,6 +80,7 @@
       dialogDelete: false,
       search: '',
       loading: false,
+
       headers: [
         {
           text: 'First Name',
@@ -82,12 +91,13 @@
         { text: 'Last Name', value: 'lastName' },
         { text: 'Email', value: 'email' },
         { text: 'Email Verified', value: 'emailVerified' },
-        { text: 'Phone Number', value: 'phonenumber' },
+        { text: 'Phone Number', value: 'phoneNumber' },
         { text: 'Role', value: 'roles' },
         { text: 'Subscription', value: 'subscription' },
         { text: 'Created At', value: 'createdAt' },
         { text: 'Sessions', value: 'sessions' },
         { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Enable/Disable', value: 'archive', sortable: false },
       ],
       userArray: [],
       editedIndex: -1,
@@ -133,6 +143,7 @@
     },
     methods: {
         async initialize() {
+          this.userArray=[]
           let userObject={}
           try {
               let response = await quickRequest("/getUsers", "GET",{});
@@ -154,11 +165,16 @@
                       userObject.phoneNumber=response.users[index].phoneNumber
                       userObject.roles=response.users[index].roles
                       userObject.createdAt=response.users[index].createdAt
+                      userObject.archieved=response.users[index].archieved
                       userObject.sessions=response.users[index].Sessions.length
                       if(response.users[index].subscription!=null){
                         if(response.users[index].subscription.subscription_id){
                           userObject.subscription=response.users[index].subscription.status
+                        }else{
+                          userObject.subscription='none'
                         }
+                      }else{
+                        userObject.subscription='none'
                       }
                       this.userArray.push(userObject)
                       userObject={}
@@ -175,6 +191,42 @@
               });
           }
         },
+
+        async setArchive(userDetails, archiveValue){
+            this.loading=true
+            try {
+                let response1 = await quickRequest("/archivedUser", "POST",{id:userDetails.id, archieved:archiveValue});
+                console.log(response1)
+                if ("error" in response1) {
+                    this.loading=false
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response1.error,
+                });
+                }else if (response1.msg) {
+                    this.loading=false
+                    Swal.fire({
+                        type: "success",
+                        icon: "success",
+                        title: "Message",
+                        text: response1.msg,
+                    });
+                    this.initialize()
+
+                }
+            } catch (e) {
+                this.loading=false
+                Swal.fire({
+                type: "error",
+                title: "Error Fetching Information",
+                text: "Error occured",
+                });
+            }
+        },
+
+
         async deleteUser(idd, index){
             this.loading=true
             try {

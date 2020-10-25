@@ -133,6 +133,49 @@ module.exports = new class {
             });
         }
     }
+
+    async archiveUser(req,res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+            const user = await User.findOne({
+                where: {id: req.body.id}
+            });
+
+            if(user) {
+                const updateUser = await user.update({
+                    archieved: req.body.archieved
+                  });
+                  res.send({
+                    data: {
+                        msg: "User Updated successfully",
+                        record: updateUser
+                    }
+                }) 
+            } else {
+                res.send({
+                    data: {
+                        msg: "User doesn't exist"
+                    }
+                })
+            }
+        }
+        catch(e) {
+            console.log("error");
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
     
     async updateUser(req,res, next) {
         try {

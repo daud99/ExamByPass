@@ -33,6 +33,7 @@ router.get('/api/getMessages', contactUsController.getAllMessages);
 router.post('/api/deleteMessages', contactUsController.deleteMessages);
 router.get('/api/getUsers', AuthController.getAllusers);
 router.post('/api/deleteUsers', AuthController.deleteUser);
+router.post('/api/archivedUser', AuthController.archiveUser);
 
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
