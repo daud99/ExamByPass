@@ -6,6 +6,7 @@ const auth = require("./auth.js");
 const siteConfig = require("./config/site.js");
 const routes = require("./server-routes.js");
 const db = require("./config/db.js");
+var bodyParser = require('body-parser');
 
 async function ignite() {
   try {
@@ -16,7 +17,8 @@ async function ignite() {
     db.authenticate().then(() => console.log("connectedd"));
 
     auth.initialize(app);
-
+    app.use(bodyParser.json({limit: "100mb"}));
+    app.use(bodyParser.urlencoded({limit: "100mb", extended: true, parameterLimit:500000}));
     app.use("/", routes);
 
     // Handle production
