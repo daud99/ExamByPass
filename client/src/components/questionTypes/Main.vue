@@ -53,6 +53,9 @@ import FillInTheBlank from './FillInTheBlank'
 import HotArea from './HotArea'
 import axios from "axios";
 import Footer from "./Footer"
+import { quickRequest } from "../../../common/misc.js"
+import Swal from "sweetalert2";
+
 //import Vue from "vue";
 
 export default {
@@ -94,7 +97,22 @@ export default {
             count: 0,
         };
     },
+    beforeDestroy: function(){
+        for(let index1=0; index1<this.wrongQuestion.length; index1++){
+            this.wrongQuestion[index1].condition='false'
+        }
+        for(let index2=0; index2<this.correctQuestion.length; index2++){
+            this.correctQuestion[index2].condition='true'
+        }
+        for(let index3=0; index3<this.unansweredQuestion.length; index3++){
+            this.unansweredQuestion[index3].condition='unanswered'
+        }
+        let cQuestions=[...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
+        console.log(cQuestions)
+        let id=100
+        this.examSession(id,cQuestions)
 
+    },
     created() {
         if (this.selectedRandomAnswer[0] === 'Answer order') {
 
@@ -108,8 +126,34 @@ export default {
     },
 
     methods: {
+        async examSession(IdOfUser,combinedQuestions){
+            try {
+                const data = {
+                userId: IdOfUser,
+                record: combinedQuestions
+                };
+                let response = await quickRequest("/saveExamsession", "POST", data);
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                }
+                if(response){
+                    console.log(response)
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Saving Session",
+                text: "Could not save session through the server.",
+                });
+            }
+        },
         getQuestions() {
-
             axios
                 .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck)
                 .then((resp) => {

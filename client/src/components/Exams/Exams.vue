@@ -68,7 +68,7 @@
                             <v-tab-item v-for="item in tabItems" :key="item">
                                 <v-card flat>
                                     <v-card-text>
-                                        <div class="row">
+                                        <div v-if="examSessionLength>0" class="row">
                                             <div class="col col-lg-12 col-md-12 col-xs-12">
                                                 <button type="button" class="btn btn-sm btn-primary btn-block">
                                                     <h4 style="color:white; text-weigth:bolder; line-height: 1.6;">
@@ -197,7 +197,9 @@
 
 <script>
 import axios from "axios";
-import Main from "../questionTypes/Main"
+import Main from "../questionTypes/Main";
+import { quickRequest } from "../../../common/misc.js"
+import Swal from "sweetalert2";
 export default {
     components: {
         Main
@@ -205,6 +207,7 @@ export default {
     name: "Exams",
     data: () => {
         return {
+            examSessionLength:0,
             dialog: false,
             candidateName: '',
 
@@ -254,9 +257,34 @@ export default {
     created() {
         console.log("created")
         this.getExams()
+        this.getExamSession()
     },
     methods: {
-
+        async getExamSession(){
+            let user_id=100
+            try {
+                let response = await quickRequest("/getExamsession", "GET", {}, user_id);
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                }
+                if(response){
+                    this.examSessionLength=response.examSessions.length
+                    console.log(response.examSessions.length)
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Occured",
+                text: "Error occured while retriving session",
+                });
+            }
+        },
         getExams() {
             console.log("i am exam")
             axios
