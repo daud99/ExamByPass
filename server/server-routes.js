@@ -12,7 +12,7 @@ var DbController = require('./controllers/dbController')
 var StripeController = require('./controllers/stripeController')
 var SubscriptionManagementController = require('./controllers/subscriptionManagementController')
 var contactUsController = require('./controllers/contactUsController')
-
+var userExamsessionController = require('./controllers/userExamsessionController')
 // Local imports
 const upload = require("./config/multer").upload;
 var csrfProtection = csrf({ cookie: true });
@@ -34,6 +34,10 @@ router.post('/api/deleteMessages', contactUsController.deleteMessages);
 router.get('/api/getUsers', AuthController.getAllusers);
 router.post('/api/deleteUsers', AuthController.deleteUser);
 router.post('/api/archivedUser', AuthController.archiveUser);
+
+router.post('/api/saveExamsession', userExamsessionController.saveSessionExam);
+router.get('/api/getExamsession', userExamsessionController.getSessionExam);
+router.post('/api/deleteExamsession', userExamsessionController.deleteSessionExam);
 
 router.post('/api/auth/get-user', AuthController.getUser);
 router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
