@@ -48,6 +48,7 @@ export default {
     methods: {
         submit() {},
         nextQuestion() {
+            console.log(this.counter)
             if (this.counter + 1 < this.totalQuestions) {
                 console.log(this.counter + 1, this.totalQuestions)
                 this.$parent.submit();

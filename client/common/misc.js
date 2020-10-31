@@ -1,5 +1,5 @@
 const axios = require('axios')
-    export const quickRequest = async (url, method, body) => {
+    export const quickRequest = async (url, method, body, paramS) => {
        
         // var csrfToken = document
         //     .querySelector("invisible-config[data-csrf-token]")
@@ -11,6 +11,9 @@ const axios = require('axios')
             data: JSON.stringify(body),
             headers: {
                 'Content-Type': 'application/json',
+            },
+            params:{
+                paramS
             }
         });
 
