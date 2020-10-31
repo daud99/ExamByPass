@@ -53,6 +53,7 @@ import FillInTheBlank from './FillInTheBlank'
 import HotArea from './HotArea'
 import axios from "axios";
 import Footer from "./Footer"
+import EventBus from "../../Event/eventBus"
 //import Vue from "vue";
 
 export default {
@@ -65,15 +66,11 @@ export default {
         Footer
     },
     props: {
-        examId: Number,
-        selectedCheck: Array,
-        selectedRandomAnswer: Array,
-        candidateName: String,
-        selectedTab: Number,
 
     },
     data() {
         return {
+
             questions: [],
             testlet: null,
             questionTestlet: [],
@@ -90,11 +87,24 @@ export default {
             wrongQuestion: [],
             correctQuestion: [],
             unansweredQuestion: [],
-
             count: 0,
+            examId: Number,
+            selectedCheck: Array,
+            selectedRandomAnswer: Array,
+            candidateName: String,
+            selectedTab: Number,
+            structureEntryQuestionn: Array
         };
     },
+    mounted() {
+        let count = 0
 
+        EventBus.$once('stop', () => {
+            console.log("i am bus")
+            this.stop()
+
+        });
+    },
     created() {
         if (this.selectedRandomAnswer[0] === 'Answer order') {
 
@@ -102,29 +112,59 @@ export default {
         } else {
             this.allowShuffleAnswer = false
         }
+
+        this.examId = this.$route.params.examId
+        this.selectedCheck = this.$route.params.selectedCheck
+        this.selectedRandomAnswer = this.$route.params.selectedRandomAnswer
+        this.candidateName = this.$route.params.candidateName
+        this.selectedTab = this.$route.params.selectedTab
+        this.structureEntryQuestionn = this.$route.params.structureEntryQuestionn
+
         this.getTestlet()
         this.getQuestions();
 
     },
+    updated() {
 
+    },
     methods: {
+
         getQuestions() {
 
-            axios
-                .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck)
-                .then((resp) => {
-                    console.log(resp);
+            if (this.structureEntryQuestionn.length !== 0) {
+                axios
+                    .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + this.structureEntryQuestionn)
+                    .then((resp) => {
+                        console.log(resp);
 
-                    this.questions = this.questions.concat(resp.data)
-                    this.questions.pop()
-                    this.is_data_fetched = true;
-                    this.is_button_disabled = false;
-                    this.totalQuestions = resp.data[resp.data.length - 1].count
+                        this.questions = this.questions.concat(resp.data)
+                        this.questions.pop()
+                        this.is_data_fetched = true;
+                        this.is_button_disabled = false;
+                        this.totalQuestions = resp.data[resp.data.length - 1].count
 
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            } else {
+                axios
+                    .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + 0)
+                    .then((resp) => {
+                        console.log(resp);
+
+                        this.questions = this.questions.concat(resp.data)
+                        this.questions.pop()
+                        this.is_data_fetched = true;
+                        this.is_button_disabled = false;
+                        this.totalQuestions = resp.data[resp.data.length - 1].count
+
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+
         },
         getTestlet() {
 
@@ -203,6 +243,7 @@ export default {
                 })
             this.unansweredQuestion = uniqueAddresses
         },
+
         stop() {
 
             let wrong = this.wrongQuestion.map((elem) => {
@@ -258,7 +299,7 @@ export default {
                     unansweredQuestion: unanswered
 
                 }
-            });
+            }).catch(() => {});;
 
         },
         openDialog() {

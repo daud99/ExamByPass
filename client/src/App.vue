@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="dark-drop " v-show="fullView"></div>
+
     <router-view name="header"></router-view>
     <v-app>
         <v-main>
