@@ -1,70 +1,43 @@
 <template>
 <header class="header-global">
-    <base-nav type="primary" effect="dark" expand>
-        <router-link slot="brand" class="navbar-brand" to="/">
-            <img class="navbar-brand-img" src="img/brand/logovector.svg">
-        </router-link>
+    <b-navbar toggleable="lg" type="light" style="background-color: #e3f2fd;">
+        <b-navbar-brand>
+            <router-link class="navbar-brand" to="/">
+                <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
+            </router-link>
+        </b-navbar-brand>
 
-        <div class="row" slot="content-header" slot-scope="{ closeMenu }">
-            <div class="col-6 collapse-brand">
-                <a href="#">
-                    <img src="img/brand/logovector.svg">
-                </a>
-            </div>
-            <div class="col-6 collapse-close">
-                <close-button @click="closeMenu"></close-button>
-            </div>
-        </div>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-        <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-            <li class="nav-item pointer">
-                <h6 style="color: white; padding-top: 10px" @click="h6">
-                    <strong>
-                        <router-link style="color: white;" :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link>
-                    </strong>
-                </h6>
-            </li>
-            &nbsp; &nbsp; &nbsp;
+        <b-collapse id="nav-collapse" is-nav>
+            <b-navbar-nav class="ml-auto">
+                <b-nav-item href="#">
+                    <router-link class="nav-item nav-link " :to="{path: '/contactUs'}">
 
-            <li class="nav-item pointer">
-                <h6 style="color: white; padding-top: 10px" @click="h6">
-                    <strong>
-                        <router-link style="color: white;" :to="{path: '/about'}" class="nav-item">About</router-link>
-                    </strong>
-                </h6>
-            </li>
-            &nbsp; &nbsp; &nbsp;
-            <li class="nav-item pointer">
-                <h6 style="color: white; padding-top: 10px" @click="h6">
-                    <strong>
-                        <router-link style="color: white;" :to="{path: '/faq'}" class="nav-item">FAQS</router-link>
-                    </strong>
-                </h6>
-            </li>
-            &nbsp; &nbsp; &nbsp;
-            <li class="nav-item pointer">
-                <h6 style="color: white; padding-top: 10px" @click="h6">
-                    <strong>PRICING</strong>
-                </h6>
-            </li>
-            &nbsp; &nbsp; &nbsp;
-            <li class="nav-item pointer">
-                <h6 style="color: white; padding-top: 10px" @click="h6">
-                    <strong>EDITOR</strong>
-                </h6>
-            </li>
-            &nbsp; &nbsp; &nbsp;
-            <li class="nav-item">
-                <base-button tag="a" @click="
-              () => {
-                this.$router.push({ name: 'login' });
-              }
-            " class="mb-3 mb-sm-0" type="white" icon="fa fa-sign-in">
-                    Login
-                </base-button>
-            </li>
-        </ul>
-    </base-nav>
+                        <h6>
+                            <v-icon right>
+                                mdi-delete-variant
+                            </v-icon>SHOW DELETED
+                        </h6>
+                    </router-link>
+                </b-nav-item>
+                <b-nav-item>
+                    <router-link class="nav-item nav-link" :to="{path: '/about'}">
+                        <h6>
+                            <v-icon right>
+                                mdi-upload
+                            </v-icon>UPLOAD
+                        </h6>
+                    </router-link>
+                </b-nav-item>
+                <b-nav-item>
+
+                </b-nav-item>
+
+            </b-navbar-nav>
+
+        </b-collapse>
+    </b-navbar>
 </header>
 </template>
 
@@ -100,5 +73,11 @@ export default {
 .navbar-brand-img {
     height: 45px;
     width: 230px;
+}
+
+.nav-item>h6 {
+    font-weight: bold;
+    font-size: 16px;
+
 }
 </style>

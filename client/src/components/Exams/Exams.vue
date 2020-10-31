@@ -82,22 +82,19 @@
                                             </a>
                                         </div>
 
-                                        <div class="row">
-                                            <v-col cols="12" sm="4" class="py-2">
+                                        <div class="row mr-6 " no-gutters>
+                                            <v-col col="12" sm="6" class="py-2 ">
                                                 <v-btn-toggle v-model="toggle_exclusive" mandatory tile color="blue accent-3">
 
                                                     <v-btn x-large block>
                                                         <v-icon>mdi-clock</v-icon>
                                                         <h6>ALL QUESTIONS </h6>
+
                                                     </v-btn>
 
                                                     <v-btn x-large block>
                                                         <v-icon>mdi-clock</v-icon>
                                                         SPECIFIC EXAMS
-                                                    </v-btn>
-                                                    <v-btn x-large block>
-                                                        <v-icon>mdi-clock</v-icon>
-                                                        INCORRECT QUESTIONS
                                                     </v-btn>
 
                                                 </v-btn-toggle>
@@ -111,20 +108,15 @@
                                                 <v-text-field v-model="candidateName" hide-details="auto"></v-text-field>
                                             </div>
                                         </div>
-                                        <div class="row" v-if="toggle_exclusive===2">
+                                        <div class="row" v-if="toggle_exclusive===1">
                                             <div class="col col-lg-12 col-md-12 col-xs-12">
 
-                                                <h6>Incorrectly answered at least</h6>
+                                                <h6>Select Exam</h6>
                                             </div>
                                             <div class="col col-lg-8 col-md-8 col-xs-8">
-                                                <v-select :items="incorrectTimes" label="Incorrectly answered at least  "></v-select>
+                                                <v-select :items="examTab" v-model="slectedExamTab" label="Select Exam" @input="structureEntryQuestion()"></v-select>
                                             </div>
-                                            <div class="col col-lg-4 col-md-4 col-xs-4">
-                                                <v-btn large class="ma-2" outlined color="indigo">
-                                                    RESET
-                                                </v-btn>
 
-                                            </div>
                                         </div>
                                         <div class="row" v-if="item==='TRAINING MODE'">
                                             <div class="col col-lg-12 col-md-12 col-xs-12">
@@ -190,9 +182,6 @@
         </div>
 
     </v-card>
-    <div class="scrolll" v-else-if="!this.showList">
-        <Main :examId="examId" :selectedCheck="selected_check" :selectedRandomAnswer="selectedRandomAnswer" :candidateName='this.candidateName' :selectedTab='this.tab' />
-    </div>
 
 </div>
 </template>
@@ -215,6 +204,8 @@ export default {
 
             exams: [],
             examName: "",
+            slectedExamTab: "",
+            structureEntryQuestionn: [],
             tab: null,
             checkBox: [],
             selected_check: [],
@@ -237,18 +228,14 @@ export default {
             tabItems: [
                 'TRAINING MODE', 'EXAM MODE'
             ],
-            incorrectTimes: ["5 questions answered incorrectly one time", "5 questions answered incorrectly two time"],
+            examType: [],
+            filterExamType: [],
+            examTab: [],
             examId: Number,
             showList: true,
             items: [{
                     title: 'Delete',
 
-                },
-                {
-                    title: 'Statistics',
-                },
-                {
-                    title: 'Open in Editor',
                 },
 
             ],
@@ -257,10 +244,17 @@ export default {
 
     },
     created() {
+
+        //console.log("created")
+
         console.log("created")
         this.getExamSession()
+
         this.getExams()
         
+    },
+    updated() {
+        console.log("updated", this.slectedExamTab)
     },
     methods: {
         async getExamSession(){
@@ -297,11 +291,11 @@ export default {
             }
         },
         getExams() {
-            console.log("i am exam")
+            // console.log("i am exam")
             axios
                 .get("/exams")
                 .then((resp) => {
-                    console.log(resp);
+                    // console.log(resp);
                     this.exams = resp.data;
                     // var results = resp.data.filter(function (entry) {
                     //   return entry.is_correct === 1;
@@ -312,13 +306,32 @@ export default {
                     console.log(err);
                 });
         },
+        getExamType(id) {
+            console.log("i am type")
+            axios
+                .get("/structureEntry/" + id)
+                .then((resp) => {
+
+                    this.examType = resp.data;
+                    let tab = resp.data.map(t => t.name);
+                    this.examTab = tab
+                    console.log(resp);
+                    // var results = resp.data.filter(function (entry) {
+                    //   return entry.is_correct === 1;
+                    // });
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
         gettypes(id) {
-            console.log("i am types")
+            // console.log("i am types")
             this.checkBox = []
             axios
                 .get("/types/" + id)
                 .then((resp) => {
-                    console.log("get type", resp);
+                    //   console.log("get type", resp);
                     this.checkBox = resp.data;
                     // var results = resp.data.filter(function (entry) {
                     //   return entry.is_correct === 1;
@@ -335,12 +348,44 @@ export default {
             this.examId = id;
             this.examName = name
             this.gettypes(id)
-            console.log("i am tet", this.examId, name)
+            this.getExamType(id)
+            //   console.log("i am tet", this.examId, name)
             this.dialog = true
 
         },
+        structureEntryQuestion() {
+            let sendTab = this.examType.filter(st => st.name === this.slectedExamTab)
+            let sendTabId = sendTab[0].id
+            axios
+                .get("/structureEntryQuestion/" + sendTabId)
+                .then((resp) => {
+
+                    let sortedArray = resp.data.map(sa => sa.questionId)
+                    this.structureEntryQuestionn = sortedArray
+                    console.log(sortedArray)
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+
+        },
         startExam() {
+            let sendTab = this.examType.filter(st => st.name === this.slectedExamTab)
+            this.filterExamType = sendTab
             this.showList = false
+            this.$router.push({
+                name: "main",
+                params: {
+                    examId: this.examId,
+                    selectedCheck: this.selected_check,
+                    selectedRandomAnswer: this.selectedRandomAnswer,
+                    candidateName: this.candidateName,
+                    selectedTab: this.tab,
+                    structureEntryQuestionn: this.structureEntryQuestionn
+
+                }
+            });
             this.dialog = false
         },
         close() {
@@ -348,9 +393,7 @@ export default {
 
         }
     },
-    updated() {
-        console.log("i am updated", this.selected_check)
-    }
+
 }
 </script>
 

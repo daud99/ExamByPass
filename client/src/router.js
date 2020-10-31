@@ -7,6 +7,7 @@ import DashboardFooter from "./layout/dashboard/DashboardFooter";
 import LoginHeader from "./layout/login/LoginHeader";
 import RegisterHeader from "./layout/register/RegisterHeader";
 import ExamsHeader from "./layout/exams/ExamsHeader";
+import StartHeader from "./layout/startexam/startHeader";
 import Landing from "./views/landing/Landing.vue";
 import Login from "./views/login/Login.vue";
 import Register from "./views/register/Register.vue";
@@ -253,7 +254,7 @@ export default new Router({
      
       components: {
         default: Main,
-        header: LandingHeader,               
+        header: StartHeader,               
         footer: DashboardFooter,
 
       },

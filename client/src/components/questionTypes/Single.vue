@@ -16,9 +16,7 @@
             <div v-if="this.detailsDialog===true">
                 <v-btn class="ma-2" tile color="indigo" dark @click="submit(userAnswer)">Answer</v-btn>
             </div>
-            <div v-if="!this.detailsDialog">
-                <v-btn class="ma-2" tile color="indigo" dark @click="stop()">stop</v-btn>
-            </div>
+
             <!-- <h2>{{question_id}}</h2> -->
         </v-col>
     </v-row>
@@ -164,18 +162,7 @@ export default {
                     "WRONG ANSWER: RIGHT ONE: " + this.correctAnswer[0].content;
             }
         },
-        stop() {
-            this.$parent.stop();
-            // ar = ar.concat(this.questionn)
-            //  let arraySet2 = new Set(this.wrongProp);
-            // const array1 = JSON.parse(JSON.stringify(this.wrongProp))
-            // const uniqueAddresses = Array.from(new Set(array1.map(a => a.answerId)))
-            //     .map(id => {
-            //         return array1.find(a => a.answerId === id)
-            //     })
-            //this.wrongProp = uniqueAddresses
-            // console.log(this.wrongProp, uniqueAddresses)
-        }
+
     },
 };
 </script>

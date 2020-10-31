@@ -63,7 +63,7 @@ router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.
 //Route for allExams
 router.get("/api/exams", ParserController.getExams);
 //Route for questions
-router.get("/api/questions/:page/:examId/:selectedCheck", ParserController.getQuestions);
+router.get("/api/questions/:page/:examId/:selectedCheck/:structureEntryQuestionn", ParserController.getQuestions);
 //Route for questions types
 router.get("/api/types/:examId", ParserController.getTypes);
 //Route for case study(Testlet)
@@ -72,6 +72,10 @@ router.get("/api/testlet/:examId", ParserController.getTestlet);
 router.get("/api/answers/:question_id", ParserController.getAnswers);
 //Route for answers_area
 router.get("/api/answers_area/:answer_id", ParserController.getAnswersArea);
+//Route for structure entry
+router.get("/api/structureEntry/:examId", ParserController.structureEntry);
+//Route for structure entry Question
+router.get("/api/structureEntryQuestion/:structureId", ParserController.structureEntryQuestion);
 
 // Send CSRF token for session
 router.get("/api/getcsrftoken", csrfProtection, function (req, res) {

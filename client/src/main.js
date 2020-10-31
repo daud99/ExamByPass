@@ -25,14 +25,21 @@ import axios from "./axios.js";
 import { store } from './store/store';
 import vuetify from './plugins/vuetify';
 import CoreContent from './components/Core-content';
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios;
 Vue.use(Argon);
 Vue.use(Vuelidate);
+Vue.use(BootstrapVue)
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin)
 Vue.component('core-content', CoreContent)
-
+const EventBus = new Vue()
+Vue.prototype.$bus = EventBus;
 new Vue({
   router,
   store,
