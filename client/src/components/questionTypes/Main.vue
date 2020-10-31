@@ -56,9 +56,10 @@ import Footer from "./Footer"
 
 import EventBus from "../../Event/eventBus"
 
-import { quickRequest } from "../../../common/misc.js"
+import {
+    quickRequest
+} from "../../../common/misc.js"
 import Swal from "sweetalert2";
-
 
 //import Vue from "vue";
 
@@ -111,49 +112,47 @@ export default {
             this.stop()
 
         });
-
-    beforeDestroy: function(){
+    },
+    beforeDestroy: function () {
         console.log(this.indexVar)
-        for(let index1=0; index1<this.wrongQuestion.length; index1++){
-            this.wrongQuestion[index1].condition='false'
-            this.wrongQuestion[index1].page=this.page
-            this.wrongQuestion[index1].examId=this.examId
-            this.wrongQuestion[index1].selectedCheck=JSON.stringify(this.selectedCheck)
-            this.wrongQuestion[index1].indexVar=this.indexVar
+        for (let index1 = 0; index1 < this.wrongQuestion.length; index1++) {
+            this.wrongQuestion[index1].condition = 'false'
+            this.wrongQuestion[index1].page = this.page
+            this.wrongQuestion[index1].examId = this.examId
+            this.wrongQuestion[index1].selectedCheck = JSON.stringify(this.selectedCheck)
+            this.wrongQuestion[index1].indexVar = this.indexVar
 
-            this.wrongQuestion[index1].candidateName=this.candidateName
-            this.wrongQuestion[index1].selectedRandomAnswer=JSON.stringify(this.selectedRandomAnswer)
-            this.wrongQuestion[index1].selectedTab=this.selectedTab
+            this.wrongQuestion[index1].candidateName = this.candidateName
+            this.wrongQuestion[index1].selectedRandomAnswer = JSON.stringify(this.selectedRandomAnswer)
+            this.wrongQuestion[index1].selectedTab = this.selectedTab
         }
-        for(let index2=0; index2<this.correctQuestion.length; index2++){
-            this.correctQuestion[index2].condition='true'
-            this.correctQuestion[index2].page=this.page
-            this.correctQuestion[index2].examId=this.examId
-            this.correctQuestion[index2].selectedCheck=JSON.stringify(this.selectedCheck)
-            this.correctQuestion[index2].indexVar=this.indexVar
+        for (let index2 = 0; index2 < this.correctQuestion.length; index2++) {
+            this.correctQuestion[index2].condition = 'true'
+            this.correctQuestion[index2].page = this.page
+            this.correctQuestion[index2].examId = this.examId
+            this.correctQuestion[index2].selectedCheck = JSON.stringify(this.selectedCheck)
+            this.correctQuestion[index2].indexVar = this.indexVar
 
-            this.correctQuestion[index2].candidateName=this.candidateName
-            this.correctQuestion[index2].selectedRandomAnswer=JSON.stringify(this.selectedRandomAnswer)
-            this.correctQuestion[index2].selectedTab=this.selectedTab
+            this.correctQuestion[index2].candidateName = this.candidateName
+            this.correctQuestion[index2].selectedRandomAnswer = JSON.stringify(this.selectedRandomAnswer)
+            this.correctQuestion[index2].selectedTab = this.selectedTab
         }
-        for(let index3=0; index3<this.unansweredQuestion.length; index3++){
-            this.unansweredQuestion[index3].condition='unanswered'
-            this.unansweredQuestion[index3].page=this.page
-            this.unansweredQuestion[index3].examId=this.examId
-            this.unansweredQuestion[index3].selectedCheck=JSON.stringify(this.selectedCheck)
-            this.unansweredQuestion[index3].indexVar=this.indexVar
+        for (let index3 = 0; index3 < this.unansweredQuestion.length; index3++) {
+            this.unansweredQuestion[index3].condition = 'unanswered'
+            this.unansweredQuestion[index3].page = this.page
+            this.unansweredQuestion[index3].examId = this.examId
+            this.unansweredQuestion[index3].selectedCheck = JSON.stringify(this.selectedCheck)
+            this.unansweredQuestion[index3].indexVar = this.indexVar
 
-            this.unansweredQuestion[index3].candidateName=this.candidateName
-            this.unansweredQuestion[index3].selectedRandomAnswer=JSON.stringify(this.selectedRandomAnswer)
-            this.unansweredQuestion[index3].selectedTab=this.selectedTab
+            this.unansweredQuestion[index3].candidateName = this.candidateName
+            this.unansweredQuestion[index3].selectedRandomAnswer = JSON.stringify(this.selectedRandomAnswer)
+            this.unansweredQuestion[index3].selectedTab = this.selectedTab
         }
 
-
-        let cQuestions=[...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
+        let cQuestions = [...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
         console.log(cQuestions)
-        let id=100
-        this.examSession(id,cQuestions)
-
+        let id = 100
+        this.examSession(id, cQuestions)
 
     },
     created() {
@@ -175,101 +174,98 @@ export default {
 
         this.getTestlet()
         this.getQuestions()
-        
-    },
-    updated() {
 
     },
+
     methods: {
 
-
-        getQuestions() {
-
-        async deleteExamsession(){
-            let user_id=100
+        async deleteExamsession() {
+            let user_id = 100
             try {
-                let response = await quickRequest("/deleteExamsession", "POST", {id:100});
-                if ("error" in response) {
-                Swal.fire({
-                    type: "error",
-                    icon: "error",
-                    title: "Error",
-                    text: response.error,
+                let response = await quickRequest("/deleteExamsession", "POST", {
+                    id: 100
                 });
+                if ("error" in response) {
+                    Swal.fire({
+                        type: "error",
+                        icon: "error",
+                        title: "Error",
+                        text: response.error,
+                    });
                 }
-                
+
             } catch (e) {
                 console.log(e)
                 Swal.fire({
-                type: "error",
-                title: "Error Occured",
-                text: "Error occured while deleting session",
+                    type: "error",
+                    title: "Error Occured",
+                    text: "Error occured while deleting session",
                 });
             }
         },
-        async getExamSession(){
-            let user_id=100
+        async getExamSession() {
+            let user_id = 100
             try {
                 let response = await quickRequest("/getExamsession", "GET", {}, user_id);
                 if ("error" in response) {
-                Swal.fire({
-                    type: "error",
-                    icon: "error",
-                    title: "Error",
-                    text: response.error,
-                });
+                    Swal.fire({
+                        type: "error",
+                        icon: "error",
+                        title: "Error",
+                        text: response.error,
+                    });
                 }
-                if(response.examSessions.length>0){
-                    this.examSessionLength=response.examSessions.length
+                if (response.examSessions.length > 0) {
+                    this.examSessionLength = response.examSessions.length
                     console.log(response.examSessions[0].indexVar)
-                    if(response.examSessions.length>0){
-                        this.page=response.examSessions[0].page
-                        this.indexVar=response.examSessions[0].indexVar
-                        for(let indexs=0; indexs<response.examSessions.length; indexs++){
-                            if(response.examSessions[indexs].conditionOf=='unanswered'){
+                    if (response.examSessions.length > 0) {
+                        this.page = response.examSessions[0].page
+                        this.indexVar = response.examSessions[0].indexVar
+                        for (let indexs = 0; indexs < response.examSessions.length; indexs++) {
+                            if (response.examSessions[indexs].conditionOf == 'unanswered') {
                                 this.unansweredQuestion.push(response.examSessions[indexs])
-                            }else if(response.examSessions[indexs].conditionOf=='true'){
+                            } else if (response.examSessions[indexs].conditionOf == 'true') {
                                 this.correctQuestion.push(response.examSessions[indexs])
-                            }else if(response.examSessions[indexs].conditionOf=='false'){
+                            } else if (response.examSessions[indexs].conditionOf == 'false') {
                                 this.wrongQuestion.push(response.examSessions[indexs])
                             }
                         }
                     }
-                    
+
                 }
             } catch (e) {
                 console.log(e)
                 Swal.fire({
-                type: "error",
-                title: "Error Occured",
-                text: "Error occured while retriving session",
+                    type: "error",
+                    title: "Error Occured",
+                    text: "Error occured while retriving session",
                 });
             }
         },
-        async examSession(IdOfUser,combinedQuestions){
+        async examSession(IdOfUser, combinedQuestions) {
             try {
                 const data = {
-                userId: IdOfUser,
-                record: combinedQuestions
+                    userId: IdOfUser,
+                    record: combinedQuestions
                 };
                 let response = await quickRequest("/saveExamsession", "POST", data);
                 if ("error" in response) {
-                Swal.fire({
-                    type: "error",
-                    icon: "error",
-                    title: "Error",
-                    text: response.error,
-                });
+                    Swal.fire({
+                        type: "error",
+                        icon: "error",
+                        title: "Error",
+                        text: response.error,
+                    });
                 }
-                if(response){
+                if (response) {
                     console.log(response)
                 }
             } catch (e) {
                 console.log(e)
                 Swal.fire({
-                type: "error",
-                title: "Error Saving Session",
-                text: "Could not save session through the server.",
+                    type: "error",
+                    title: "Error Saving Session",
+                    text: "Could not save session through the server.",
                 });
             }
         },
@@ -279,41 +275,41 @@ export default {
                 .then((resp) => {
                     console.log(resp);
 
+                    if (this.structureEntryQuestionn.length !== 0) {
+                        axios
+                            .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + this.structureEntryQuestionn)
+                            .then((resp) => {
+                                console.log(resp);
 
-            if (this.structureEntryQuestionn.length !== 0) {
-                axios
-                    .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + this.structureEntryQuestionn)
-                    .then((resp) => {
-                        console.log(resp);
+                                this.questions = this.questions.concat(resp.data)
+                                this.questions.pop()
+                                this.is_data_fetched = true;
+                                this.is_button_disabled = false;
+                                this.totalQuestions = resp.data[resp.data.length - 1].count
 
-                        this.questions = this.questions.concat(resp.data)
-                        this.questions.pop()
-                        this.is_data_fetched = true;
-                        this.is_button_disabled = false;
-                        this.totalQuestions = resp.data[resp.data.length - 1].count
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    } else {
+                        axios
+                            .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + 0)
+                            .then((resp) => {
+                                console.log(resp);
 
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            } else {
-                axios
-                    .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + 0)
-                    .then((resp) => {
-                        console.log(resp);
+                                this.questions = this.questions.concat(resp.data)
+                                this.questions.pop()
+                                this.is_data_fetched = true;
+                                this.is_button_disabled = false;
+                                this.totalQuestions = resp.data[resp.data.length - 1].count
 
-                        this.questions = this.questions.concat(resp.data)
-                        this.questions.pop()
-                        this.is_data_fetched = true;
-                        this.is_button_disabled = false;
-                        this.totalQuestions = resp.data[resp.data.length - 1].count
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    }
 
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            }
-
+                })
         },
         getTestlet() {
 
