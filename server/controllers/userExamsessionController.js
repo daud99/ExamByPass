@@ -21,6 +21,14 @@ async saveSessionExam(req,res, next) {
                 type: req.body.record[index].type,
                 id: req.body.record[index].id,
                 userId: userIdd,
+                page: req.body.record[index].page,
+                examId: req.body.record[index].examId,
+                selectedCheck: req.body.record[index].selectedCheck,
+                indexVar: req.body.record[index].indexVar,
+
+                candidateName: req.body.record[index].candidateName,
+                selectedRandomAnswer: req.body.record[index].selectedRandomAnswer,
+                selectedTab: req.body.record[index].selectedTab,
                 
             })
         }
@@ -67,13 +75,13 @@ async saveSessionExam(req,res, next) {
         try {
             const messages = await ExamUserSession.destroy({
                 where: {
-                    id: req.body.id
+                    userId: req.body.id
                 }
             });
             console.log(messages)
             res.send({
                 data: {
-                    msg: "Message deleted Successfully!",
+                    msg: "Session deleted Successfully!",
                     messages
                 }
             })
