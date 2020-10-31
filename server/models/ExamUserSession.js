@@ -22,7 +22,16 @@ const ExamUserSession = db.define('exam_user_session',{
     is_accessible_in_demo_version:DataTypes.INTEGER(1),
     offset:DataTypes.INTEGER(11),
     type:DataTypes.STRING(255),
-    userId:DataTypes.INTEGER 
+    userId:DataTypes.INTEGER,
+
+    page:DataTypes.INTEGER(111),
+    examId:DataTypes.INTEGER(111),
+    selectedCheck:DataTypes.TEXT,
+    indexVar:DataTypes.INTEGER(111),
+    
+    candidateName:DataTypes.TEXT,
+    selectedRandomAnswer:DataTypes.TEXT,
+    selectedTab:DataTypes.INTEGER(111),
    
 },{freezeTableName: true,
     underscored: false })

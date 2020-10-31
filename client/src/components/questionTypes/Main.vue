@@ -98,15 +98,42 @@ export default {
         };
     },
     beforeDestroy: function(){
+        console.log(this.indexVar)
         for(let index1=0; index1<this.wrongQuestion.length; index1++){
             this.wrongQuestion[index1].condition='false'
+            this.wrongQuestion[index1].page=this.page
+            this.wrongQuestion[index1].examId=this.examId
+            this.wrongQuestion[index1].selectedCheck=JSON.stringify(this.selectedCheck)
+            this.wrongQuestion[index1].indexVar=this.indexVar
+
+            this.wrongQuestion[index1].candidateName=this.candidateName
+            this.wrongQuestion[index1].selectedRandomAnswer=JSON.stringify(this.selectedRandomAnswer)
+            this.wrongQuestion[index1].selectedTab=this.selectedTab
         }
         for(let index2=0; index2<this.correctQuestion.length; index2++){
             this.correctQuestion[index2].condition='true'
+            this.correctQuestion[index2].page=this.page
+            this.correctQuestion[index2].examId=this.examId
+            this.correctQuestion[index2].selectedCheck=JSON.stringify(this.selectedCheck)
+            this.correctQuestion[index2].indexVar=this.indexVar
+
+            this.correctQuestion[index2].candidateName=this.candidateName
+            this.correctQuestion[index2].selectedRandomAnswer=JSON.stringify(this.selectedRandomAnswer)
+            this.correctQuestion[index2].selectedTab=this.selectedTab
         }
         for(let index3=0; index3<this.unansweredQuestion.length; index3++){
             this.unansweredQuestion[index3].condition='unanswered'
+            this.unansweredQuestion[index3].page=this.page
+            this.unansweredQuestion[index3].examId=this.examId
+            this.unansweredQuestion[index3].selectedCheck=JSON.stringify(this.selectedCheck)
+            this.unansweredQuestion[index3].indexVar=this.indexVar
+
+            this.unansweredQuestion[index3].candidateName=this.candidateName
+            this.unansweredQuestion[index3].selectedRandomAnswer=JSON.stringify(this.selectedRandomAnswer)
+            this.unansweredQuestion[index3].selectedTab=this.selectedTab
         }
+
+
         let cQuestions=[...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
         console.log(cQuestions)
         let id=100
@@ -114,6 +141,8 @@ export default {
 
     },
     created() {
+        this.getExamSession()
+        this.deleteExamsession()
         if (this.selectedRandomAnswer[0] === 'Answer order') {
 
             this.allowShuffleAnswer = true
@@ -121,11 +150,72 @@ export default {
             this.allowShuffleAnswer = false
         }
         this.getTestlet()
-        this.getQuestions();
-
+        this.getQuestions()
+        
     },
 
     methods: {
+        async deleteExamsession(){
+            let user_id=100
+            try {
+                let response = await quickRequest("/deleteExamsession", "POST", {id:100});
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                }
+                
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Occured",
+                text: "Error occured while deleting session",
+                });
+            }
+        },
+        async getExamSession(){
+            let user_id=100
+            try {
+                let response = await quickRequest("/getExamsession", "GET", {}, user_id);
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                }
+                if(response.examSessions.length>0){
+                    this.examSessionLength=response.examSessions.length
+                    console.log(response.examSessions[0].indexVar)
+                    if(response.examSessions.length>0){
+                        this.page=response.examSessions[0].page
+                        this.indexVar=response.examSessions[0].indexVar
+                        for(let indexs=0; indexs<response.examSessions.length; indexs++){
+                            if(response.examSessions[indexs].conditionOf=='unanswered'){
+                                this.unansweredQuestion.push(response.examSessions[indexs])
+                            }else if(response.examSessions[indexs].conditionOf=='true'){
+                                this.correctQuestion.push(response.examSessions[indexs])
+                            }else if(response.examSessions[indexs].conditionOf=='false'){
+                                this.wrongQuestion.push(response.examSessions[indexs])
+                            }
+                        }
+                    }
+                    
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Occured",
+                text: "Error occured while retriving session",
+                });
+            }
+        },
         async examSession(IdOfUser,combinedQuestions){
             try {
                 const data = {

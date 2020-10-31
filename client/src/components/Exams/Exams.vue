@@ -69,15 +69,17 @@
                                 <v-card flat>
                                     <v-card-text>
                                         <div v-if="examSessionLength>0" class="row">
-                                            <div class="col col-lg-12 col-md-12 col-xs-12">
-                                                <button type="button" class="btn btn-sm btn-primary btn-block">
-                                                    <h4 style="color:white; text-weigth:bolder; line-height: 1.6;">
-                                                        <v-icon color="white">mdi-play</v-icon>
-                                                        CONTINUE LAST SESSION
-                                                    </h4>
-                                                    <h6 style="color:white; text-weigth:bolder; line-height: 1.6;">AT QUESTION 1/3</h6>
-                                                </button>
-                                            </div>
+                                            <a class="col col-lg-12 col-md-12 col-xs-12" v-on:click="startExam()">
+                                                <div class="col col-lg-12 col-md-12 col-xs-12">
+                                                    <button type="button" class="btn btn-sm btn-primary btn-block">
+                                                        <h4 style="color:white; text-weigth:bolder; line-height: 1.6;">
+                                                            <v-icon color="white">mdi-play</v-icon>
+                                                            CONTINUE LAST SESSION
+                                                        </h4>
+                                                        <h6 style="color:white; text-weigth:bolder; line-height: 1.6;">AT QUESTION 1/3</h6>
+                                                    </button>
+                                                </div>
+                                            </a>
                                         </div>
 
                                         <div class="row">
@@ -256,8 +258,9 @@ export default {
     },
     created() {
         console.log("created")
-        this.getExams()
         this.getExamSession()
+        this.getExams()
+        
     },
     methods: {
         async getExamSession(){
@@ -274,7 +277,15 @@ export default {
                 }
                 if(response){
                     this.examSessionLength=response.examSessions.length
-                    console.log(response.examSessions.length)
+                    console.log(response.examSessions)
+                    if(response.examSessions.length>0){
+                        this.examId=response.examSessions[0].examId
+                        this.selected_check=JSON.parse(response.examSessions[0].selectedCheck)
+                        this.candidateName=response.examSessions[0].candidateName
+                        this.tab=response.examSessions[0].selectedTab
+                        this.dselectedRandomAnswer=JSON.parse(response.examSessions[0].selectedRandomAnswer)
+                    }
+                    
                 }
             } catch (e) {
                 console.log(e)
