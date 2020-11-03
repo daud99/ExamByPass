@@ -6,7 +6,7 @@
           <div class="row">
             <div class="col offset-lg-1 offset-md-1 col-lg-10 col-md-10 col-xs-12">
                 <v-layout justify-center>
-                    <h4>All User Messages</h4>
+                    <h4>All User's Messages</h4>
                 </v-layout><br><br>
                 <v-card v-for="(item, index) in messages" :key="index" class="mx-auto rounded-lg" max-width="100%" color="LightGray" >
                     <v-card-text>

@@ -33,7 +33,9 @@ import About from './views/NewComponents/about.vue';
 import Faqs from './views/NewComponents/faq.vue';
 import ContactUs from './views/NewComponents/contactUs.vue';
 import ViewMessage from './views/NewComponents/viewAllMessages.vue';
-import ViewUsers from './views/NewComponents/viewAllUsers';
+import ViewUsers from './views/NewComponents/viewAllUsers.vue';
+import CreateUser from './views/NewComponents/createUser.vue';
+import UpdateUserByadmin from './views/NewComponents/editUserByAdmin.vue'
 Vue.use(Router);
 
 export default new Router({
@@ -151,6 +153,26 @@ export default new Router({
       components: {
         header: DashboardHeader,
         default: ViewUsers,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/create_User",
+      name: "createUser",
+      components: {
+        header: DashboardHeader,
+        default: CreateUser,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/update_User/:id",
+      name: "editUserByAdmin",
+      components: {
+        header: DashboardHeader,
+        default: UpdateUserByadmin,
         footer: DashboardFooter,
       },
       beforeEnter: Guards.isAdmin,

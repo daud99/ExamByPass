@@ -5,8 +5,21 @@
           <div class="row">
             <div class="col col-lg-12 col-md-12 col-xs-12">
                 <v-layout justify-center>
-                    <h4>All User Messages</h4>
+                    <h4>All Users</h4>
                 </v-layout><br><br>
+                
+                <v-layout justify-center>
+                    <download-csv
+                        class   = "btn btn-primary"
+                        :data   = "json_data"
+                        name    = "Users.csv">
+                        Download CSV Of All Users(Excel File)
+                    </download-csv>
+                    <button type="button" class="btn btn-success" @click="gotToCreateUser()">
+                      Create New User
+                    </button>
+                </v-layout><br><br>
+                
                 <v-layout justify-center>
                     <v-text-field
                         v-model="search"
@@ -45,10 +58,18 @@
                         </template>
                         <template v-slot:item.actions="{ item }">
                         <v-icon
+                            color="pink"
                             small
                             @click="deleteItem(item)"
                         >
                             mdi-delete
+                        </v-icon>&nbsp;
+                        <v-icon
+                            color="teal darken-2"
+                            small
+                            @click="editItem(item)"
+                        >
+                            mdi-pencil
                         </v-icon>
                         </template>
 
@@ -69,18 +90,20 @@
 </template>
 
 <script>
-    import card from '../../components/Card';
-    import {mapActions, mapGetters} from 'vuex';
-    import Swal from "sweetalert2";
-    import { quickRequest } from "../../../common/misc";
-    import PageMixin from "../page-mixin";
-
+  import card from '../../components/Card';
+  import {mapActions, mapGetters} from 'vuex';
+  import Swal from "sweetalert2";
+  import { quickRequest } from "../../../common/misc";
+  import PageMixin from "../page-mixin";
+  import Vue from 'vue'
+  import JsonCSV from 'vue-json-csv'
+  Vue.component('downloadCsv', JsonCSV)
   export default {
     data: () => ({
       dialogDelete: false,
       search: '',
       loading: false,
-
+      json_data: [],
       headers: [
         {
           text: 'First Name',
@@ -142,6 +165,9 @@
         document.getElementById("preloader-block").style.display = "none";
     },
     methods: {
+      gotToCreateUser(){
+        this.$router.push("/create_User");
+      },
         async initialize() {
           this.userArray=[]
           let userObject={}
@@ -179,6 +205,9 @@
                       this.userArray.push(userObject)
                       userObject={}
                     }
+                    console.log(this.userArray)
+                    this.json_data=this.userArray
+                    console.log(this.json_data)
                   }
                   
               }
@@ -265,7 +294,9 @@
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
-
+      editItem(item){
+        this.$router.push('/update_User/'+item.id)
+      },
       deleteItemConfirm () {
         console.log(this.selectedUserId)
         this.deleteUser(this.selectedUserId,this.editedIndex)

@@ -46,6 +46,27 @@ module.exports = new class {
         }
     }
 
+    async retrieveUser(req,res, next) {
+        try {
+            const user = await User.findOne({
+                where: {
+                    id: req.query.paramS
+                }
+            });
+            res.send({
+                data: {
+                    user
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
     async saveUser(req,res, next) {
         try {
             const errors = validationResult(req);
@@ -197,6 +218,54 @@ module.exports = new class {
                     emial: req.body.email,
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
+                  });
+                  res.send({
+                    data: {
+                        msg: "User updated successfully",
+                        record: updateUser
+                    }
+                }) 
+            } else {
+                res.send({
+                    data: {
+                        msg: "User doesn't exist"
+                    }
+                })
+            }
+        }
+        catch(e) {
+            console.log("error");
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+
+    async adminUpdateUser(req,res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+            const user = await User.findOne({
+                where: {email: req.body.email}
+            });
+
+            if(user) {
+                const updateUser = await user.update({
+                    emial: req.body.email,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    roles: req.body.roles,
+                    phoneNumber: req.body.phoneNumber,
+                    emailVerified: req.body.emailVerified
                   });
                   res.send({
                     data: {
