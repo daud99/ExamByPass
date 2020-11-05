@@ -14,9 +14,13 @@ const resetPasswordRequest = require('../models/resetPasswordRequest')
 const structureEntryQuestionLink = require('../models/structureEntryQuestionLink')
 const Testlet = require('../models/Testlet')
 const Answer = require('../models/Answer')
+const Product = require('../models/Product')
+const Price = require('../models/Price')
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Keys = require("../config/Keys")
 const Db = require("../config/db")
+const { compareSync } = require("bcrypt")
 
 module.exports = new class {
     async syncDB(req, res, next) {
@@ -28,6 +32,7 @@ module.exports = new class {
         User.hasMany(examLibrary)
         User.hasMany(resetPasswordRequest)
         User.hasOne(Subscription)
+        Product.hasOne(Price, { foreignKey: 'productPid' })
         Subscription.belongsTo(User)
         examLibrary.hasMany(Question)
         examLibrary.hasMany(structureEntry)
@@ -40,8 +45,50 @@ module.exports = new class {
         Ticket.hasMany(Comment)
         Answer.hasMany(answerArea)
 
-        Db.sync({force: true}).then(function () {
+        await Db.sync({force: true}).then(function () {
             console.log("Database Configured");
         });
+        await module.exports.populateDB();
+    } 
+
+    async populateDB() {
+        console.log("starting populating DB");
+        try {
+            const products = await stripe.products.list({
+                limit: 3,
+            });;
+            if(products.data.length > 0) {
+                for (const element in products.data) {
+                    await Product.create({
+                        pid: products.data[element].id,
+                        name: products.data[element].name
+                    });
+                }
+            }
+            const prices = await stripe.prices.list({
+                limit: 3,
+            });
+            if(prices.data.length > 0) {
+                for (const element in prices.data) {
+                    let amount = prices.data[element].unit_amount/100;
+                    console.log(prices.data[element].product);
+                    await Price.create({
+                        pid: prices.data[element].id,
+                        currency: prices.data[element].currency,
+                        interval: prices.data[element].recurring.interval,
+                        amount: prices.data[element].unit_amount/100,
+                        productPid: prices.data[element].product
+                    },
+                    { fields: ["pid", "currency", "interval", "amount", "productPid"] }   
+                    );
+                }
+            }
+            console.log("Database populated successfully");
+        } catch(e) {
+            console.log("Error while populaiton database");
+            console.log(e);
+        }
+
     }
+
 };

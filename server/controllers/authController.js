@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Auth = require("../auth");
 const Subscription = require('../models/Subscription');
 const Session = require('../models/Session');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports = new class {
     redirectToDashboard(req, res, next) {
@@ -68,6 +69,9 @@ module.exports = new class {
                     }
                 })
             } else {
+                const customer = await stripe.customers.create({
+                    email: req.body.email,
+                });
                 let password = await Auth.hashPassword(req.body.password);
                 await User.create({
                     email: req.body.email,
@@ -76,7 +80,8 @@ module.exports = new class {
                     roles: "user",
                     emailVerified: false,
                     archieved: false,
-                    password: password
+                    password: password,
+                    stripeId: customer.id
                 })
                 res.send({
                     data: {
@@ -350,9 +355,6 @@ module.exports = new class {
             });
         }
     }
-
-
-
     async changePassword(req, res, next) {
         try {
 

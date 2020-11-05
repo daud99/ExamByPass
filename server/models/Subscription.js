@@ -9,8 +9,10 @@ const Subscription = db.define('subscription',{
         primaryKey:true
     },
     amount:DataTypes.STRING(15),
-    status: DataTypes.STRING(15)
-    
+    status: DataTypes.STRING(15),
+    start: DataTypes.INTEGER,
+    end: DataTypes.INTEGER,
+    interval: DataTypes.STRING(100)
 },{freezeTableName: true,
     underscored: true })
 

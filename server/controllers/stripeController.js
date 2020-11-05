@@ -1,8 +1,87 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Subscription = require('../models/Subscription');
 const User = require("../models/User");
+const Price = require("../models/Price");
+const Product = require('../models/Product');
 
 module.exports = {
+    async getPrices(req, res, next ) {
+        try {
+            let prices = await Product.findAll({include:[Price]});
+            if(prices.length > 0) {
+                res.send({
+                    data: {
+                       prices,
+                       key: process.env.STRIPE_PUBLIC_KEY
+                    }
+                })
+            } else {
+                res.send({
+                    data: {
+                        error: "No prices are set yet!"
+                    }
+                })
+            }
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async listAllProducts(req, res, next ) {
+        try {
+            const products = await stripe.products.list({
+                limit: 3,
+            });
+
+            res.send({
+                data: {
+                    products
+                }
+            }) 
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async createCustomer(req, res, next) {
+        try {
+            const customer = await stripe.customers.create({
+                email: req.body.email,
+            });
+            
+              // save the customer.id as stripeCustomerId
+
+            const user = await User.findOne({
+                where: {email: req.body.email}
+            });
+
+            if(user) {
+                await user.update({
+                    stripeId: customer.id
+                  });
+                  res.send({
+                    data: {
+                        customer
+                    }
+                }) 
+            }             
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
 
     async createCheckoutSession(req, res, next) {
         try {
@@ -45,10 +124,10 @@ module.exports = {
             const sub = await req.user.getSubscription();
             if(sub) {
                 if(sub.dataValues) {
-                    const subscription = await stripe.subscriptions.retrieve(sub.dataValues.subscription_id);
+                    // const subscription = await stripe.subscriptions.retrieve(sub.dataValues.subscription_id);
                     return res.send({
                         data: {
-                            subscription: subscription
+                            subscription: sub.dataValues
                         }
                     })
                 }
@@ -95,7 +174,44 @@ module.exports = {
             });
         }
     },
+    async createSubscription(req, res, next) {
+        try {
+            await stripe.customers.update(
+                req.user.stripeId,
+                {
+                    source: req.body.token.id 
+                }
+                );
 
+                // Create the subscription
+                const subscription = await stripe.subscriptions.create({
+                    customer: req.user.stripeId,
+                    items: [{ price: req.body.id }]
+                });
+                console.log(subscription);
+                await req.user.createSubscription({
+                    amount: subscription.plan.amount/100,
+                    subscription_id: subscription.id,
+                    status: subscription.status,
+                    start: subscription.current_period_start,
+                    end: subscription.current_period_end,
+                    interval: `${subscription.plan.interval_count} ${subscription.plan.interval}`  
+                });
+
+                res.send({
+                    data: {
+                        subscription
+                    }
+                })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
 
     async webHook(req, res, next) {
         try {

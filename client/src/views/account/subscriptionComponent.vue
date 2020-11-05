@@ -8,29 +8,25 @@
               <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12">
                   <v-card
-                    v-for="(item, index) in subData.data" :key="index"
                     class="mx-auto rounded-lg text-center"
                     color="LightGray"
                     elevation="6"
                   >
                     <v-card-text class="text-al">
                        <v-layout>
-                        <h5 style="text-weight: bolder">Subscription Started:&nbsp;<span style="color:green;">{{dateGet(subData.current_period_start)}}</span></h5>
+                        <h5 style="text-weight: bolder">Subscription Started:&nbsp;<span style="color:green;">{{dateGet(subData.start)}}</span></h5>
                       </v-layout>
                       <v-layout justify-left>
-                        <h5 style="text-weight: bolder">Subscription End:&nbsp;<span style="color:green;">{{dateGet(subData.current_period_end)}}</span></h5>
+                        <h5 style="text-weight: bolder">Subscription End:&nbsp;<span style="color:green;">{{dateGet(subData.end)}}</span></h5>
                       </v-layout>
                       <v-layout justify-left>
-                        <h5 style="text-weight: bolder">Amount:&nbsp;<span style="color:green;">{{item.amount}}&nbsp;&nbsp;{{item.currency}}</span></h5>
+                        <h5 style="text-weight: bolder">Amount:&nbsp;<span style="color:green;">{{subData.amount}}&nbsp;&nbsp;USD</span></h5>
                       </v-layout>
                       <v-layout justify-left>
-                        <p style="font-weight: bolder">Interval:&nbsp;{{item.interval_count}}&nbsp;{{item.interval}}</p>
+                        <p style="font-weight: bolder">Interval:&nbsp;{{subData.interval}}</p>
                       </v-layout>
                       <v-layout justify-left>
-                        <p style="font-weight: bolder">Active:&nbsp;<span style="color:green;">{{item.active}}</span></p>
-                      </v-layout>
-                      <v-layout justify-right>
-                        <p style="font-weight: bolder">Usage Type:&nbsp;<span style="color:green;">{{item.usage_type}}</span></p>
+                        <p style="font-weight: bolder">Status:&nbsp;<span style="color:green;">{{subData.status}}</span></p>
                       </v-layout>
                       <v-layout justify-center>
                         <button type="button" class="btn btn-danger btn-block" @click="cancelSub">Cancel Renewal Of Subscription</button>
@@ -104,27 +100,7 @@ export default {
         } else if (response.msg) {
          this.msg = response.msg;
         }else if(response.subscription){
-          this.subData.created= response.subscription.created
-          this.subData.current_period_end= response.subscription.current_period_end
-          this.subData.current_period_start= response.subscription.current_period_start
-          this.subData.quantity= response.subscription.quantity
-          for(var index=0;index<response.subscription.items.data.length;index++){
-            this.dataObj.amount= response.subscription.items.data[index].plan.amount
-            this.dataObj.currency= response.subscription.items.data[index].plan.currency
-            this.dataObj.billing_scheme= response.subscription.items.data[index].plan.billing_scheme
-            this.dataObj.interval= response.subscription.items.data[index].plan.interval
-            this.dataObj.interval_count=response.subscription.items.data[index].plan.interval_count
-            this.dataObj.usage_type=response.subscription.items.data[index].plan.usage_type
-            this.dataObj.active=response.subscription.items.data[index].price.active
-            this.subData.data.push(this.dataObj)
-            // this.dataObj.amount= ''
-            // this.dataObj.currency=''
-            // this.dataObj.billing_scheme= ''
-            // this.dataObj.interval= ''
-            // this.dataObj.interval_count=''
-            // this.dataObj.usage_type=''
-            // this.dataObj.active=''
-          }
+          this.subData = response.subscription;
         // console.log(this.subData)
         }
         // console.log(response)

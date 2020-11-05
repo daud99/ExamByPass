@@ -14,8 +14,9 @@ const resetPasswordRequest = require('./models/resetPasswordRequest')
 const structureEntryQuestionLink = require('./models/structureEntryQuestionLink')
 const Testlet = require('./models/Testlet')
 const Answer = require('./models/Answer')
-
-
+const Product = require('./models/Product')
+const Price = require('./models/Price')
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 
 var ejs = require('ejs')
@@ -66,6 +67,7 @@ module.exports = new class {
       User.hasMany(examLibrary)
       User.hasMany(resetPasswordRequest)
       User.hasOne(Subscription)
+      Product.hasOne(Price)
       Subscription.belongsTo(User)
       examLibrary.hasMany(Question)
       examLibrary.hasMany(structureEntry)
@@ -153,18 +155,22 @@ module.exports = new class {
         clientSecret: Keys.github.client_secret,
         callbackURL: "/login/github/return"
       },
-      function(accessToken, refreshToken, profile, done) {
+      async function(accessToken, refreshToken, profile, done) {
         if(profile._json.email === null) {
           done(null, false, { message: 'Email address is required in order to login but your github email address is private.' })
         }
         User.findAll({where: {email: profile._json.email}})
-        .then(user => {
+        .then(async user => {
           if(user.length > 0) {
             done(null, user[0]);
           } else {
+            const customer = await stripe.customers.create({
+                email: profile._json.email,
+            });
             User.create({
               email: profile._json.email,
               emailVerified: profile._json.email_verified,
+              stripeId: customer.id,
               roles: 'user'
             })
             .then(result=> {
@@ -186,18 +192,22 @@ module.exports = new class {
         callbackURL: '/login/facebook/return',
         profileFields: ['id', 'displayName', 'email', 'name']
       },
-      (accessToken, refreshToken, profile, done) => {
+      async (accessToken, refreshToken, profile, done) => {
         // Handle facebook login
         User.findAll({where: {email: profile._json.email}})
-          .then(user => {
+          .then(async user => {
             if(user.length > 0) {
               done(null, user[0]);
             } else {
+              const customer = await stripe.customers.create({
+                email: profile._json.email,
+              });
               User.create({
                 email: profile._json.email,
                 emailVerified: profile._json.email_verified,
                 firstName: profile._json.first_name,
                 lastName: profile._json.last_name,
+                stripeId: customer.id,
                 roles: 'user'
               })
               .then(result=> {
@@ -218,17 +228,21 @@ module.exports = new class {
           clientID: Keys.google.client_id,
           clientSecret: Keys.google.client_secret,
           callbackURL: '/login/google/return'
-        }, (accessToken, refreshToken, profile, done) => {
+        }, async (accessToken, refreshToken, profile, done) => {
           User.findAll({where: {email: profile._json.email}})
-          .then(user => {
+          .then(async user => {
             if(user.length > 0) {
               done(null, user[0]);
             } else {
+              const customer = await stripe.customers.create({
+                email: profile._json.email,
+              });
               User.create({
                 email: profile._json.email,
                 emailVerified: profile._json.email_verified,
                 firstName: profile._json.given_name,
                 lastName: profile._json.family_name,
+                stripeId: customer.id,
                 roles: 'user'
               })
               .then(result=> {
@@ -291,7 +305,7 @@ module.exports = new class {
     async isSubscribed(req,res,next) {
       const subscription = await req.user.getSubscription();
       if(subscription) {
-        if(req.isAuthenticated() && subscription.status === 'paid'){
+        if(req.isAuthenticated() && subscription.status === 'active'){
           next();
       } else {
           res.status(400).send({
@@ -310,7 +324,7 @@ module.exports = new class {
     async isUnSubscribed(req,res,next) {
       const subscription = await req.user.getSubscription();
       if(subscription) {
-        if(req.isAuthenticated() && subscription.status === 'unpaid'){
+        if(req.isAuthenticated() && subscription.status !== 'active'){
           next();
       } else {
           res.status(400).send({

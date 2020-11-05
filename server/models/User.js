@@ -16,6 +16,7 @@ const User = db.define('user',{
     phoneNumber:DataTypes.STRING(20),
     type:DataTypes.STRING(20),
     roles:DataTypes.TEXT,
+    stripeId:DataTypes.STRING(250),  
     uuid:{ 
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4
