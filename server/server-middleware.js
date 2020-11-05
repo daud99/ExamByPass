@@ -38,5 +38,10 @@ module.exports = {
         return [
             check('old_password').exists().withMessage("Enter a valid old Password").isString().isLength({ min: 4 }).withMessage("Enter a valid old password length must be greater than 4")
         ]
+    },
+    checkCharge: function() {
+        return [
+            check('charge').exists().withMessage("Charge field is missing").isBoolean().withMessage("The charge field needs to be boolean")
+        ]
     }
 };

@@ -5,6 +5,8 @@ const Price = require("../models/Price");
 const Product = require('../models/Product');
 const Invoice = require('../models/Invoice');
 
+const { validationResult } = require('express-validator');
+
 module.exports = {
     async getPrices(req, res, next ) {
         try {
@@ -147,15 +149,30 @@ module.exports = {
             });
         }
     },
-    async cancelSubscription(req, res, next) {
+    async updateAutoChargeSubscription(req, res, next) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
             const sub = await req.user.getSubscription();
             if(sub) {
                 if(sub.dataValues) {
-                    await stripe.subscriptions.update(sub.dataValues.subscription_id, {cancel_at_period_end: true});
+                    await stripe.subscriptions.update(sub.dataValues.subscription_id, {cancel_at_period_end: !req.body.charge});                   
+                    
+                    await sub.update({
+                        autoCharge: req.body.charge
+                    });
+
                     return res.send({
                         data: {
-                            msg: "You will not be charge for this subscription any more."
+                            subscription: sub,
+                            msg: "Auto Payment Status updated Successfully!"
                         }
                     })
                 } 

@@ -12,7 +12,11 @@ const Subscription = db.define('subscription',{
     status: DataTypes.STRING(15),
     start: DataTypes.INTEGER,
     end: DataTypes.INTEGER,
-    interval: DataTypes.STRING(100)
+    interval: DataTypes.STRING(100),
+    autoCharge: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    }
 },{freezeTableName: true,
     underscored: true })
 

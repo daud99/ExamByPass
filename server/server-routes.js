@@ -57,7 +57,7 @@ router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.cre
 router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
 router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
 router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
-router.post('/api/cancel-subscription', [Auth.isAuthenticated], StripeController.cancelSubscription);
+router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
 router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
 
 

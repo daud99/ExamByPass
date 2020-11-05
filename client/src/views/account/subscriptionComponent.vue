@@ -28,8 +28,19 @@
                       <v-layout justify-left>
                         <p style="font-weight: bolder">Status:&nbsp;<span style="color:green;">{{subData.status}}</span></p>
                       </v-layout>
+                      <v-layout justify-left>
+                        <p style="font-weight: bolder">Auto Charge:&nbsp;<span style="color:green;">{{subData.autoCharge}}</span></p>
+                      </v-layout>
                       <v-layout justify-center>
-                        <button type="button" class="btn btn-danger btn-block" @click="cancelSub">Cancel Renewal Of Subscription</button>
+                        <button type="button" class="btn btn-danger btn-block" @click="cancelSub(!subData.autoCharge)">
+                          <template v-if="!subData.autoCharge">
+                            Enable
+                          </template>
+                          <template v-if="subData.autoCharge">
+                            Disable 
+                          </template>
+                          Auto Renewal Of Subscription
+                        </button>
                       </v-layout>
 
                     </v-card-text>
@@ -89,7 +100,7 @@ export default {
     this.subData.Data=[]
     try {
         // this.loading = true;
-        let response = await quickRequest("/get-subscription", "POST", {});
+        let response = await quickRequest("/get-subscription", "POST", {charge: false});
         if ("error" in response) {
           Swal.fire({
             type: "error",
@@ -138,10 +149,10 @@ export default {
         this.firstname = ''
         this.lastname = ''
     },
-    async cancelSub(){
+    async cancelSub(charge){
       try {
         this.loading = true;
-        let response = await quickRequest("/cancel-subscription", "POST", {});
+        let response = await quickRequest("/cancel-subscription", "POST", {charge});
         if ("error" in response) {
           Swal.fire({
             type: "error",
@@ -156,6 +167,7 @@ export default {
             title: "Message",
             text: response.msg,
           });
+          this.subData = response.subscription;
         }
         } catch (e) {
         Swal.fire({
