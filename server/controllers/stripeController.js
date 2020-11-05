@@ -3,6 +3,7 @@ const Subscription = require('../models/Subscription');
 const User = require("../models/User");
 const Price = require("../models/Price");
 const Product = require('../models/Product');
+const Invoice = require('../models/Invoice');
 
 module.exports = {
     async getPrices(req, res, next ) {
@@ -146,7 +147,6 @@ module.exports = {
             });
         }
     },
-
     async cancelSubscription(req, res, next) {
         try {
             const sub = await req.user.getSubscription();
@@ -198,6 +198,15 @@ module.exports = {
                     interval: `${subscription.plan.interval_count} ${subscription.plan.interval}`  
                 });
 
+                // Create the invoice
+                await req.user.createInvoice({
+                    total: subscription.plan.amount/100,
+                    invoiceId: subscription.latest_invoice,
+                    productPid: subscription.plan.product,
+                    issueDate: subscription.created
+                });
+
+
                 res.send({
                     data: {
                         subscription
@@ -212,7 +221,39 @@ module.exports = {
             });
         }
     },
-
+    async getInvoices(req, res, next) {
+        try {
+        //    const invoices = await Invoice.findAll({
+        //        where: {
+        //            user_id: req.user.id
+        //        },
+        //        raw: true,
+        //        nest: true 
+        //    });
+           const invoices = await req.user.getInvoices({raw: true, nest: true, include:[Product]});
+           if(invoices.length > 0) {
+            res.send({
+                data: {
+                    invoices
+                }
+            });
+           } else {
+                res.send({
+                    data: {
+                        msg: "No invoices found"
+                    }
+                }); 
+           }
+           
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
     async webHook(req, res, next) {
         try {
             const payload = req.body;
@@ -304,13 +345,6 @@ module.exports = {
               
             res.status(200);
             
-
-            //   res.send({
-            //         data: {
-            //             id: session.id,
-            //             key: process.env.STRIPE_PUBLIC_KEY
-            //         }
-            //     })
         }
         catch(e) {
             console.log(e);

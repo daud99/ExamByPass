@@ -55,6 +55,7 @@ router.post('/api/list-products', StripeController.listAllProducts);
 router.post('/api/get-prices', StripeController.getPrices);
 router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.createCustomer);
 router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
+router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
 router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
 router.post('/api/cancel-subscription', [Auth.isAuthenticated], StripeController.cancelSubscription);
 router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
