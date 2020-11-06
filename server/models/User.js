@@ -24,7 +24,10 @@ const User = db.define('user',{
     resetPasswordToken:DataTypes.STRING(100),
     resetPasswordExpire:DataTypes.STRING(30),
     emailVerified:DataTypes.BOOLEAN(),
-    archieved:DataTypes.BOOLEAN(),
+    archieved: {
+        type: DataTypes.BOOLEAN(),
+        defaultValue: false
+    },
     modifiedId:DataTypes.STRING(20),
     
 },{freezeTableName: true,

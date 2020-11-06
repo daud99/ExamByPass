@@ -179,6 +179,7 @@ export default {
           localStorage.setItem("subscription_status", response.user.subscription_status); 
           localStorage.setItem("auth_type", response.user.auth_type); 
           this["auth/setUser"](response.user);
+          this.$router.push("dashboard");
         }
       } catch (e) {
         Swal.fire({
@@ -188,7 +189,6 @@ export default {
         });
       } finally {
         this.loading = false;
-        this.$router.push("dashboard");
       }
     },
   },
