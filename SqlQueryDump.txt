@@ -1,6 +1,10 @@
-// For deleting all sessions
+// For deleting all
 
 SET SQL_SAFE_UPDATES = 0;
-DELETE FROM exambypass.session;
+DELETE FROM exambypass.price;
 SET SQL_SAFE_UPDATES = 1;
 
+
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM exambypass.product;
+SET SQL_SAFE_UPDATES = 1;

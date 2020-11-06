@@ -38,5 +38,28 @@ module.exports = {
         return [
             check('old_password').exists().withMessage("Enter a valid old Password").isString().isLength({ min: 4 }).withMessage("Enter a valid old password length must be greater than 4")
         ]
+    },
+    checkCharge: function() {
+        return [
+            check('charge').exists().withMessage("Charge field is missing").isBoolean().withMessage("The charge field needs to be boolean")
+        ]
+    },
+    checkProductId: function() {
+        return [
+            check('product_id').exists().withMessage("Product id is missing").isString().withMessage("The charge field needs to be string")
+        ]
+    },
+    checkProductPriceInfo: function() {
+        return [
+            check('name').exists().withMessage("Name field is required").isString().withMessage("Name field should be of type string"),
+            check('unit_amount').exists().withMessage('unit_amount field is required' ).isInt().withMessage("unit_amount needs to be integer"),
+            check('interval').exists().withMessage("interval_count field is required").isString().withMessage("interval_count field should be of type string").matches(/year|month/).withMessage("The value of interval needs to be year or month"),
+            check('interval_count').exists().withMessage('interval_count field is required' ).isInt().withMessage("interval_count needs to be integer").custom(value => {
+                if(value <= 0) {
+                    throw new Error('interval_count must be greater than or equal to 1');
+                }
+                return true;
+              }),
+        ]
     }
 };

@@ -10,8 +10,9 @@ const Invoice = db.define('invoice',{
         autoIncrement: true,
         primaryKey:true
     },
-    title:DataTypes.STRING(30),
-
+    total: DataTypes.INTEGER,
+    invoiceId: DataTypes.STRING,
+    issueDate: DataTypes.INTEGER
 },{freezeTableName: true,
     underscored: true })
 

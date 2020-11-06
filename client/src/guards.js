@@ -28,7 +28,7 @@ export default {
     isUserSubscribed(to, from, next) {
         const type = localStorage.getItem('roles')
         const  subsription_status = localStorage.getItem('subscription_status')
-        if (type === 'user' && subsription_status === 'paid') {
+        if (type === 'user' && subsription_status === 'active') {
             next()
         } else {
             next({

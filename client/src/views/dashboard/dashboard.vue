@@ -17,6 +17,7 @@
 import {mapActions, mapGetters} from 'vuex';
 import {quickRequest} from "../../../common/misc";
 import PageMixin from "../page-mixin";
+import Swal from "sweetalert2";
 
 export default {
   name: "dashboard",
@@ -55,7 +56,17 @@ export default {
     async getCurrentUser() {
       try {
         let response = await quickRequest("/auth/get-user", "POST", {});
-        this['auth/setUser'](response);
+        if(response.error) {
+           Swal.fire({
+            type: "error",
+            icon: "error",
+            title: "Error",
+            text: response.error,
+          });
+          this.$router.push("login");
+        } else {
+          this['auth/setUser'](response);          
+        }
       } 
       catch(e) {
         console.log("error");

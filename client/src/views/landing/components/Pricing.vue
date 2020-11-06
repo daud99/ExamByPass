@@ -8,7 +8,7 @@
             <h5 style="text-weight: bolder">PRICING</h5>
           </v-layout>
           <div class="row">
-            <div class="col col-lg-4 col-md-4 col-xs-12">
+            <div class="col col-lg-4 col-md-4 col-xs-12" v-for="product in prices" :key="product.pid">
               <v-card
                 class="mx-auto rounded-lg"
                 max-width="344"
@@ -17,10 +17,10 @@
               >
                 <v-card-text>
                   <v-layout justify-center>
-                    <h5 style="text-weight: bolder">Monthly Subscription</h5>
+                    <h5 style="text-weight: bolder">{{product.name}} Subscription</h5>
                   </v-layout>
                   <v-layout justify-center>
-                    <h5 style="text-weight: bolder">$9.99&nbsp;&nbsp;</h5>
+                    <h5 style="text-weight: bolder">${{product.Price.amount}}&nbsp;&nbsp;</h5>
                     <p>per VCE File</p>
                   </v-layout>
                   <v-layout justify-center>
@@ -29,96 +29,20 @@
                   <v-layout justify-center>
                     <p>Unlimited free retries forever.</p>
                   </v-layout>
-                  <stripe-checkout
+                  <!-- <stripe-checkout
                     ref="sessionRef"
                     :pk="publishableKey"
                     :session-id="sessionId"
                   >
-                    <template slot="checkout-button">
+                    <template slot="checkout-button"> -->
                       <v-btn 
-                        @click="subscribe('STRIPE_MONTH_PRICE_ID')"
+                        @click="select(product.Price.pid, product.name, product.Price.amount)"
                         color="#42b883"
                         large
                         dark
-                      >Subscribe</v-btn>
-                    </template>
-                  </stripe-checkout>
-                </v-card-text>
-              </v-card>
-            </div>
-            <div class="col col-lg-4 col-md-4 col-xs-12">
-              <v-card
-                class="mx-auto rounded-lg"
-                max-width="344"
-                color="LightGray"
-                elevation="6"
-              >
-                <v-card-text>
-                  <v-layout justify-center>
-                    <h5 style="text-weight: bolder">Quaterly Subscription</h5>
-                  </v-layout>
-                  <v-layout justify-center>
-                    <h5 style="text-weight: bolder">$19.99&nbsp;&nbsp;</h5>
-                    <p>per VCE File</p>
-                  </v-layout>
-                  <v-layout justify-center>
-                    <p>One-time payment for this exam</p>
-                  </v-layout>
-                  <v-layout justify-center>
-                    <p>Unlimited free retries forever.</p>
-                  </v-layout>
-                  <stripe-checkout
-                    ref="sessionRef"
-                    :pk="publishableKey"
-                    :session-id="sessionId"
-                  >
-                    <template slot="checkout-button">
-                      <v-btn 
-                        @click="subscribe('STRIPE_QUATER_PRICE_ID')"
-                        color="#42b883"
-                        large
-                        dark
-                      >Subscribe</v-btn>
-                    </template>
-                  </stripe-checkout>                  
-                </v-card-text>
-              </v-card>
-            </div>
-            <div class="col col-lg-4 col-md-4 col-xs-12">
-              <v-card
-                class="mx-auto rounded-lg"
-                max-width="344"
-                color="LightGray"
-                elevation="6"
-              >
-                <v-card-text>
-                  <v-layout justify-center>
-                    <h5 style="text-weight: bolder">Annual Subscription</h5>
-                  </v-layout>
-                  <v-layout justify-center>
-                    <h5 style="text-weight: bolder">$182.00&nbsp;&nbsp;</h5>
-                    <p>per VCE File</p>
-                  </v-layout>
-                  <v-layout justify-center>
-                    <p>One-time payment for this exam</p>
-                  </v-layout>
-                  <v-layout justify-center>
-                    <p>Unlimited free retries forever.</p>
-                  </v-layout>
-                  <stripe-checkout
-                    ref="sessionRef"
-                    :pk="publishableKey"
-                    :session-id="sessionId"
-                  >
-                    <template slot="checkout-button">
-                      <v-btn 
-                        @click="subscribe('STRIPE_YEAR_PRICE_ID')"
-                        color="#42b883"
-                        large
-                        dark
-                      >Subscribe</v-btn>
-                    </template>
-                  </stripe-checkout>
+                      >Select</v-btn>
+                    <!-- </template>
+                  </stripe-checkout>                   -->
                 </v-card-text>
               </v-card>
             </div>
@@ -128,6 +52,7 @@
     </div>
     </div>
     <login-signup-dialog :visible="showDialog" @close="showDialog=false" />
+    <payment-dialog :visible="showPaymentDialog" :name="productName" :id="productId" :amount="productPrice" :publickey="publishableKey" @close="showPaymentDialog=false" />
   </core-content>
   
 </template>
@@ -138,10 +63,11 @@ import ComponentOne from "./component1";
 import ComponentTwo from "./component2";
 import Swal from "sweetalert2";
 import PageMixin from "../../page-mixin";
-import { StripeCheckout } from 'vue-stripe-checkout';
+import { StripeCheckout , StripeElements} from 'vue-stripe-checkout';
 import { quickRequest } from "../../../../common/misc";
 import {mapGetters} from 'vuex';
 import LoginSignupDialog from "./FirstPageComponents/login_signup_dialog";
+import PaymentDialog from "./FirstPageComponents/payment_dialog";
 
 
 export default {
@@ -151,14 +77,38 @@ export default {
     ComponentOne,
     ComponentTwo,
     StripeCheckout,
-    LoginSignupDialog
+    LoginSignupDialog,
+    StripeElements,
+    PaymentDialog
+  },
+  async created() {
+    let response = await quickRequest("/get-prices", "POST", {});
+    if (response.prices) {
+      this.prices = response.prices;
+      this.publishableKey = response.key;
+      console.log(this.prices);
+    } else if(response.error) {
+            Swal.fire({
+              type: "error",
+              title: response.error
+            });
+    }
   },
   data()  {
     return {
       publishableKey: '',
       sessionId: '',
-      showDialog: false
+      showDialog: false,
+      showPaymentDialog: false,
+      token: null,
+      prices: [],
+      productId: '',
+      productName: '',
+      productPrice: null
     }
+  },
+  beforeDestroy: function(){
+    document.getElementById("preloader-block").style.display = "none";
   },
    computed: {
     ...mapGetters(["auth/isAuthenticated"]),
@@ -198,8 +148,32 @@ export default {
         // this.$router.push("dashboard");
       }
      
+    },
+    async select(product_id, product_name, product_price) {
+      this.productId = product_id;
+      this.productName = product_name;
+      this.productPrice = product_price;
+      try {
+        if(this["auth/isAuthenticated"]) {
+          this.showPaymentDialog = true;
+        } else {
+          localStorage.setItem("redirectToPricing", true);
+          this.showDialog = true;
+        }
+      } catch (e) {
+        console.log(e);
+        Swal.fire({
+          type: "error",
+          title: "Error Fetching Information",
+          text: "Could not subscribe through the server.",
+        });
+      } finally {
+        this.loading = false;
+        // this.$router.push("dashboard");
+      }
+     
     }
-  }
+    }
 };
 </script>
 

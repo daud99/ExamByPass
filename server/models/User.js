@@ -16,6 +16,7 @@ const User = db.define('user',{
     phoneNumber:DataTypes.STRING(20),
     type:DataTypes.STRING(20),
     roles:DataTypes.TEXT,
+    stripeId:DataTypes.STRING(250),  
     uuid:{ 
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4
@@ -23,7 +24,10 @@ const User = db.define('user',{
     resetPasswordToken:DataTypes.STRING(100),
     resetPasswordExpire:DataTypes.STRING(30),
     emailVerified:DataTypes.BOOLEAN(),
-    archieved:DataTypes.BOOLEAN(),
+    archieved: {
+        type: DataTypes.BOOLEAN(),
+        defaultValue: false
+    },
     modifiedId:DataTypes.STRING(20),
     
 },{freezeTableName: true,

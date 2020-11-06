@@ -3,6 +3,8 @@ const User = require("../models/User");
 const Auth = require("../auth");
 const Subscription = require('../models/Subscription');
 const Session = require('../models/Session');
+const MaxSession = require('../models/MaxSession')
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports = new class {
     redirectToDashboard(req, res, next) {
@@ -30,12 +32,38 @@ module.exports = new class {
     async getUser(req,res, next) {
         try {
             let response = req.user;
-            let subscription = await req.user.getSubscription();
-            subscription? response.dataValues.subscription_status = subscription.status: response.dataValues.subscription_status = 'not_subscribed';
-            response.dataValues.auth_type = 'OAuth';
-            res.send({
-                data: response,
-            });
+            if(!response) {
+                return res.send({
+                    data: response,
+                });
+            }
+            const user_sessions = await Session.count({where: {
+                user_id: req.user.id
+            }});
+            const max_session_allowed = await MaxSession.findOne({}); 
+            if(user_sessions > max_session_allowed.dataValues.max_session_allow) {
+                await req.session.destroy();
+                return res.send({
+                    data: {
+                        error: "You have reached the maximum concurrent sessions allowed, Kindly logout of one of the already logged in places to log in successfully"
+                    }
+                })
+            } else if(req.user.archieved) {
+                await req.session.destroy();
+                return res.send({
+                    data: {
+                        error: "You are not allowed to logged in, please contact us in case of any problem!"
+                    }
+                })
+            } 
+            else {
+                let subscription = await req.user.getSubscription();
+                subscription? response.dataValues.subscription_status = subscription.status: response.dataValues.subscription_status = 'not_subscribed';
+                response.dataValues.auth_type = 'OAuth';
+                res.send({
+                    data: response,
+                });
+            }
         }
         catch(e) {
             console.log(e);
@@ -89,6 +117,9 @@ module.exports = new class {
                     }
                 })
             } else {
+                const customer = await stripe.customers.create({
+                    email: req.body.email,
+                });
                 let password = await Auth.hashPassword(req.body.password);
                 await User.create({
                     email: req.body.email,
@@ -97,7 +128,8 @@ module.exports = new class {
                     roles: "user",
                     emailVerified: false,
                     archieved: false,
-                    password: password
+                    password: password,
+                    stripeId: customer.id
                 })
                 res.send({
                     data: {
@@ -307,16 +339,37 @@ module.exports = new class {
             var user = await Auth.tryLogin(req, email, password);
            
             if(user) {
-                let subscription = await Subscription.findOne({
-                    where: {user_id: user.id}
-                  });
-                subscription? user.subscription_status = subscription.status: user.subscription_status = 'not_subscribed';
-                user.auth_type = 'LocalAuth';
-                res.send({
-                    data: {
-                        user
-                    }
-                })
+                const user_sessions = await Session.count({where: {
+                    user_id: user.id
+                }});
+                const max_session_allowed = await MaxSession.findOne({}); 
+                if(user_sessions >= max_session_allowed.dataValues.max_session_allow) {
+                    await req.session.destroy();
+                    return res.send({
+                        data: {
+                            error: "You have reached the maximum concurrent sessions allowed, Kindly logout of one of the already logged in places to log in successfully"
+                        }
+                    })
+                }else if(user.archieved) {
+                    await req.session.destroy();
+                    return res.send({
+                        data: {
+                            error: "You are not allowed to logged in, please contact us in case of any problem!"
+                        }
+                    })
+                }  
+                else {
+                    let subscription = await Subscription.findOne({
+                        where: {user_id: user.id}
+                      });
+                    subscription? user.subscription_status = subscription.status: user.subscription_status = 'not_subscribed';
+                    user.auth_type = 'LocalAuth';
+                    res.send({
+                        data: {
+                            user
+                        }
+                    })
+                }
             } else {
                 res.send({
                     data: {
@@ -334,6 +387,7 @@ module.exports = new class {
             });
         }
     }
+
     async recoverPassword(req, res, next) {
         try {
             const errors = validationResult(req);
@@ -419,8 +473,6 @@ module.exports = new class {
             });
         }
     }
-
-
 
     async changePassword(req, res, next) {
         try {

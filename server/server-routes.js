@@ -54,9 +54,17 @@ router.get('/syncDB', DbController.syncDB);
 
 // Stripe Routes 
 router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
+router.post('/api/list-products', StripeController.listAllProducts);
+router.post('/api/get-prices', StripeController.getPrices);
+router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.createCustomer);
 router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
-router.post('/api/cancel-subscription', [Auth.isAuthenticated], StripeController.cancelSubscription);
-router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
+router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
+router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
+router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
+router.post('/api/create-product', Middleware.checkProductPriceInfo(), StripeController.createProduct);
+router.post('/api/update-product', Middleware.checkProductId(), StripeController.updateProduct);
+router.post('/webhook', bodyParser.raw({type: 'application/json'}), StripeController.webHook);
+
 
 // Subscription Management Routes
 router.post('/api/subscription-management/get-subscription-status', [Auth.isAuthenticated], SubscriptionManagementController.getSubscriptionStatus);
