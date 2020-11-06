@@ -58,7 +58,9 @@ router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.ge
 router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
 router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
 router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
-router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
+router.post('/api/create-product', Middleware.checkProductPriceInfo(), StripeController.createProduct);
+router.post('/api/update-product', Middleware.checkProductId(), StripeController.updateProduct);
+router.post('/webhook', bodyParser.raw({type: 'application/json'}), StripeController.webHook);
 
 
 // Subscription Management Routes

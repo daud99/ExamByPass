@@ -1,8 +1,7 @@
 
 const db = require("../config/db.js")
 const { DataTypes } = require("sequelize"); // Import the built-in data types
-const Answer = require('./Answer')
-const Structure_Entry_Question_Link = require('./structureEntryQuestionLink')
+
 const Question = db.define('question',{
     id:{
         type:DataTypes.INTEGER ,

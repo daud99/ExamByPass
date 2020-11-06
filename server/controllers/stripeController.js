@@ -8,9 +8,133 @@ const Invoice = require('../models/Invoice');
 const { validationResult } = require('express-validator');
 
 module.exports = {
+    async createProduct(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+            let unit_amount = req.body.unit_amount * 100;
+            const product = await stripe.products.create({
+                name: req.body.name
+            });
+            const pro = await Product.create({
+                pid: product.id,
+                name: product.name,
+                active: product.active
+            });
+            const price = await stripe.prices.create({
+                unit_amount: unit_amount,
+                currency: 'usd',
+                recurring: {interval: req.body.interval, interval_count: req.body.interval_count},
+                product: product.id,
+                billing_scheme: 'per_unit'
+            });
+            const p = await Price.create({
+                pid: price.id,
+                currency: price.currency,
+                interval: price.recurring.interval,
+                amount: price.unit_amount/100,
+                productPid: price.product
+            },
+            { fields: ["pid", "currency", "interval", "amount", "productPid"] }   
+            );
+
+            res.send({
+                data: {
+                    product: pro,
+                    price: p
+                }
+            }); 
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async updateProduct(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.send( 
+                    {
+                        data:{
+                            error: errors.array()[0].msg
+                        } 
+                    });
+            }
+            // if(req.body.unit_amount) req.body.unit_amount *= 100;
+            const editObj = {
+                ...(typeof req.body.name !== "undefined" && {name: req.body.name}),
+                ...(typeof req.body.active !== "undefined" && {active: req.body.active})
+                }
+            if(req.body.name, req.body.product_id) {
+                await stripe.products.update(
+                    req.body.product_id,
+                    editObj
+                  );
+                var pro = await Product.findOne({
+                    where: {pid: req.body.product_id}
+                });
+    
+                if(pro) {
+                    await pro.update({
+                        name: req.body.name,
+                        active: req.body.active
+                      }); 
+                }     
+            }
+
+            // if(req.body.price_id) {
+            //     console.log(typeof req.body.unit_amount);
+            //     console.log(typeof req.body.interval);
+            //     const editObj = {
+            //         ...(typeof req.body.unit_amount !== "undefined" && {"unit_amount_decimal": req.body.unit_amount}),
+            //         ...(typeof req.body.interval !== "undefined" && {recurring: {interval: req.body.interval, ...(typeof req.body.interval_count !== "undefined" && {interval_count: req.body.interval_count})}})
+            //     }
+            //     console.log(editObj);
+            //     await stripe.prices.update(
+            //         req.body.price_id,
+            //         {unit_amount: 800}
+            //     );
+            //     var p = await Price.findOne({
+            //         where: {pid: req.body.price_id}
+            //     });
+            //     if(p) {
+            //         const editObj2 = {
+            //             ...(typeof req.body.unit_amount !== "undefined" && {amount: req.body.unit_amount/100}),
+            //         ...(typeof req.body.interval !== "undefined" && {interval: req.body.interval})
+            //         }
+            //         await p.update(editObj2);
+            //     }
+            // }
+
+            res.send({
+                data: {
+                    product: pro,
+                    // price: p
+                }
+            }); 
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
     async getPrices(req, res, next ) {
         try {
-            let prices = await Product.findAll({include:[Price]});
+            let prices = await Product.findAll({where: {active: true}, include:[Price]});
             if(prices.length > 0) {
                 res.send({
                     data: {
@@ -35,6 +159,7 @@ module.exports = {
         }
     },
     async listAllProducts(req, res, next ) {
+        // do not use me to get product but the above one
         try {
             const products = await stripe.products.list({
                 limit: 3,
@@ -85,7 +210,6 @@ module.exports = {
             });
         }
     },
-
     async createCheckoutSession(req, res, next) {
         try {
             const type = req.body.type;
@@ -121,7 +245,6 @@ module.exports = {
             });
         }
     },
-
     async getSubscription(req, res, next) {
         try {
             const sub = await req.user.getSubscription();

@@ -8,7 +8,11 @@ const Product = db.define(
       type: DataTypes.STRING,
       primaryKey: true
     },
-    name: DataTypes.STRING(180)
+    name: DataTypes.STRING(180),
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    }
   },
   { freezeTableName: true, underscored: true }
 );

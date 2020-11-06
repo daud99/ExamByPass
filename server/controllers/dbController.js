@@ -16,6 +16,7 @@ const Testlet = require('../models/Testlet')
 const Answer = require('../models/Answer')
 const Product = require('../models/Product')
 const Price = require('../models/Price')
+const MaxSession = require('../models/MaxSession')
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Keys = require("../config/Keys")
@@ -58,22 +59,23 @@ module.exports = new class {
         console.log("starting populating DB");
         try {
             const products = await stripe.products.list({
-                limit: 3,
-            });;
+                limit: 10,
+            });
+            console.log(products);
             if(products.data.length > 0) {
                 for (const element in products.data) {
                     await Product.create({
                         pid: products.data[element].id,
-                        name: products.data[element].name
+                        name: products.data[element].name,
+                           active: products.data[element].active 
                     });
                 }
             }
             const prices = await stripe.prices.list({
-                limit: 3,
+                limit: 10,
             });
             if(prices.data.length > 0) {
                 for (const element in prices.data) {
-                    let amount = prices.data[element].unit_amount/100;
                     console.log(prices.data[element].product);
                     await Price.create({
                         pid: prices.data[element].id,
