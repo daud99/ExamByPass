@@ -204,6 +204,14 @@ export default {
           this.loading = false;
         } else if (response.msg) {
           this.loading = false;
+          if(response.msg2) {
+             Swal.fire({
+            type: "info",
+            icon: "info",
+            title: "Verify Email",
+            text: response.msg2
+          });
+          }
           this.$router.push("login");
         }
       } catch (e) {

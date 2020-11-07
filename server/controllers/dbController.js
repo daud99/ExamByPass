@@ -20,6 +20,7 @@ const MaxSession = require('../models/MaxSession')
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Keys = require("../config/Keys")
+const Auth = require("../auth")
 const Db = require("../config/db")
 const { compareSync } = require("bcrypt")
 
@@ -52,7 +53,8 @@ module.exports = new class {
         await Db.sync({force: true}).then(function () {
             console.log("Database Configured");
         });
-        await module.exports.populateDB();
+        const returnData = await module.exports.populateDB();
+        return res.status(200).send(returnData);
     } 
 
     async populateDB() {
@@ -88,10 +90,28 @@ module.exports = new class {
                     );
                 }
             }
+
+            await User.create({
+                firstName: "admin",
+                lastName: "admin",
+                email: "admin@admin.com",
+                roles: "admin",
+                password: await Auth.hashPassword("admin")
+            });
+
+            await MaxSession.create({
+                max_session_allow: 3
+            });
             console.log("Database populated successfully");
+            return {
+                msg: "DB is initialized and populated successfully"
+            };
         } catch(e) {
             console.log("Error while populaiton database");
             console.log(e);
+            return {
+                error: e.toString()
+            };
         }
 
     }

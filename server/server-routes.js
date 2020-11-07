@@ -20,7 +20,7 @@ var csrfProtection = csrf({ cookie: true });
 
 // Auth Routes
 router.get('/login/google', passport.authenticate('google', { scope: ['profile','email'] }));
-router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 router.get('/login/github', passport.authenticate('github', { scope: ['email'] }));
 router.get('/login/google/return', [passport.authenticate('google', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.get('/login/facebook/return', [passport.authenticate('facebook', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
