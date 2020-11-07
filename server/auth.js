@@ -16,6 +16,8 @@ const Testlet = require('./models/Testlet')
 const Answer = require('./models/Answer')
 const Product = require('./models/Product')
 const Price = require('./models/Price')
+const Coupon = require('./models/Coupon')
+const promotionCode = require('./models/promotionCode')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 
@@ -67,6 +69,7 @@ module.exports = new class {
       User.hasMany(examLibrary)
       User.hasMany(resetPasswordRequest)
       User.hasMany(Invoice)
+      User.hasMany(Coupon)
       User.hasOne(Subscription)
       Product.hasOne(Price, { foreignKey: 'productPid' })
       Product.hasMany(Invoice, { foreignKey: 'productPid' })
@@ -76,6 +79,7 @@ module.exports = new class {
       examLibrary.hasMany(structureEntry)
       examLibrary.hasMany(structureEntryQuestionLink)
       examLibrary.hasMany(Testlet)
+      Coupon.hasMany(promotionCode)
       Question.hasMany(Answer)
       Question.hasMany(structureEntryQuestionLink)
       structureEntry.hasMany(structureEntryQuestionLink)
@@ -303,6 +307,14 @@ module.exports = new class {
         } else{
             res.redirect("/dashboard");
         }
+    }
+
+    isAuthenticatedAndAdmmin(req,res,next) {
+      if(req.isAuthenticated() && req.user.roles === 'admin') {
+        next(); 
+      } else{
+        res.redirect("/login");
+      }
     }
 
     async isSubscribed(req,res,next) {

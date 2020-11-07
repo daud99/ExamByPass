@@ -46,6 +46,10 @@
                 @loading="loading = $event"
                 >
                 </stripe-elements>
+                 <v-text-field
+                v-model="promoCode"
+                label="Promo Code(Optional)"
+              ></v-text-field>
                 <div class="text-center">
                     <v-btn
                     rounded
@@ -102,7 +106,8 @@ export default {
   data: () => ({
     dialog: false,
     loading: false,
-    publishableKey: ''
+    publishableKey: '',
+    promoCode: ''
   }),
 
   methods: {
@@ -129,15 +134,22 @@ export default {
                 id: this.id,
                 name: this.name
             };
+            if(this.promoCode) data["promoCode"] = this.promoCode;
             let response = await quickRequest("/create-subscription", "POST", data);
             if(response.subscription) {
-                console.log(response.subscription);
                 Swal.fire({
                     type: "success",
                     title: "Successfully Subscribed!",
                 });
                 this.$router.push("account");
-            } else {
+            } else if(response.error) {
+              Swal.fire({
+                    type: "error",
+                    title: "Subscription failed!",
+                    text: response.error,
+                });
+            } 
+            else {
                 Swal.fire({
                     type: "error",
                     title: "Subscription failed!",
