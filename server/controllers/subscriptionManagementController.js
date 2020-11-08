@@ -26,4 +26,21 @@ module.exports = new class {
             });
        }
     }
+    async getAllSubscriptions(req,res, next) {
+        try {
+            const subscriptions = await Subscription.findAll({ include:[{all:true}]});
+            res.send({
+                data: {
+                    subscriptions
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
 };

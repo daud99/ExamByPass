@@ -47,15 +47,7 @@
                         <router-link :to="{path: '/pricing'}" class="nav-item">Pricing</router-link>
                     </strong></h6>
             </li>
-            &nbsp;
-            &nbsp;
-            &nbsp;
 
-            <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                        <router-link :to="{path: '/messages'}" class="nav-item">Messages</router-link>
-                    </strong></h6>
-            </li>
             &nbsp;
             &nbsp;
             &nbsp;
@@ -64,13 +56,37 @@
                     <strong>EDITOR</strong>
                 </h6>
             </li>
+
+
             &nbsp;
             &nbsp;
             &nbsp;
             <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                        <router-link :to="{path: '/users'}" class="nav-item">All Users</router-link>
-                    </strong></h6>
+                <base-dropdown>
+                    <base-button slot="title" type="secondary" icon="fa fa-user">
+                        Administration
+                    </base-button>
+                    <router-link class="dropdown-item" to="/users">
+                        <i class="ni ni-single-02"></i>
+                        <span>All Users</span>
+                    </router-link>
+                    <router-link class="dropdown-item" to="/messages">
+                        <i class="ni ni-single-02"></i>
+                        <span>Messages</span>
+                    </router-link>
+                    <router-link class="dropdown-item" to="/products">
+                        <i class="ni ni-single-02"></i>
+                        <span>Products</span>
+                    </router-link>
+                    <router-link class="dropdown-item" to="/invoices">
+                        <i class="ni ni-single-02"></i>
+                        <span>Invoices</span>
+                    </router-link>
+                    <router-link class="dropdown-item" to="/subscriptions">
+                        <i class="ni ni-single-02"></i>
+                        <span>Subscritions</span>
+                    </router-link>
+                </base-dropdown>
             </li>
 
             &nbsp; &nbsp; &nbsp;

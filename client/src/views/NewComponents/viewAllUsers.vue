@@ -5,8 +5,38 @@
           <div class="row">
             <div class="col col-lg-12 col-md-12 col-xs-12">
                 <v-layout justify-center>
-                    <h4>All User Messages</h4>
+                    <h4>All Users</h4>
                 </v-layout><br><br>
+                
+                <v-layout justify-center>
+                    <download-csv
+                        class   = "btn btn-primary"
+                        :data   = "json_data"
+                        name    = "Users.csv">
+                        Download CSV Of All Users(Excel File)
+                    </download-csv>
+                    <button type="button" class="btn btn-success" @click="gotToCreateUser()">
+                      Create New User
+                    </button>
+                    <button type="button" class="btn btn-warning" @click="enableSessionEdit()">
+                      Edit Allowed Number of sessions
+                    </button>
+                </v-layout><br><br>
+                <v-layout v-if="canEditSession" justify-center>
+                    <v-text-field
+                        v-model="sessionsAllowed"
+                        label="Enter Allowed sessions"
+                        type="number"
+                        outlined shaped
+                    ></v-text-field>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm btn-success" @click="submitSession()">
+                      Submit
+                    </button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" @click="disableSessionEdit()">
+                      Cancel
+                    </button>
+                </v-layout><br><br>
+                
                 <v-layout justify-center>
                     <v-text-field
                         v-model="search"
@@ -45,10 +75,18 @@
                         </template>
                         <template v-slot:item.actions="{ item }">
                         <v-icon
+                            color="pink"
                             small
                             @click="deleteItem(item)"
                         >
                             mdi-delete
+                        </v-icon>&nbsp;
+                        <v-icon
+                            color="teal darken-2"
+                            small
+                            @click="editItem(item)"
+                        >
+                            mdi-pencil
                         </v-icon>
                         </template>
 
@@ -69,18 +107,22 @@
 </template>
 
 <script>
-    import card from '../../components/Card';
-    import {mapActions, mapGetters} from 'vuex';
-    import Swal from "sweetalert2";
-    import { quickRequest } from "../../../common/misc";
-    import PageMixin from "../page-mixin";
-
+  import card from '../../components/Card';
+  import {mapActions, mapGetters} from 'vuex';
+  import Swal from "sweetalert2";
+  import { quickRequest } from "../../../common/misc";
+  import PageMixin from "../page-mixin";
+  import Vue from 'vue'
+  import JsonCSV from 'vue-json-csv'
+  Vue.component('downloadCsv', JsonCSV)
   export default {
     data: () => ({
+      canEditSession:false,
+      sessionsAllowed:Number,
       dialogDelete: false,
       search: '',
       loading: false,
-
+      json_data: [],
       headers: [
         {
           text: 'First Name',
@@ -137,11 +179,78 @@
             this.$router.push('/')
         }
         this.initialize()
+        this.getSessionsAllowed()
     },
     beforeDestroy: function(){
         document.getElementById("preloader-block").style.display = "none";
     },
     methods: {
+      async submitSession(){
+        try {
+                const data = {max_session_allow:this. sessionsAllowed};
+                this.loading = true;
+                let response = await quickRequest("/sessionallowedUpdate", "POST", data);
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                } else if (response.msg) {
+                Swal.fire({
+                    type: "success",
+                    icon: "success",
+                    title: "Message",
+                    text: response.msg,
+                });
+                if(response.record){
+                    console.log(response.record)
+                }
+                this.loading = false;
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Fetching Information",
+                text: "Could not update through the server.",
+                });
+            } finally {
+                this.loading = false;
+            }
+      },
+      enableSessionEdit(){
+        this.canEditSession=true
+      },
+      disableSessionEdit(){
+        this.canEditSession=false
+      },
+      async getSessionsAllowed(){
+         try {
+              let response = await quickRequest("/getSessionAllowed", "GET",{});
+              if ("error" in response) {
+              Swal.fire({
+                  type: "error",
+                  icon: "error",
+                  title: "Error",
+                  text: response.error,
+              });
+              }else if(response.sess){
+                  this.sessionsAllowed=response.sess[0].max_session_allow
+              }
+          } catch (e) {
+              console.log(e)
+              Swal.fire({
+              type: "error",
+              title: "Error Fetching Information",
+              text: "Error occured",
+              });
+          }
+      },
+      gotToCreateUser(){
+        this.$router.push("/create_User");
+      },
         async initialize() {
           this.userArray=[]
           let userObject={}
@@ -179,6 +288,9 @@
                       this.userArray.push(userObject)
                       userObject={}
                     }
+                    console.log(this.userArray)
+                    this.json_data=this.userArray
+                    console.log(this.json_data)
                   }
                   
               }
@@ -213,6 +325,24 @@
                         title: "Message",
                         text: response1.msg,
                     });
+                    let response2 = await quickRequest("/deleteUserSession", "POST",{id:userDetails.id});
+                    if ("error" in response2) {
+                      this.loading=false
+                    Swal.fire({
+                        type: "error",
+                        icon: "error",
+                        title: "Error",
+                        text: response2.error,
+                    });
+                    }else if (response2.msg) {
+                      this.loading=false
+                      Swal.fire({
+                          type: "success",
+                          icon: "success",
+                          title: "Message",
+                          text: response2.msg,
+                      });
+                    }
                     this.initialize()
 
                 }
@@ -265,7 +395,9 @@
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
-
+      editItem(item){
+        this.$router.push('/update_User/'+item.id)
+      },
       deleteItemConfirm () {
         console.log(this.selectedUserId)
         this.deleteUser(this.selectedUserId,this.editedIndex)
