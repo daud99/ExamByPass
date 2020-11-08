@@ -4,6 +4,8 @@ const User = require("../models/User");
 const Price = require("../models/Price");
 const Product = require('../models/Product');
 const Invoice = require('../models/Invoice');
+const Coupon = require('../models/Coupon');
+const PromotionCode = require('../models/promotionCode');
 
 const { validationResult } = require('express-validator');
 
@@ -336,18 +338,39 @@ module.exports = {
     },
     async createSubscription(req, res, next) {
         try {
+
+            var obj = {
+                customer: req.user.stripeId,
+                items: [{ price: req.body.id }]
+            }
+
+            if(req.body.promoCode) {
+                const code = await PromotionCode.findOne({
+                    where: {
+                        code: req.body.promoCode
+                    },
+                    raw: true, nest: true
+                });
+                if(code) {
+                    if(code.id) obj["promotion_code"] = code.id;
+                } else {
+                    return res.send({
+                        data: {
+                            error: "Not a valid promotion Code!"
+                        }
+                    })
+                }
+            }
+
             await stripe.customers.update(
                 req.user.stripeId,
                 {
                     source: req.body.token.id 
                 }
-                );
-
+            );
+               
                 // Create the subscription
-                const subscription = await stripe.subscriptions.create({
-                    customer: req.user.stripeId,
-                    items: [{ price: req.body.id }]
-                });
+                const subscription = await stripe.subscriptions.create(obj);
                 console.log(subscription);
                 await req.user.createSubscription({
                     amount: subscription.plan.amount/100,
@@ -405,6 +428,166 @@ module.exports = {
                 }); 
            }
            
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async createCoupon(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.send( 
+                {
+                    data:{
+                        error: errors.array()[0].msg
+                    } 
+                });
+        }
+        try {
+
+            let obj = {
+                currency: "USD"    
+            }
+            
+            if(req.body.name) obj["name"] = req.body.name;
+            if(req.body.amount_off) obj["amount_off"] = req.body.amount_off;
+            if(req.body.percent_off) obj["percent_off"] = req.body.percent_off;
+            if(req.body.duration) obj["duration"] = req.body.duration;
+            if(req.body.duration_in_months) obj["duration_in_months"] = req.body.duration_in_months;
+            if(req.body.max_redemptions) obj["max_redemptions"] = req.body.max_redemptions;
+            if(req.body.redeem_by) obj["redeem_by"] =  Number(new Date(req.body.redeem_by).getTime().toString().slice(0, 10));
+            await stripe.coupons.create(obj);
+            const coupon = await req.user.create(obj);
+            res.send({
+                data: {
+                    coupon
+                }
+            });
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async deleteCoupon(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.send( 
+                {
+                    data:{
+                        error: errors.array()[0].msg
+                    } 
+                });
+        }
+        try {
+
+            const deleted = await stripe.coupons.del(
+                req.body.id
+            );
+            
+            await PromotionCode.destroy({
+                where: {
+                    couponId: req.body.id
+                }
+            });
+
+            await Coupon.destroy({
+                where: {
+                  id: req.body.id
+                }
+              });
+            
+            res.send({
+                data: {
+                    msg: "Coupon is deleted successfully!"
+                }
+            })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async createPromotionCode(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.send( 
+                {
+                    data:{
+                        error: errors.array()[0].msg
+                    } 
+                });
+        }
+        try {
+
+            let obj = {
+               active: true,
+               coupon: req.body.coupon
+            }
+            
+            if(req.body.code) obj["code"] = req.body.code;
+            if(req.body.expires_at) obj["expires_at"] = Number(new Date(req.body.expires_at).getTime().toString().slice(0, 10));
+            if(req.body.max_redemptions) obj["max_redemptions"] = req.body.max_redemptions;
+            const promotionCode = await stripe.promotionCodes.create(obj);
+
+            delete obj["coupon"];
+            obj["couponId"] = req.body.coupon; 
+            if(promotionCode.id) obj["id"] = promotionCode.id;
+            await PromotionCode.create(obj);
+           
+            res.send({
+                data: {
+                    promotionCode
+                }
+            });
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async archivePromotionCode(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.send( 
+                {
+                    data:{
+                        error: errors.array()[0].msg
+                    } 
+                });
+        }
+        try {
+
+            await stripe.promotionCodes.update(
+                req.body.id,
+                {active: req.body.active}
+            );
+            let promo = await PromotionCode.findOne({
+                where: {id: req.body.id}
+            });
+
+            await promo.update({
+                active: req.body.active
+            });    
+
+            res.send({
+                data: {
+                    promotionCode: promo
+                }
+            });
         }
         catch(e) {
             console.log(e);

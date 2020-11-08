@@ -1,4 +1,4 @@
-const { check, validationResult } = require('express-validator');
+const { check, validationResult, body } = require('express-validator');
 
 module.exports = {
 
@@ -46,7 +46,18 @@ module.exports = {
     },
     checkProductId: function() {
         return [
-            check('product_id').exists().withMessage("Product id is missing").isString().withMessage("The charge field needs to be string")
+            check('product_id').exists().withMessage("Product id is missing").isString().withMessage("The product_id field needs to be string")
+        ]
+    },
+    checkPromoCodeArchiveInfo: function() {
+        return [
+            check('id').exists().withMessage("promotion code id is missing").isString().withMessage("The id field needs to be string"),
+            check('active').exists().withMessage("active field is require").isBoolean().withMessage("active field needs to be Boolean")
+        ]
+    },
+    checkId: function() {
+        return [
+            check('id').exists().withMessage("id is required field").isString().withMessage("The id field needs to be string")
         ]
     },
     checkProductPriceInfo: function() {
@@ -60,6 +71,72 @@ module.exports = {
                 }
                 return true;
               }),
+        ]
+    },
+    checkCouponInfo: function() {
+        return [
+            check("duration").exists().withMessage("duration field is required").isString().isString("The duation fields needs to be string").matches(/once|repeating|forever/).withMessage("The value of duration needs to be once or repeating or forever"),
+            check("amount_off").custom((value, {req})=>{
+                if((value || value === 0) && (req.body.percent_off || req.percent_off === 0)) throw new Error("percent_off or amount_off either one of the field is required");
+                if(value || value === 0) {
+                    if(typeof value != "number") throw new Error("amount_off need to be a integer");
+                    if(value <= 0) throw new Error("amount_off must be a positive interger greater than 0");
+                    return true;
+                } else {
+                    if((!req.body.percent_off) && req.body.percent_off != 0) throw new Error("percent_off or amount_off either one of the field is required");
+                    if(req.body.percent_off || req.body.percent_off === 0) {
+                        if(typeof req.body.percent_off != "number") throw new Error("percent_off need to be a integer")
+                        if(!(req.body.percent_off > 0 && req.body.percent_off <= 100)) throw new Error("percent_off needs to between 0 and 100"); 
+                        return true;
+                    }
+                }
+            }),
+            check("duration_in_months").custom((value, {req}) => {
+                if(req.body.duration === "repeating") {
+                    if(!value || value < 0) throw new Error("duration_in_months is required and needs to be a postive interger");
+                    return true;
+                } else if(value) {
+                    throw new Error("duration_in_months is not required it's only required when duration is set to repeating");
+                } else {
+                    return true;
+                }
+            }),
+            check('max_redemptions').custom(value => {
+                if(value || value === 0) {
+                    if(value <= 0) throw new Error('max_redemptions needs to be a postive integer');
+                }
+                return true;
+            }),
+            check('redeem_by').custom(value => {
+                if(value || value == 0) {
+                    let date_time = Math.round(new Date(value).getTime());
+                    let now_date_time = + new Date().getTime();
+                    if(date_time <= now_date_time) throw new Error("redeem_by date needs to be in future");
+                    return true;   
+                }
+                return true;
+            })
+        ]
+    },
+    checkPromotionCodeInfo: function() {
+        return [
+            check("coupon").exists().withMessage("coupon field is required").isString().withMessage("The coupon field needs to be string"),
+            check('max_redemptions').custom(value => {
+                if(value || value === 0) {
+                    if(value <= 0) throw new Error('max_redemptions needs to be a postive integer');
+                }
+                return true;
+            }),
+            check('code').if(body('code') || body('code') == 0).isString().withMessage("code field needs to be string"),
+            check('expires_at').custom(value => {
+                if(value || value == 0) {
+                    let date_time = Math.round(new Date(value).getTime());
+                    let now_date_time = + new Date().getTime();
+                    if(date_time <= now_date_time) throw new Error("expires_at date needs to be in future");
+                    return true;   
+                }
+                return true;
+            })
         ]
     }
 };

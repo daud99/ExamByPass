@@ -130,10 +130,13 @@ module.exports = new class {
                     archieved: false,
                     password: password,
                     stripeId: customer.id
-                })
+                });
+                Auth.sendVerificationEmail(req.body.email);
+
                 res.send({
                     data: {
-                        msg: "User is created Successfully!"
+                        msg: "User is created Successfully!",
+                        msg2: "You will shortly receive the verificaiton email, kindly verify your email!"
                     }
                 })
             }

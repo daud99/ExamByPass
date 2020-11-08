@@ -1,4 +1,3 @@
-
 const db = require("../config/db.js")
 const { DataTypes } = require("sequelize"); // Import the built-in data types
 const Contact = db.define('contact_us',{

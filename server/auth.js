@@ -16,6 +16,8 @@ const Testlet = require('./models/Testlet')
 const Answer = require('./models/Answer')
 const Product = require('./models/Product')
 const Price = require('./models/Price')
+const Coupon = require('./models/Coupon')
+const promotionCode = require('./models/promotionCode')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 
@@ -67,6 +69,7 @@ module.exports = new class {
       User.hasMany(examLibrary)
       User.hasMany(resetPasswordRequest)
       User.hasMany(Invoice)
+      User.hasMany(Coupon)
       User.hasOne(Subscription)
       Product.hasOne(Price, { foreignKey: 'productPid' })
       Product.hasMany(Invoice, { foreignKey: 'productPid' })
@@ -76,6 +79,7 @@ module.exports = new class {
       examLibrary.hasMany(structureEntry)
       examLibrary.hasMany(structureEntryQuestionLink)
       examLibrary.hasMany(Testlet)
+      Coupon.hasMany(promotionCode)
       Question.hasMany(Answer)
       Question.hasMany(structureEntryQuestionLink)
       structureEntry.hasMany(structureEntryQuestionLink)
@@ -207,13 +211,13 @@ module.exports = new class {
               });
               User.create({
                 email: profile._json.email,
-                emailVerified: profile._json.email_verified,
                 firstName: profile._json.first_name,
                 lastName: profile._json.last_name,
                 stripeId: customer.id,
                 roles: 'user'
               })
               .then(result=> {
+                module.exports.sendVerificationEmail(profile._json.email);
                 done(null, result);
               })
               .catch(err => {
@@ -303,6 +307,14 @@ module.exports = new class {
         } else{
             res.redirect("/dashboard");
         }
+    }
+
+    isAuthenticatedAndAdmmin(req,res,next) {
+      if(req.isAuthenticated() && req.user.roles === 'admin') {
+        next(); 
+      } else{
+        res.redirect("/login");
+      }
     }
 
     async isSubscribed(req,res,next) {
@@ -401,6 +413,60 @@ module.exports = new class {
           let info = await transporter.sendMail({
               to: user.email, // list of receivers
               subject: "Password Recovery", // Subject line
+              html: emailHTML // html body
+          });
+
+          return info.accepted.length > 0;
+
+      } catch(e) {
+
+          return false;
+
+      }
+
+    }
+
+    async sendVerificationEmail(email) {
+          
+      var user = await User.findOne({
+        where: {email: email},
+      });
+
+      if(!user) {
+          return false;
+      }
+
+      var token = Misc.makeID(32);
+      
+      await user.update({
+        verificationToken: token
+      });
+
+      var template = fs.readFileSync("emails/notification.htm", 'utf-8');
+
+      var emailHTML = ejs.render(template, {
+        siteURL: `${SiteConfig.url}:${SiteConfig.port}/verify-password?token=${user.verificationToken}`,
+        action: 'To verify account, click the following link:',
+        btnText: 'Account Verification',
+        message: 'If you do not signed up on our site,you can ignore and delete this email.'
+    });
+
+      try {
+      
+          let transporter = nodemailer.createTransport({
+              host: EmailConfig.host,
+              port: EmailConfig.port,
+              secure: EmailConfig.secure,
+              auth: {
+                  user: EmailConfig.username,
+                  pass: EmailConfig.password
+              }
+          });
+          
+          // send mail with defined transport object
+          let info = await transporter.sendMail({
+              to: user.email, // list of receivers
+              subject: "Email Verification", // Subject line
               html: emailHTML // html body
           });
 

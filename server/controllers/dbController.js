@@ -17,42 +17,57 @@ const Answer = require('../models/Answer')
 const Product = require('../models/Product')
 const Price = require('../models/Price')
 const MaxSession = require('../models/MaxSession')
+const Coupon = require('../models/Coupon')
+const promotionCode = require('../models/promotionCode')
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Keys = require("../config/Keys")
+const Auth = require("../auth")
 const Db = require("../config/db")
 const { compareSync } = require("bcrypt")
 
 module.exports = new class {
     async syncDB(req, res, next) {
-        User.hasMany(Session)
-        User.hasMany(Invoice)
-        User.hasMany(discountApplicable)
-        User.hasMany(Discount)
-        User.hasMany(Ticket)
-        User.hasMany(examLibrary)
-        User.hasMany(resetPasswordRequest)
-        User.hasMany(Invoice)
-        User.hasOne(Subscription)
-        Product.hasOne(Price, { foreignKey: 'productPid' })
-        Product.hasMany(Invoice, { foreignKey: 'productPid' })
-        Invoice.belongsTo(Product)
-        Subscription.belongsTo(User)
-        examLibrary.hasMany(Question)
-        examLibrary.hasMany(structureEntry)
-        examLibrary.hasMany(structureEntryQuestionLink)
-        examLibrary.hasMany(Testlet)
-        Question.hasMany(Answer)
-        Question.hasMany(structureEntryQuestionLink)
-        structureEntry.hasMany(structureEntryQuestionLink)
-        Testlet.hasMany(Question)
-        Ticket.hasMany(Comment)
-        Answer.hasMany(answerArea)
+        try {
+            User.hasMany(Session)
+            User.hasMany(Invoice)
+            User.hasMany(discountApplicable)
+            User.hasMany(Discount)
+            User.hasMany(Ticket)
+            User.hasMany(examLibrary)
+            User.hasMany(resetPasswordRequest)
+            User.hasMany(Invoice)
+            User.hasMany(Coupon)
+            User.hasOne(Subscription)
+            Product.hasOne(Price, { foreignKey: 'productPid' })
+            Product.hasMany(Invoice, { foreignKey: 'productPid' })
+            Invoice.belongsTo(Product)
+            Subscription.belongsTo(User)
+            examLibrary.hasMany(Question)
+            examLibrary.hasMany(structureEntry)
+            examLibrary.hasMany(structureEntryQuestionLink)
+            examLibrary.hasMany(Testlet)
+            Coupon.hasMany(promotionCode)
+            Question.hasMany(Answer)
+            Question.hasMany(structureEntryQuestionLink)
+            structureEntry.hasMany(structureEntryQuestionLink)
+            Testlet.hasMany(Question)
+            Ticket.hasMany(Comment)
+            Answer.hasMany(answerArea)
 
-        await Db.sync({force: true}).then(function () {
-            console.log("Database Configured");
-        });
-        await module.exports.populateDB();
+            await Db.sync({force: true}).then(function () {
+                console.log("Database Configured");
+            });
+            const returnData = await module.exports.populateDB();
+            return res.status(200).send(returnData);
+        }
+        catch(e) {
+            console.log(e);
+            res.send({
+                error: e.toString()
+            })
+        }
+        
     } 
 
     async populateDB() {
@@ -88,10 +103,28 @@ module.exports = new class {
                     );
                 }
             }
+
+            await User.create({
+                firstName: "admin",
+                lastName: "admin",
+                email: "admin@admin.com",
+                roles: "admin",
+                password: await Auth.hashPassword("admin")
+            });
+
+            await MaxSession.create({
+                max_session_allow: 3
+            });
             console.log("Database populated successfully");
+            return {
+                msg: "DB is initialized and populated successfully"
+            };
         } catch(e) {
             console.log("Error while populaiton database");
             console.log(e);
+            return {
+                error: e.toString()
+            };
         }
 
     }
