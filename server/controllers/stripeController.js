@@ -48,7 +48,8 @@ module.exports = {
             res.send({
                 data: {
                     product: pro,
-                    price: p
+                    price: p,
+                    msg:'Product created successfuly'
                 }
             }); 
         }
@@ -120,6 +121,7 @@ module.exports = {
             res.send({
                 data: {
                     product: pro,
+                    msg:'Product updated successfully'
                     // price: p
                 }
             }); 
@@ -132,9 +134,26 @@ module.exports = {
             });
         }
     },
+    async getAllInvoices(req,res, next) {
+        try {
+            const invoices = await Invoice.findAll({ include:[{all:true}]});
+            res.send({
+                data: {
+                    invoices
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
     async getPrices(req, res, next ) {
         try {
-            let prices = await Product.findAll({where: {active: true}, include:[Price]});
+            let prices = await Product.findAll({ include:[Price]});
             if(prices.length > 0) {
                 res.send({
                     data: {
@@ -158,6 +177,7 @@ module.exports = {
             });
         }
     },
+
     async listAllProducts(req, res, next ) {
         // do not use me to get product but the above one
         try {

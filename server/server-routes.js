@@ -13,6 +13,7 @@ var StripeController = require('./controllers/stripeController')
 var SubscriptionManagementController = require('./controllers/subscriptionManagementController')
 var contactUsController = require('./controllers/contactUsController')
 var userExamsessionController = require('./controllers/userExamsessionController')
+const authController = require('./controllers/authController')
 // Local imports
 const upload = require("./config/multer").upload;
 var csrfProtection = csrf({ cookie: true });
@@ -61,8 +62,15 @@ router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.ge
 router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
 router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
 router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
+
 router.post('/api/create-product', Middleware.checkProductPriceInfo(), StripeController.createProduct);
 router.post('/api/update-product', Middleware.checkProductId(), StripeController.updateProduct);
+router.get('/api/getInvoices', StripeController.getAllInvoices);
+router.get('/api/getSubscriptions', SubscriptionManagementController.getAllSubscriptions);
+router.get('/api/getSessionAllowed', authController.getSessionsAlloweds);
+router.post('/api/sessionallowedUpdate', authController.changeAllowedsessions);
+router.post('/api/deleteUserSession', authController.deleteUserSession);
+
 router.post('/webhook', bodyParser.raw({type: 'application/json'}), StripeController.webHook);
 
 

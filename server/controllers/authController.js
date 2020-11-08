@@ -164,6 +164,79 @@ module.exports = new class {
             });
         }
     }
+    async getSessionsAlloweds(req,res, next) {
+        try {
+            const sess = await MaxSession.findAll({});
+            console.log(sess)
+            res.send({
+                data: {
+                    sess
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+
+    async changeAllowedsessions(req,res, next) {
+        try {
+            const sess = await MaxSession.findOne({
+                where: {id: 1}
+            });
+            console.log('llll')
+            console.log(req.body)
+            console.log(sess)
+            console.log('hhhh')
+            if(sess){
+                const updateSessions = await sess.update({
+                        max_session_allow: req.body.max_session_allow
+                    });
+                    res.send({
+                    data: {
+                        msg: "Session Allowed Updated successfully",
+                        record: updateSessions
+                    }
+                }) 
+            }
+            
+        }
+        catch(e) {
+            console.log("error");
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+
+    async deleteUserSession(req,res, next) {
+        try {
+            const session = await Session.destroy({
+                where: {
+                    user_id: req.body.id
+                }
+            });
+            res.send({
+                data: {
+                    msg: "User Session deleted Successfully!"
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+
     async deleteUser(req,res, next) {
         try {
             const messages = await User.destroy({

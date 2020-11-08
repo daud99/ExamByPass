@@ -18,6 +18,23 @@
                     <button type="button" class="btn btn-success" @click="gotToCreateUser()">
                       Create New User
                     </button>
+                    <button type="button" class="btn btn-warning" @click="enableSessionEdit()">
+                      Edit Allowed Number of sessions
+                    </button>
+                </v-layout><br><br>
+                <v-layout v-if="canEditSession" justify-center>
+                    <v-text-field
+                        v-model="sessionsAllowed"
+                        label="Enter Allowed sessions"
+                        type="number"
+                        outlined shaped
+                    ></v-text-field>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm btn-success" @click="submitSession()">
+                      Submit
+                    </button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" @click="disableSessionEdit()">
+                      Cancel
+                    </button>
                 </v-layout><br><br>
                 
                 <v-layout justify-center>
@@ -100,6 +117,8 @@
   Vue.component('downloadCsv', JsonCSV)
   export default {
     data: () => ({
+      canEditSession:false,
+      sessionsAllowed:Number,
       dialogDelete: false,
       search: '',
       loading: false,
@@ -160,11 +179,75 @@
             this.$router.push('/')
         }
         this.initialize()
+        this.getSessionsAllowed()
     },
     beforeDestroy: function(){
         document.getElementById("preloader-block").style.display = "none";
     },
     methods: {
+      async submitSession(){
+        try {
+                const data = {max_session_allow:this. sessionsAllowed};
+                this.loading = true;
+                let response = await quickRequest("/sessionallowedUpdate", "POST", data);
+                if ("error" in response) {
+                Swal.fire({
+                    type: "error",
+                    icon: "error",
+                    title: "Error",
+                    text: response.error,
+                });
+                } else if (response.msg) {
+                Swal.fire({
+                    type: "success",
+                    icon: "success",
+                    title: "Message",
+                    text: response.msg,
+                });
+                if(response.record){
+                    console.log(response.record)
+                }
+                this.loading = false;
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                type: "error",
+                title: "Error Fetching Information",
+                text: "Could not update through the server.",
+                });
+            } finally {
+                this.loading = false;
+            }
+      },
+      enableSessionEdit(){
+        this.canEditSession=true
+      },
+      disableSessionEdit(){
+        this.canEditSession=false
+      },
+      async getSessionsAllowed(){
+         try {
+              let response = await quickRequest("/getSessionAllowed", "GET",{});
+              if ("error" in response) {
+              Swal.fire({
+                  type: "error",
+                  icon: "error",
+                  title: "Error",
+                  text: response.error,
+              });
+              }else if(response.sess){
+                  this.sessionsAllowed=response.sess[0].max_session_allow
+              }
+          } catch (e) {
+              console.log(e)
+              Swal.fire({
+              type: "error",
+              title: "Error Fetching Information",
+              text: "Error occured",
+              });
+          }
+      },
       gotToCreateUser(){
         this.$router.push("/create_User");
       },
@@ -242,6 +325,24 @@
                         title: "Message",
                         text: response1.msg,
                     });
+                    let response2 = await quickRequest("/deleteUserSession", "POST",{id:userDetails.id});
+                    if ("error" in response2) {
+                      this.loading=false
+                    Swal.fire({
+                        type: "error",
+                        icon: "error",
+                        title: "Error",
+                        text: response2.error,
+                    });
+                    }else if (response2.msg) {
+                      this.loading=false
+                      Swal.fire({
+                          type: "success",
+                          icon: "success",
+                          title: "Message",
+                          text: response2.msg,
+                      });
+                    }
                     this.initialize()
 
                 }
