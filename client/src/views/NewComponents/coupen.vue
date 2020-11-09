@@ -40,7 +40,7 @@
                                     <v-dialog
                                       v-model="dialog"
                                       max-width="500px"
-                                    >
+                                    ><br><br><br><br><br>
                                       <v-card>
                                         <v-card-title>
                                           <span class="headline">Add new coupen</span>
@@ -140,6 +140,7 @@
                                       </v-card>
                                     </v-dialog>
                             <v-dialog v-model="dialogDelete" max-width="500px">
+                            <br><br><br><br><br>
                             <v-card>
                                 <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
                                 <v-card-actions>
@@ -152,6 +153,7 @@
                             </v-dialog>
 
                             <v-dialog v-model="dialogPromo" max-width="500px">
+                            <br><br><br><br><br>
                             <v-card style="padding:20px">
                                   <h6>Promocodes</h6> 
                                   <v-text-field

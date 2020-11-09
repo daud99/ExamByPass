@@ -19,7 +19,7 @@
                 </div>
 
                 <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-                    <li class="nav-item pointer">
+                    <li v-if="(_self['auth/getUser'].roles!='admin')" class="nav-item pointer">
                         <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
                                 <router-link :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link>
                             </strong></h6>
@@ -27,7 +27,7 @@
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <li class="nav-item pointer">
+                    <li v-if="(_self['auth/getUser'].roles!='admin')" class="nav-item pointer">
                         <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
                                 <router-link :to="{path: '/about'}" class="nav-item">About</router-link>
                             </strong></h6>
@@ -35,7 +35,7 @@
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <li class="nav-item pointer">
+                    <li v-if="(_self['auth/getUser'].roles!='admin')" class="nav-item pointer">
                         <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
                                 <router-link :to="{path: '/faq'}" class="nav-item">FAQS</router-link>
                             </strong></h6>
