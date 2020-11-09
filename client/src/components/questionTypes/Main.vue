@@ -16,10 +16,14 @@
     <div v-else-if="questions[indexVar].type === 'HOT_AREA'">
         <HotArea :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
     </div>
-    <v-btn v-if="this.testlet.length !==0" color="primary" @click="this.openDialog" large>
-        CASE STUDY
-    </v-btn>
-    <Footer :counter='this.counterL' :totalQuestions='this.totalQuestions' :obtainScore="this.obtainScore" />
+    <div style="margin-bottom:100px">
+        <v-btn v-if="this.testlet.length !==0" color="primary" @click="this.openDialog" large>
+            CASE STUDY
+        </v-btn>
+    </div>
+    <div>
+        <Footer :counter='this.counterL' :totalQuestions='this.totalQuestions' :obtainScore="this.obtainScore" />
+    </div>
     <v-row justify="center">
         <v-dialog v-model="caseStudyDialog" width="600px">
 
@@ -109,6 +113,7 @@ export default {
             toForward: true,
             obtainScore: 0,
             correctCount: 0,
+            random: Number,
             localKeys: ["examId", "selectedCheck", "selectedRandomAnswer", "candidateName", "selectedTab", "structureEntryQuestionn", "condition"]
         };
     },
@@ -128,7 +133,7 @@ export default {
         EventBus.$on('save', () => {
             console.log("i am bus")
             this.deleteExamsession(this.examId, true)
-            this.saveSession()
+            this.saveSession(true)
 
         });
     },
@@ -178,6 +183,7 @@ export default {
         this.selectedTab = JSON.parse(localStorage.getItem("selectedTab"));
         this.structureEntryQuestionn = JSON.parse(localStorage.getItem("structureEntryQuestionn"));
         this.condition = JSON.parse(localStorage.getItem("condition"));
+        this.random = JSON.parse(localStorage.getItem("random"));
         console.log("shuffle q", this.selectedRandomQuestion[0])
         if (this.selectedRandomQuestion[0] === 'Question order') {
             console.log("shuffle q", this.selectedRandomQuestion[0])
@@ -242,7 +248,7 @@ export default {
             let response = await quickRequest("/updateSessionStatus", "PUT", {}, {}, id);
 
         },
-        saveSession() {
+        saveSession(condition) {
             this.deleteExamsession()
             for (let index1 = 0; index1 < this.wrongQuestion.length; index1++) {
                 this.wrongQuestion[index1].condition = 'false'
@@ -290,7 +296,7 @@ export default {
             let cQuestions = [...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
             console.log(cQuestions)
             let id = 100
-            this.examSession(id, cQuestions)
+            this.examSession(id, cQuestions, condition)
         },
         deleteExamsession(id, condition) {
 
@@ -375,7 +381,7 @@ export default {
                 });
             }
         },
-        async examSession(IdOfUser, combinedQuestions) {
+        async examSession(IdOfUser, combinedQuestions, condition) {
             console.log("save", combinedQuestions)
             try {
                 const data = {
@@ -394,6 +400,13 @@ export default {
                 }
                 if (response) {
                     console.log(response)
+                    if (condition) {
+                        Swal.fire({
+                            type: "success",
+                            title: "Session Saved",
+                            text: "Your Session Saved Successfully",
+                        });
+                    }
                 }
             } catch (e) {
                 console.log(e)
@@ -421,9 +434,9 @@ export default {
                                 this.questions = this.questions.concat(resp.data)
 
                                 if (this.allowShuffleQuestion) {
-                                    console.log("i am random", this.allowShuffleQuestion)
+
                                     let answerShuffle = this.questions.sort(() => {
-                                        return 0.5 - Math.random();
+                                        return 0.5 - this.random;
                                     });
 
                                 }
@@ -444,10 +457,15 @@ export default {
 
                                 this.questions = this.questions.concat(resp.data)
                                 if (this.allowShuffleQuestion) {
-                                    console.log("i am random", this.allowShuffleQuestion)
-                                    let answerShuffle = this.questions.sort(() => {
-                                        return 0.5 - Math.random();
-                                    });
+
+                                    let array1 = [1, 2, 3, 4, 5, 6]
+                                    let count = 0
+
+                                    for (let i = this.questions.length - 1; i > 0; i--) {
+                                        let j = Math.floor(this.random * (i + 1));
+
+                                        [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                                    }
 
                                 }
                                 this.questions.pop()
@@ -614,8 +632,11 @@ export default {
         openDialogOnEntry() {
             if (this.testlet.length !== 0) {
                 const result = this.testlet.filter(testlet => testlet.id === this.questions[this.indexVar].TestletId);
-                this.questionTestlet = result
-                this.caseStudyDialog = true
+                console.log("result is cs", result)
+                if (result.length !== 0) {
+                    this.questionTestlet = result
+                    this.caseStudyDialog = true
+                }
             }
         }
 

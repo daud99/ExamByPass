@@ -6,7 +6,7 @@ async saveSessionExam(req,res, next) {
         let userIdd = req.body.userId
         
         for (let index = 0; index < req.body.record.length; index++) {
-            console.log("record on save is coming",req.body.record[index])
+        
             await ExamUserSession.create({
                 TestletId: req.body.record[index].TestletId,
                 allow_shuffle_answers: req.body.record[index].allow_shuffle_answers,
@@ -31,6 +31,7 @@ async saveSessionExam(req,res, next) {
                 totalQuestions: req.body.record[index].totalQuestions,
                 candidateName: req.body.record[index].candidateName,
                 selectedRandomAnswer: req.body.record[index].selectedRandomAnswer,
+                 selectedRandomQuestion: req.body.record[index].selectedRandomQuestion,
                 selectedTab: req.body.record[index].selectedTab,
                 obtainScore: req.body.record[index].obtainScore,
                 
