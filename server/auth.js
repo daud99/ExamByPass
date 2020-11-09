@@ -447,7 +447,7 @@ module.exports = new class {
       var template = fs.readFileSync("emails/notification.htm", 'utf-8');
 
       var emailHTML = ejs.render(template, {
-        siteURL: `${SiteConfig.url}:${SiteConfig.port}/verify-password?token=${user.verificationToken}`,
+        siteURL: `${SiteConfig.url}:${SiteConfig.port}/verify-password/${user.verificationToken}`,
         action: 'To verify account, click the following link:',
         btnText: 'Account Verification',
         message: 'If you do not signed up on our site,you can ignore and delete this email.'

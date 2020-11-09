@@ -39,6 +39,8 @@ import CreateProducts from './views/NewComponents/createProduct.vue';
 import ViewProducts from './views/NewComponents/products.vue';
 import ViewInvoices from './views/NewComponents/invoices.vue';
 import ViewSubscription from './views/NewComponents/subscriptions.vue';
+import ViewCoupon from './views/NewComponents/coupen.vue';
+import verifyTokenEmail from './views/NewComponents/verifyEmailS.vue';
 
 import CreateUser from './views/NewComponents/createUser.vue';
 import UpdateUserByadmin from './views/NewComponents/editUserByAdmin.vue'
@@ -182,6 +184,23 @@ export default new Router({
         footer: DashboardFooter,
       },
       beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/coupons",
+      name: "coupon",
+      components: {
+        header: DashboardHeader,
+        default: ViewCoupon,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/verify-password/:token",
+      name: "verifyEmailToken",
+      components: {
+        default: verifyTokenEmail,
+      },
     },
     {
       path: "/subscriptions",

@@ -216,12 +216,13 @@ export default {
         }
       } catch (e) {
         // console.log("error below");
-        // console.log(e);
+        console.log(e);
         Swal.fire({
           type: "error",
           title: "Error Fetching Information",
           text: "Could not save user through the server.",
         });
+        this.loading = false;
       }
     },
   },

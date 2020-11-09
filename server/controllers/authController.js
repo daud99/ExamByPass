@@ -96,6 +96,7 @@ module.exports = new class {
         }
     }
     async saveUser(req,res, next) {
+        console.log(req.body)
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -306,6 +307,40 @@ module.exports = new class {
         }
     }
     
+    async verifyFromEmailUser(req,res, next) {
+        console.log(req.body)
+        try {
+            const user = await User.findOne({
+                where: {verification_token: req.body.token}
+            });
+            console.log(user)
+            if(user) {
+                const updateUser = await user.update({
+                    emailVerified: req.body.verify
+                  });
+                  res.send({
+                    data: {
+                        msg: "User verified successfully",
+                        record: updateUser
+                    }
+                }) 
+            } else {
+                res.send({
+                    data: {
+                        msg: "User doesn't exist"
+                    }
+                })
+            }
+        }
+        catch(e) {
+            console.log("error");
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
     async updateUser(req,res, next) {
         try {
             const errors = validationResult(req);

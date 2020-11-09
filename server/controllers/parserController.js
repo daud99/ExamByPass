@@ -24,8 +24,9 @@ module.exports = new (class {
       }
 
       var data = new FormData(this);
+      console.log(req.body)
      data.append("file", fs.createReadStream(req.file.path));
-      data.append("user_id", 1);
+      data.append("user_id", req.body.userId);
     
     
      

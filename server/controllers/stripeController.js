@@ -437,6 +437,23 @@ module.exports = {
             });
         }
     },
+    async getAllCoupens(req,res, next) {
+        try {
+            const coupons = await Coupon.findAll({ include:[{all:true}]});
+            res.send({
+                data: {
+                    coupons
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
     async createCoupon(req, res, next) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -460,11 +477,13 @@ module.exports = {
             if(req.body.duration_in_months) obj["duration_in_months"] = req.body.duration_in_months;
             if(req.body.max_redemptions) obj["max_redemptions"] = req.body.max_redemptions;
             if(req.body.redeem_by) obj["redeem_by"] =  Number(new Date(req.body.redeem_by).getTime().toString().slice(0, 10));
-            await stripe.coupons.create(obj);
-            const coupon = await req.user.create(obj);
+            const coupend=await stripe.coupons.create(obj);
+            obj['id']=coupend.id
+            const coupon = await Coupon.create(obj);
             res.send({
                 data: {
-                    coupon
+                    coupon,
+                    msg:'Coupen created successfuly'
                 }
             });
         }
@@ -547,7 +566,8 @@ module.exports = {
            
             res.send({
                 data: {
-                    promotionCode
+                    promotionCode,
+                    msg:'Promocode added successfuly'
                 }
             });
         }
@@ -585,7 +605,8 @@ module.exports = {
 
             res.send({
                 data: {
-                    promotionCode: promo
+                    promotionCode: promo,
+                    msg:'Successfuly Updated'
                 }
             });
         }
