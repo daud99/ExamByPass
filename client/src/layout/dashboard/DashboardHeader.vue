@@ -91,13 +91,13 @@
 
             &nbsp; &nbsp; &nbsp;
             <li v-if="!_self['auth/isAuthenticated']" class="nav-item">
-                <base-button tag="a" @click="
+                <b-button variant="outline-primary" tag="a" @click="
                       () => {
                         this.$router.push({ name: 'login' });
                       }
                     " class="mb-3 mb-sm-0" icon="fa fa-sign-in">
                     Login
-                </base-button>
+                </b-button>
             </li>&nbsp; &nbsp; &nbsp;
 
             <li v-if="_self['auth/isAuthenticated']" class="nav-item">

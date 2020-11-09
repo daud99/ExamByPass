@@ -86,17 +86,17 @@
                         <td>{{ question.id }}</td>
                         <td>{{ question.type }}</td>
                         <td v-html="question.content"></td>
-                        <td v-if="question.condition === 'true' ">
+                        <td v-if="question.conditionOf === 'true' || question.condition ==='true' ">
                             <v-chip class="ma-2" color="green" label text-color="white" v-on:click="getDetails(question)">
                                 Correct
                             </v-chip>
                         </td>
-                        <td v-else-if="question.condition === 'false'">
+                        <td v-else-if="question.conditionOf === 'false' || question.condition ==='false'  ">
                             <v-chip class="ma-2" color="red" label text-color="white" v-on:click="getDetails(question)">
                                 Incorrect
                             </v-chip>
                         </td>
-                        <td v-else-if="question.condition === 'unanswered'">
+                        <td v-else-if="question.conditionOf === 'unanswered' || question.condition ==='unanswered' ">
                             <v-chip class="ma-2" color="yellow" label text-color="white" v-on:click="getDetails(question)">
                                 Unanswered
                             </v-chip>
@@ -116,6 +116,10 @@
 <script>
 import DetailsDialog from './DetailsDialog'
 import axios from 'axios'
+import {
+    quickRequest
+} from "../../../common/misc.js"
+import Swal from "sweetalert2";
 export default {
     components: {
         DetailsDialog,
@@ -207,54 +211,117 @@ export default {
         }
 
     },
+    beforeDestroy() {
+        //window.removeEventListener('beforeunload', this.warning)
+    },
 
     created() {
 
-        this.correctQuestions = this.$route.params.correctQuestions
-        this.wrongQuestions = this.$route.params.wrongQuestions
-        this.unansweredQuestion = this.$route.params.unansweredQuestion
-        this.totalQuestionsCount = this.$route.params.totalQuestions
-        this.candidateName = this.$route.params.candidateName
-
-        let score = 1000 / this.totalQuestionsCount
-        let int_part = Math.trunc(score); // returns 3
-        let float_part = Number((score - int_part).toFixed(2));
-        let ceilScore = Math.ceil(score)
-        let floorScore = Math.floor(score)
-        if (float_part > .5) {
-
-            this.obtainScore = ceilScore * this.correctQuestions.length
-
-        } else if (float_part <= .5) {
-
-            this.obtainScore = floorScore * this.correctQuestions.length
-        }
-        if (this.obtainScore < 800) {
-            this.result = false
+        console.log(this.$route.params.stop)
+        if (this.$route.params.stop) {
+            this.correctQuestions = this.$route.params.correctQuestions
+            this.wrongQuestions = this.$route.params.wrongQuestions
+            this.unansweredQuestion = this.$route.params.unansweredQuestion
+            this.totalQuestionsCount = this.$route.params.totalQuestions
+            this.candidateName = this.$route.params.candidateName
+            this.evaluate()
         } else {
-            this.result = true
+            this.getExamSession()
+            //  window.addEventListener('beforeunload', this.warning)
         }
 
-        // this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
+        // console.log("iam eval", this.correctQuestions, this.wrongQuestions, this.$route.params.correctQuestions, this.$route.params.wrongQuestions)
 
-        if (this.filter[0] === 'Correct Answers') {
-            this.totalQuestions = this.correctQuestions
-        }
-        if (this.filter[0] === 'Incorrect Answers') {
-            this.totalQuestions = this.wrongQuestions
-        }
-
-        if (this.filter[0] === 'Incorrect Answers' && this.filter[1] === 'Correct Answers' || this.filter[1] === 'Incorrect Answers' && this.filter[0] === 'Correct Answers') {
-
-            this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
-        }
-        if (this.filter[0] === 'Unanswered Questions') {
-            this.totalQuestions = this.unansweredQuestion
-
-        }
+        //this.updateSessionStatus()
 
     },
     methods: {
+
+        async getExamSession() {
+            let user_id = 100
+
+            let examIdd = JSON.parse(localStorage.getItem("examId"));
+
+            // console.log("id is", this.examId, this.$route.params.examId)
+            try {
+                let response = await quickRequest("/getExamsession", "GET", {}, user_id, examIdd);
+                console.log("response", response)
+                if ("error" in response) {
+                    Swal.fire({
+                        type: "error",
+                        icon: "error",
+                        title: "Error",
+                        text: response.error,
+                    });
+                }
+                if (response.examSessions.length > 0) {
+
+                    // this.examSessionLength = response.examSessions.length
+                    console.log(response.examSessions[0].indexVar)
+                    if (response.examSessions.length > 0) {
+
+                        this.candidateName = response.examSessions[0].candidateName
+                        this.totalQuestionsCount = response.examSessions[0].totalQuestions
+                        for (let indexs = 0; indexs < response.examSessions.length; indexs++) {
+                            if (response.examSessions[indexs].conditionOf == 'unanswered') {
+                                this.unansweredQuestion.push(response.examSessions[indexs])
+                            } else if (response.examSessions[indexs].conditionOf == 'true') {
+                                this.correctQuestions.push(response.examSessions[indexs])
+                            } else if (response.examSessions[indexs].conditionOf == 'false') {
+                                this.wrongQuestions.push(response.examSessions[indexs])
+                            }
+                        }
+                        this.evaluate()
+                    }
+
+                }
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                    type: "error",
+                    title: "Error Occured",
+                    text: "Error occured while retriving session",
+                });
+            }
+        },
+        evaluate() {
+            let score = 1000 / this.totalQuestionsCount
+            let int_part = Math.trunc(score); // returns 3
+            let float_part = Number((score - int_part).toFixed(2));
+            let ceilScore = Math.ceil(score)
+            let floorScore = Math.floor(score)
+            if (float_part > .5) {
+
+                this.obtainScore = ceilScore * this.correctQuestions.length
+
+            } else if (float_part <= .5) {
+
+                this.obtainScore = floorScore * this.correctQuestions.length
+            }
+            if (this.obtainScore < 800) {
+                this.result = false
+            } else {
+                this.result = true
+            }
+
+            // this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
+
+            if (this.filter[0] === 'Correct Answers') {
+                this.totalQuestions = this.correctQuestions
+            }
+            if (this.filter[0] === 'Incorrect Answers') {
+                this.totalQuestions = this.wrongQuestions
+            }
+
+            if (this.filter[0] === 'Incorrect Answers' && this.filter[1] === 'Correct Answers' || this.filter[1] === 'Incorrect Answers' && this.filter[0] === 'Correct Answers') {
+
+                this.totalQuestions = this.correctQuestions.concat(this.wrongQuestions)
+            }
+            if (this.filter[0] === 'Unanswered Questions') {
+                this.totalQuestions = this.unansweredQuestion
+
+            }
+        },
         getDetails(question) {
 
             this.sendQuestion = question
@@ -265,10 +332,10 @@ export default {
             this.clickme = false
         },
         handleChange: function (e) {
-            this.correctQuestions = this.$route.params.correctQuestions
-            this.wrongQuestions = this.$route.params.wrongQuestions
-            this.unansweredQuestion = this.$route.params.unansweredQuestion
-            this.totalQuestionsCount = this.$route.params.totalQuestions
+            // this.correctQuestions = this.$route.params.correctQuestions
+            // this.wrongQuestions = this.$route.params.wrongQuestions
+            // this.unansweredQuestion = this.$route.params.unansweredQuestion
+            // this.totalQuestionsCount = this.$route.params.totalQuestions
 
             if (this.filter[0] === 'Correct Answers') {
                 this.totalQuestions = this.correctQuestions

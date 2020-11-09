@@ -12,14 +12,14 @@
         <b-collapse id="nav-collapse" is-nav>
             <b-navbar-nav class="ml-auto">
                 <b-nav-item href="#">
-                    <router-link class="nav-item nav-link " :to="{path: '/contactUs'}">
+                    <a class="nav-item nav-link " @click="showDeleted()">
 
                         <h6>
                             <v-icon right>
                                 mdi-delete-variant
                             </v-icon>SHOW DELETED
                         </h6>
-                    </router-link>
+                    </a>
                 </b-nav-item>
                 <b-nav-item>
                     <router-link class="nav-item nav-link" :to="{path: '/about'}">
@@ -45,7 +45,7 @@
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
-
+import EventBus from '../../Event/eventBus';
 export default {
     components: {
         BaseNav,
@@ -65,6 +65,9 @@ export default {
         h6() {
             this.scrollToElement();
         },
+        showDeleted() {
+            EventBus.$emit('delete');
+        }
     },
 };
 </script>

@@ -22,10 +22,18 @@
     </v-row>
     <v-row>
         <v-col v-show="showAnswer" v-if="this.selectedTab === 0 || this.detailsDialog===true ">
-            <v-sheet class="pa-12" :color="this.boxColor">
-                {{ message }}
-                <div v-html="questionn.explanation"></div>
-            </v-sheet>
+            <div v-if="this.answerCondition">
+                <v-sheet class="pa-12" color="green lighten-3">
+                    {{ message }}
+                    <div v-html="questionn.explanation"></div>
+                </v-sheet>
+            </div>
+            <div v-else-if="!this.answerCondition">
+                <v-sheet class="pa-12" color="red lighten-3">
+                    {{ message }}
+                    <div v-html="questionn.explanation"></div>
+                </v-sheet>
+            </div>
         </v-col>
     </v-row>
 
@@ -42,7 +50,8 @@ export default {
         questionn: Object,
         allowShuffleAnswer: Boolean,
         detailsDialog: Boolean,
-        selectedTab: Number
+        selectedTab: Number,
+
     },
     components: {
         Footer
@@ -50,7 +59,7 @@ export default {
     data: () => {
         return {
             showAnswer: false,
-
+            answerCondition: false,
             answers: [],
             boxColor: "",
             correctAnswers: [],
@@ -129,6 +138,7 @@ export default {
             if (_.isEqual(this.correctAnswers, this.userAnswers)) {
                 this.boxColor = 'green'
                 this.message = "CORRECT ANSWER";
+                this.answerCondition = true
                 if (!this.detailsDialog) {
                     this.$parent.getCorrectQuestion();
                 }
@@ -147,6 +157,7 @@ export default {
                 }
                 this.boxColor = 'red'
                 this.message = "WRONG ANSWER";
+                this.answerCondition = false
             }
         },
         stop() {

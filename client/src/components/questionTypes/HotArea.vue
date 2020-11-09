@@ -24,10 +24,18 @@
     </v-row>
     <v-row>
         <v-col v-show="showAnswer" v-if="this.selectedTab === 0 || this.detailsDialog===true ">
-            <v-sheet class="pa-12" color="red lighten-3">
-                {{ message }}
-                <div class="explanation" v-html="questionn.explanation"></div>
-            </v-sheet>
+            <div v-if="this.answerCondition">
+                <v-sheet class="pa-12" color="green lighten-3">
+                    {{ message }}
+                    <div class="explanation" v-html="questionn.explanation"></div>
+                </v-sheet>
+            </div>
+            <div v-else-if="!this.answerCondition">
+                <v-sheet class="pa-12" color="red lighten-3">
+                    {{ message }}
+                    <div class="explanation" v-html="questionn.explanation"></div>
+                </v-sheet>
+            </div>
         </v-col>
     </v-row>
 </div>
@@ -50,6 +58,7 @@ export default {
         return {
             answers: [],
             answer_area: [],
+            answerCondition: Boolean,
             correctAnswer: [],
             canvas: null,
             showAnswer: false,
@@ -522,11 +531,13 @@ export default {
                     this.$parent.getWrongQuestion();
                 }
                 this.message = "WRONG ANSWER";
+                this.answerCondition = false
             } else {
                 if (!this.detailsDialog) {
                     this.$parent.getCorrectQuestion();
                 }
                 this.message = "CORRECT ANSWER";
+                this.answerCondition = true
             }
             if (this.chosenAnswers.length === 0) {
                 this.$parent.getunansweredQuestion();

@@ -20,9 +20,19 @@
 
         <v-col class="primary lighten-2 py-0 text-center white--text" cols="12" style="font-size:22px">
 
-            <v-chip outlined class="ma-2 " color="white" label style="font-size:18px">
+            <v-chip v-if="this.selectedTab === 0" outlined class="ma-2 " color="white" label style="font-size:18px">
 
                 <strong>Score</strong> : {{this.obtainScore}}/{{this.totalScore}}
+            </v-chip>
+            <v-chip v-else outlined class="ma-2 " color="white" label style="font-size:18px">
+
+                <div id="countdown_timer" class="font-weight-bold headline" v-bind:class="{timer_complete: timer <= 0 }">
+                    <span>{{ hours | two_digits }}</span>
+                    <span>:</span>
+                    <span>{{ minutes | two_digits }}</span>
+                    <span>:</span>
+                    <span>{{ seconds | two_digits }}</span>
+                </div>
             </v-chip>
         </v-col>
 
@@ -34,21 +44,69 @@
 export default {
     props: {
         counter: Number,
-        totalQuestions: Number
+        totalQuestions: Number,
+        obtainScore: Number,
+
     },
     data: () => {
         return {
             // totalQuestions: 50,
             countQuestion: 0,
             totalScore: 800,
-            obtainScore: 0,
-            count: 0
+            interval: Number,
+            timer: Number,
+            count: 0,
+            selectedTab: Number,
+
         }
     },
+    // watch: {
+    //     obtainScore: function () {
+    //         this.obtainScore2 = JSON.parse(localStorage.getItem("obtainScore"));
+    //         console.log(this.obtainScore2)
+    //     }
+    // },
+
+    mounted() {
+        this.interval = setInterval(() => {
+            this.timer--;
+            this.check_timer_completed()
+        }, 1000);
+    },
+    created() {
+        this.selectedTab = JSON.parse(localStorage.getItem("selectedTab"));
+        let examTime = JSON.parse(localStorage.getItem("examTime")) * 60;
+
+        let timer_now = localStorage.getItem('timer_now')
+        if (timer_now > 0) {
+            this.timer = timer_now
+        } else {
+            this.timer = examTime
+        }
+
+        window.addEventListener('beforeunload', this.save_timer)
+    },
     methods: {
-        submit() {},
+
+        check_timer_completed() {
+
+            if (this.timer <= 0) {
+                this.$parent.stop()
+                console.log("second end")
+                clearInterval(this.interval)
+                this.timer = 0
+                this.save_timer()
+            }
+        },
+        save_timer() {
+            localStorage.setItem('timer_now', this.timer)
+            // this.obtainScore2 = JSON.parse(localStorage.getItem("obtainScore"));
+            //     console.log('refresh', thi.obtainScore2)
+
+        },
         nextQuestion() {
-            console.log(this.counter)
+
+            //console.log(this.obtainScore2, this.obtainScore)
             if (this.counter + 1 < this.totalQuestions) {
                 console.log(this.counter + 1, this.totalQuestions)
                 this.$parent.submit();
@@ -60,6 +118,28 @@ export default {
             if (this.counter >= 1) {
                 this.$parent.decrement();
             }
+        }
+    },
+    computed: {
+        seconds() {
+            return Math.trunc(this.timer) % 60;
+        },
+        minutes() {
+            return Math.trunc((this.timer) / 60) % 60;
+        },
+        hours() {
+            return Math.trunc((this.timer) / 60 / 60) % 24;
+        },
+        days() {
+            return Math.trunc((this.timer) / 60 / 60 / 24);
+        }
+    },
+    filters: {
+        two_digits: function (value) {
+            if (value.toString().length <= 1) {
+                return "0" + value.toString();
+            }
+            return value.toString();
         }
     },
 }

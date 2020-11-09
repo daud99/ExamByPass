@@ -22,10 +22,19 @@
     </v-row>
     <v-row>
         <v-col v-show="showAnswer" v-if="this.selectedTab === 0 || this.detailsDialog===true ">
-            <v-sheet class="pa-12" color="red lighten-3">
-                {{ message }}
-                <div v-html="questionn.explanation"></div>
-            </v-sheet>
+            <div v-if="this.answerCondition">
+                <v-sheet class="pa-12" color="green lighten-3">
+                    {{ message }}
+                    <div v-html="questionn.explanation"></div>
+                </v-sheet>
+            </div>
+            <div v-else-if="!this.answerCondition">
+                <v-sheet class="pa-12" color="red lighten-3">
+                    {{ message }}
+                    <div v-html="questionn.explanation"></div>
+                </v-sheet>
+            </div>
+
         </v-col>
     </v-row>
 
@@ -54,7 +63,7 @@ export default {
             correctProp: [],
             wrongProp: [],
             unansweredProp: [],
-
+            answerCondition: Boolean,
             userAnswer: "1",
             message: "",
             styleAfterSubmit: "",
@@ -134,10 +143,13 @@ export default {
             //DOTO AJAX call to get the right answer
             if (this.userAnswer == this.correctAnswer[0].id) {
                 this.message = "CORRECT ANSWER";
+                this.answerCondition = true
+                console.log("i am iff")
                 if (!this.detailsDialog) {
                     this.$parent.getCorrectQuestion();
                 }
             } else {
+                console.log("i am elsee")
                 this.getAnswerElementById(this.userAnswer).styleAfterSubmit =
                     "background-color: red";
                 if (!this.detailsDialog) {
@@ -157,7 +169,7 @@ export default {
                 //     console.log(json)
                 //     this.wrongProp.push(json)
                 // })
-
+                this.answerCondition = false
                 this.message =
                     "WRONG ANSWER: RIGHT ONE: " + this.correctAnswer[0].content;
             }
