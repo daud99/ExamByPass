@@ -17,8 +17,8 @@ async function ignite() {
     db.authenticate().then(() => console.log("connectedd"));
 
     auth.initialize(app);
-    app.use(bodyParser.json({limit: "100mb"}));
-    app.use(bodyParser.urlencoded({limit: "100mb", extended: true, parameterLimit:500000}));
+    app.use(bodyParser.json({limit: "10000mb",extended:true}));
+    app.use(bodyParser.urlencoded({limit: "10000mb", extended: true, parameterLimit:50000000}));
     app.use("/", routes);
 
     // Handle production

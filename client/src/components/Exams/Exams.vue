@@ -313,7 +313,8 @@ export default {
                         this.selected_check = JSON.parse(response.examSessions[0].selectedCheck)
                         this.candidateName = response.examSessions[0].candidateName
                         this.tab = response.examSessions[0].selectedTab
-                        this.dselectedRandomAnswer = JSON.parse(response.examSessions[0].selectedRandomAnswer)
+                        this.selectedRandomAnswer = JSON.parse(response.examSessions[0].selectedRandomAnswer)
+                        this.selectedRandomQuestion = JSON.parse(response.examSessions[0].selectedRandomQuestion)
                         this.counterL = response.examSessions[0].counterL
                         this.totalQuestions = response.examSessions[0].totalQuestions
                         this.isDelete = response.examSessions[0].isDelete
@@ -448,8 +449,8 @@ export default {
             let sendTab = this.examType.filter(st => st.name === this.slectedExamTab)
             this.filterExamType = sendTab
             this.showList = false
+            let random = Math.random()
             localStorage.removeItem("timer_now")
-            // localStorage.removeItem("obtainScore")
 
             localStorage.setItem("examId", JSON.stringify(this.examId));
             localStorage.setItem("examTime", JSON.stringify(this.examTime));
@@ -460,6 +461,9 @@ export default {
             localStorage.setItem("selectedTab", JSON.stringify(this.tab));
             localStorage.setItem("structureEntryQuestionn", JSON.stringify(this.structureEntryQuestionn));
             localStorage.setItem("condition", JSON.stringify(condition));
+            if (!condition) {
+                localStorage.setItem("random", JSON.stringify(random));
+            }
             this.$router.push({
                 name: "main",
                 params: {

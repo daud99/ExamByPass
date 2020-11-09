@@ -17,9 +17,7 @@
             <div v-if="this.detailsDialog===true">
                 <v-btn class="ma-2" tile color="indigo" dark @click="submit">Answer</v-btn>
             </div>
-            <div v-if="!this.detailsDialog">
-                <v-btn class="ma-2" tile color="indigo" dark @click="stop()">stop</v-btn>
-            </div>
+
         </v-col>
     </v-row>
     <v-row>

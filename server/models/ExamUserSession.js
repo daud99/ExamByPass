@@ -32,7 +32,8 @@ const ExamUserSession = db.define('exam_user_session',{
       obtainScore:DataTypes.INTEGER(),
     totalQuestions:DataTypes.INTEGER(),
     candidateName:DataTypes.TEXT,
-    selectedRandomAnswer:DataTypes.TEXT,
+    selectedRandomAnswer: DataTypes.TEXT,
+     selectedRandomQuestion:DataTypes.TEXT,
     selectedTab:DataTypes.INTEGER(111),
     isDelete:DataTypes.BOOLEAN
 },{freezeTableName: true,
