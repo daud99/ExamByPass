@@ -71,6 +71,7 @@ module.exports = new class {
       User.hasMany(Invoice)
       User.hasMany(Coupon)
       User.hasOne(Subscription)
+      // Coupon.belongsTo(User)
       Product.hasOne(Price, { foreignKey: 'productPid' })
       Product.hasMany(Invoice, { foreignKey: 'productPid' })
       Invoice.belongsTo(Product)

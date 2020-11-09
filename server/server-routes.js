@@ -69,6 +69,8 @@ router.post('/api/list-products', [Auth.isAuthenticatedAndAdmmin], StripeControl
 router.post('/api/get-prices', [Auth.isAuthenticatedAndAdmmin], StripeController.getPrices);
 router.post('/api/create-product', [Auth.isAuthenticatedAndAdmmin], Middleware.checkProductPriceInfo(), StripeController.createProduct);
 router.post('/api/update-product', [Auth.isAuthenticatedAndAdmmin], Middleware.checkProductId(), StripeController.updateProduct);
+
+router.get('/api/getAllCoupons',   Middleware.checkCouponInfo(),[Auth.isAuthenticatedAndAdmmin], StripeController.getAllCoupens);
 router.post('/api/create-coupon', [Auth.isAuthenticatedAndAdmmin], Middleware.checkCouponInfo(), StripeController.createCoupon);
 router.post('/api/delete-coupon', [Auth.isAuthenticatedAndAdmmin], Middleware.checkId(), StripeController.deleteCoupon);
 router.post('/api/create-promotion-code', [Auth.isAuthenticatedAndAdmmin], Middleware.checkPromotionCodeInfo(), StripeController.createPromotionCode);

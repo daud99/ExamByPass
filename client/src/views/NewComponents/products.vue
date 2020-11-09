@@ -5,7 +5,7 @@
           <div class="row">
             <div class="col col-lg-12 col-md-12 col-xs-12">
                 <v-layout justify-center>
-                    <h4>All Users</h4>
+                    <h4>All Products</h4>
                 </v-layout><br><br>
                 
                 <v-layout justify-center>

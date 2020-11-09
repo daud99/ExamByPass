@@ -86,6 +86,10 @@
                         <i class="ni ni-single-02"></i>
                         <span>Subscritions</span>
                     </router-link>
+                    <router-link class="dropdown-item" to="/coupons">
+                        <i class="ni ni-single-02"></i>
+                        <span>Coupons</span>
+                    </router-link>
                 </base-dropdown>
             </li>
 
