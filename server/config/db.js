@@ -1,6 +1,8 @@
 
 const Sequelize = require("sequelize");
 
+// server's DB configuration
+
 // module.exports = new Sequelize("exam", "root", "", {
 //   host: "25.34.216.242",
 //   dialect: "mysql",

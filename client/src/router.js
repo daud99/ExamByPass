@@ -33,7 +33,15 @@ import About from './views/NewComponents/about.vue';
 import Faqs from './views/NewComponents/faq.vue';
 import ContactUs from './views/NewComponents/contactUs.vue';
 import ViewMessage from './views/NewComponents/viewAllMessages.vue';
-import ViewUsers from './views/NewComponents/viewAllUsers';
+import ViewUsers from './views/NewComponents/viewAllUsers.vue';
+
+import CreateProducts from './views/NewComponents/createProduct.vue';
+import ViewProducts from './views/NewComponents/products.vue';
+import ViewInvoices from './views/NewComponents/invoices.vue';
+import ViewSubscription from './views/NewComponents/subscriptions.vue';
+
+import CreateUser from './views/NewComponents/createUser.vue';
+import UpdateUserByadmin from './views/NewComponents/editUserByAdmin.vue'
 Vue.use(Router);
 
 export default new Router({
@@ -146,11 +154,72 @@ export default new Router({
       beforeEnter: Guards.isAdmin,
     },
     {
+      path: "/products",
+      name: "product",
+      components: {
+        header: DashboardHeader,
+        default: ViewProducts,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/createProducts",
+      name: "createproduct",
+      components: {
+        header: DashboardHeader,
+        default: CreateProducts,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/invoices",
+      name: "invoice",
+      components: {
+        header: DashboardHeader,
+        default: ViewInvoices,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/subscriptions",
+      name: "subscription",
+      components: {
+        header: DashboardHeader,
+        default: ViewSubscription,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    
+    {
       path: "/users",
       name: "users",
       components: {
         header: DashboardHeader,
         default: ViewUsers,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/create_User",
+      name: "createUser",
+      components: {
+        header: DashboardHeader,
+        default: CreateUser,
+        footer: DashboardFooter,
+      },
+      beforeEnter: Guards.isAdmin,
+    },
+    {
+      path: "/update_User/:id",
+      name: "editUserByAdmin",
+      components: {
+        header: DashboardHeader,
+        default: UpdateUserByadmin,
         footer: DashboardFooter,
       },
       beforeEnter: Guards.isAdmin,

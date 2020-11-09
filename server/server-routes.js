@@ -20,46 +20,66 @@ var csrfProtection = csrf({ cookie: true });
 
 // Auth Routes
 router.get('/login/google', passport.authenticate('google', { scope: ['profile','email'] }));
-router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 router.get('/login/github', passport.authenticate('github', { scope: ['email'] }));
 router.get('/login/google/return', [passport.authenticate('google', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.get('/login/facebook/return', [passport.authenticate('facebook', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.get('/login/github/return', [passport.authenticate('github', { failureRedirect: '/login' })], AuthController.redirectToDashboard);
 router.post('/api/login/logout', [Auth.isAuthenticated], AuthController.logout);
-
 router.post('/api/auth/update-user', [Auth.isAuthenticated],Middleware.checkBasicUserInfo(), AuthController.updateUser);
 router.post('/api/contactUs', Middleware.checkBasicUserInfo(), contactUsController.saveContactUs);
-router.get('/api/getMessages', contactUsController.getAllMessages);
-router.post('/api/deleteMessages', contactUsController.deleteMessages);
-router.get('/api/getUsers', AuthController.getAllusers);
-router.post('/api/deleteUsers', AuthController.deleteUser);
-router.post('/api/archivedUser', AuthController.archiveUser);
+router.get('/api/getSingleUser',[ Auth.isAuthenticated ], AuthController.retrieveUser);
+router.post('/api/auth/update-user-byAdmin', [Auth.isAuthenticated],Middleware.checkBasicUserInfo(), AuthController.adminUpdateUser);
+
 
 router.post('/api/saveExamsession', userExamsessionController.saveSessionExam);
 router.get('/api/getExamsession', userExamsessionController.getSessionExam);
 router.post('/api/deleteExamsession', userExamsessionController.deleteSessionExam);
 
 router.post('/api/auth/get-user', AuthController.getUser);
-router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
+router.post('/api/auth/save-user', [ Auth.isAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
 router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLoginUserInfo(), AuthController.tryLogin);
 router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword);
 router.post('/api/auth/change-password', [Auth.isAuthenticated], Middleware.checkChangePasswordInfo(), AuthController.changePassword);
 router.post('/api/auth/update-password', [Auth.isNotAuthenticated], AuthController.updatePassword);
 
-// DB Routes
-router.get('/syncDB', DbController.syncDB);
 
 // Stripe Routes 
 router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
+router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.createCustomer);
 router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
-router.post('/api/cancel-subscription', [Auth.isAuthenticated], StripeController.cancelSubscription);
-router.post('/webhook', bodyParser.raw({type: 'application/json'}),StripeController.webHook);
+router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
+router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
+router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
 
-// Subscription Management Routes
-router.post('/api/subscription-management/get-subscription-status', [Auth.isAuthenticated], SubscriptionManagementController.getSubscriptionStatus);
+router.get('/api/getInvoices',[Auth.isAuthenticatedAndAdmmin], StripeController.getAllInvoices);
+router.get('/api/getSubscriptions',[Auth.isAuthenticatedAndAdmmin], SubscriptionManagementController.getAllSubscriptions);
+router.get('/api/getSessionAllowed', AuthController.getSessionsAlloweds);
+router.post('/api/sessionallowedUpdate',[Auth.isAuthenticatedAndAdmmin], AuthController.changeAllowedsessions);
+router.post('/api/deleteUserSession',[Auth.isAuthenticatedAndAdmmin], AuthController.deleteUserSession);
 
-// Parser Routes
-router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
+router.post('/webhook', bodyParser.raw({type: 'application/json'}), StripeController.webHook);
+// Admin Panel
+router.get('/api/getMessages', [Auth.isAuthenticatedAndAdmmin], contactUsController.getAllMessages);
+router.post('/api/deleteMessages',[Auth.isAuthenticatedAndAdmmin], contactUsController.deleteMessages);
+router.get('/api/getUsers', [Auth.isAuthenticatedAndAdmmin], AuthController.getAllusers);
+router.post('/api/deleteUsers',[Auth.isAuthenticatedAndAdmmin], AuthController.deleteUser);
+router.post('/api/archivedUser',[Auth.isAuthenticatedAndAdmmin], AuthController.archiveUser);
+router.post('/api/list-products', [Auth.isAuthenticatedAndAdmmin], StripeController.listAllProducts);
+router.post('/api/get-prices', [Auth.isAuthenticatedAndAdmmin], StripeController.getPrices);
+router.post('/api/create-product', [Auth.isAuthenticatedAndAdmmin], Middleware.checkProductPriceInfo(), StripeController.createProduct);
+router.post('/api/update-product', [Auth.isAuthenticatedAndAdmmin], Middleware.checkProductId(), StripeController.updateProduct);
+router.post('/api/create-coupon', [Auth.isAuthenticatedAndAdmmin], Middleware.checkCouponInfo(), StripeController.createCoupon);
+router.post('/api/delete-coupon', [Auth.isAuthenticatedAndAdmmin], Middleware.checkId(), StripeController.deleteCoupon);
+router.post('/api/create-promotion-code', [Auth.isAuthenticatedAndAdmmin], Middleware.checkPromotionCodeInfo(), StripeController.createPromotionCode);
+router.post('/api/archive-promotion-code', [Auth.isAuthenticatedAndAdmmin], Middleware.checkPromoCodeArchiveInfo(), StripeController.archivePromotionCode);
+
+
+
+// Exam 
+router.post('/api/saveExamsession', userExamsessionController.saveSessionExam);
+router.get('/api/getExamsession', userExamsessionController.getSessionExam);
+router.post('/api/deleteExamsession', userExamsessionController.deleteSessionExam);
 //Route for allExams
 router.get("/api/exams", ParserController.getExams);
 //Route for questions
@@ -82,6 +102,28 @@ router.put("/api/delete/:examId", ParserController.deleteExam);
 router.put("/api/recover/:examId", ParserController.recoverExam);
 //Route for updating session status
 router.put("/api/updateSessionStatus", userExamsessionController.updateSessionStatus);
+
+
+
+// DB Routes
+router.get('/syncDB', DbController.syncDB);
+
+// Stripe Routes 
+router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
+router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.createCustomer);
+router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
+router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
+router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
+router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
+router.post('/webhook', bodyParser.raw({type: 'application/json'}), StripeController.webHook);
+
+
+// Subscription Management Routes
+router.post('/api/subscription-management/get-subscription-status', [Auth.isAuthenticated], SubscriptionManagementController.getSubscriptionStatus);
+
+// Parser Routes
+router.post('/api/parser/uploadFile', [upload.single('file')], ParserController.uploadFile);
+
 
 // Send CSRF token for session
 router.get("/api/getcsrftoken", csrfProtection, function (req, res) {

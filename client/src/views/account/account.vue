@@ -19,9 +19,7 @@
                         <SubscriptionComponent/>
                     </v-tab-item>
                     <v-tab-item key="Payments">
-                        <v-card flat>
-                            <v-card-text>Payments</v-card-text>
-                        </v-card>
+                        <PaymentComponent/>
                     </v-tab-item>
                 </v-tabs-items>
             </v-card>
@@ -36,6 +34,7 @@
 import card from '../../components/Card';
 import AccountComponent from './accountComponent';
 import SubscriptionComponent from './subscriptionComponent';
+import PaymentComponent from './paymentComponent';
 import {mapActions, mapGetters} from 'vuex';
 import {quickRequest} from "../../../common/misc";
 
@@ -54,7 +53,8 @@ export default {
   components: {
     card,
     AccountComponent,
-    SubscriptionComponent
+    SubscriptionComponent,
+    PaymentComponent
   },
   computed: {
     ...mapGetters([
