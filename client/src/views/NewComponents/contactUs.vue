@@ -160,6 +160,7 @@ export default {
                 };
                 this.loading = true;
                 let response = await quickRequest("/contactUs", "POST", data);
+                console.log(response)
                 if ("error" in response) {
                 Swal.fire({
                     type: "error",

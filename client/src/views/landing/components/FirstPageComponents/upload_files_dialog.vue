@@ -69,6 +69,10 @@
 
 <script>
 import axios from "axios";
+import {
+    mapActions,
+    mapGetters
+} from 'vuex';
 export default {
     data: () => ({
         dialog: false,
@@ -76,7 +80,10 @@ export default {
         files_check: false,
         show_alert: false,
     }),
-
+    computed: {
+        ...mapGetters(["auth/getUser"]),
+        ...mapGetters(["auth/isAuthenticated"]),
+    },
     methods: {
         submitFiles() {
             this.show_alert = false
@@ -85,7 +92,8 @@ export default {
 
             if (this.files) {
                 formData.append("file", this.files);
-
+                formData.append("userId",this["auth/getUser"].id)
+                
                 console.log(formData.getAll("file"));
                 console.log(this.files, formData);
                 axios

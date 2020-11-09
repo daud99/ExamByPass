@@ -87,6 +87,10 @@
                                 <i class="ni ni-single-02"></i>
                                 <span>Subscritions</span>
                             </router-link>
+                            <router-link class="dropdown-item" to="/coupons">
+                                <i class="ni ni-single-02"></i>
+                                <span>Coupons</span>
+                            </router-link>
                         </base-dropdown>
                     </li>
 
@@ -168,7 +172,6 @@ export default {
         ...mapGetters(["auth/getUser"]),
         ...mapGetters(["auth/isAuthenticated"])
     },
-
     methods: {
         ...mapActions([
             'auth/setUser'
@@ -188,6 +191,7 @@ export default {
         async logout() {
             try {
                 let response = await quickRequest("/login/logout", "POST", {});
+                let response2 = await quickRequest("/deleteUserSession", "POST",{id:this["auth/getUser"].id});
                 this['auth/setUser']({});
                 localStorage.clear();
                 this.$router.push("login");

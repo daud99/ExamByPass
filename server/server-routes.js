@@ -35,9 +35,10 @@ router.post('/api/auth/update-user-byAdmin', [Auth.isAuthenticated],Middleware.c
 router.post('/api/saveExamsession', userExamsessionController.saveSessionExam);
 router.get('/api/getExamsession', userExamsessionController.getSessionExam);
 router.post('/api/deleteExamsession', userExamsessionController.deleteSessionExam);
+router.post('/api/verifyWithEmailUser', AuthController.verifyFromEmailUser);
 
 router.post('/api/auth/get-user', AuthController.getUser);
-router.post('/api/auth/save-user', [ Auth.isAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
+router.post('/api/auth/save-user', [ Auth.isNotAuthenticated ], Middleware.checkNewUserInfo() , AuthController.saveUser);
 router.post('/api/auth/log-in', [Auth.isNotAuthenticated], Middleware.checkLoginUserInfo(), AuthController.tryLogin);
 router.post('/api/auth/recover-password', [Auth.isNotAuthenticated], Middleware.forgetEmailInfo(), AuthController.recoverPassword);
 router.post('/api/auth/change-password', [Auth.isAuthenticated], Middleware.checkChangePasswordInfo(), AuthController.changePassword);

@@ -1,5 +1,10 @@
 const { validationResult } = require('express-validator');
 const Contact = require("../models/contact");
+const EmailConfig = require("../config/email")
+var nodemailer = require("nodemailer")
+const fs = require('fs')
+var ejs = require('ejs')
+const SiteConfig = require("../config/site")
 module.exports = new class {
 async saveContactUs(req,res, next) {
     try {
@@ -20,11 +25,45 @@ async saveContactUs(req,res, next) {
             problemType: req.body.problemType,
             message: req.body.message
         })
-        res.send({
-            data: {
-                msg: "Message Sent Successfully!"
-            }
-        })
+        var emailHTML = `
+            <div>
+                <h4>First Name</h4>:<p>${req.body.firstName}</p>
+                <h4>Last Name</h4>:<p>${req.body.lastName}</p>
+                <h4>Email</h4>:<p>${req.body.email}</p>
+                <h4>Problem Type</h4>:<p>${req.body.problemType}</p>
+                <h4>Message</h4>:<p>${req.body.message}</p>
+            </div>
+            `
+        try {
+      
+            let transporter = nodemailer.createTransport({
+                host: EmailConfig.host,
+                port: EmailConfig.port,
+                secure: EmailConfig.secure,
+                auth: {
+                    user: EmailConfig.username,
+                    pass: EmailConfig.password
+                }
+            });
+            
+            // send mail with defined transport object
+            let info = await transporter.sendMail({
+                to: req.body.email, // list of receivers
+                subject: "Message Recieved", // Subject line
+                html: emailHTML // html body
+            });
+            res.send({
+                data: {
+                    msg: "Message Sent Successfully! and Emailed to you"
+                }
+            })  
+        } catch(e) {
+  
+            return false;
+  
+        }
+
+        
     }
     catch(e) {
         console.log(e)
