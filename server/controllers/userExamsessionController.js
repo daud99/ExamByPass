@@ -3,8 +3,10 @@ const ExamUserSession = require("../models/ExamUserSession");
 module.exports = new class {
 async saveSessionExam(req,res, next) {
     try {
-        let userIdd=req.body.userId
+        let userIdd = req.body.userId
+        
         for (let index = 0; index < req.body.record.length; index++) {
+            console.log("record on save is coming",req.body.record[index])
             await ExamUserSession.create({
                 TestletId: req.body.record[index].TestletId,
                 allow_shuffle_answers: req.body.record[index].allow_shuffle_answers,
@@ -25,10 +27,12 @@ async saveSessionExam(req,res, next) {
                 examId: req.body.record[index].examId,
                 selectedCheck: req.body.record[index].selectedCheck,
                 indexVar: req.body.record[index].indexVar,
-
+                counterL: req.body.record[index].counterL,
+                totalQuestions: req.body.record[index].totalQuestions,
                 candidateName: req.body.record[index].candidateName,
                 selectedRandomAnswer: req.body.record[index].selectedRandomAnswer,
                 selectedTab: req.body.record[index].selectedTab,
+                obtainScore: req.body.record[index].obtainScore,
                 
             })
         }
@@ -49,11 +53,13 @@ async saveSessionExam(req,res, next) {
     }
     
     async getSessionExam(req,res, next) {
-        console.log(req.query.paramS)
+       
         try {
             const examSessions = await ExamUserSession.findAll({
                 where: {
-                    userId: req.query.paramS
+                    userId: req.query.paramS,
+                    examLibraryId:req.query.examId
+                 
                 }
             });
             res.send({
@@ -75,10 +81,11 @@ async saveSessionExam(req,res, next) {
         try {
             const messages = await ExamUserSession.destroy({
                 where: {
-                    userId: req.body.id
+                    userId: req.body.id,
+                    examLibraryId:req.query.examId
                 }
             });
-            console.log(messages)
+         
             res.send({
                 data: {
                     msg: "Session deleted Successfully!",
@@ -94,4 +101,31 @@ async saveSessionExam(req,res, next) {
             });
         }
     }
+    async updateSessionStatus(req, res, next) {
+        try {
+          const errors = validationResult(req);
+          if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+          }
+         
+         
+          ExamUserSession.update({ isDelete: 1 },{
+            where: {
+                examLibraryId:req.query.examId
+            }
+          }).then(
+            () => {
+              //console.log(answer)
+    
+              res.send("Recovered");
+            }
+          );
+        } catch (e) {
+          console.log(e);
+          res.status(400).send({
+            status: 400,
+            error: "Bad Request",
+          });
+        }
+      }
 }

@@ -13,7 +13,7 @@ const { Op } = require("sequelize");
 const Sequelize = require("sequelize");
 module.exports = new (class {
   async uploadFile(req, res, next) {
-    console.log("i am here", req.file);
+  
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -27,7 +27,7 @@ module.exports = new (class {
      data.append("file", fs.createReadStream(req.file.path));
       data.append("user_id", 1);
     
-      console.log("data is", data);
+    
      
       var response = await ParserClient.performUploadFileRequest({
         method: "POST",
@@ -59,9 +59,9 @@ module.exports = new (class {
      //console.log("hi hello",req.params.structureEntryQuestionn)
       var selectedCheck = req.params.selectedCheck.split(',');
       var structureEntryQuestionn = req.params.structureEntryQuestionn.split(',');
-      console.log("hello world", req.params.structureEntryQuestionn)
+  
      if(req.params.structureEntryQuestionn == 0){
-       console.log("i am if")
+      
       Question.findAndCountAll({ where: { exam_library_id: req.params.examId , type:{[Op.in]: selectedCheck}} }).then(
         (question) => {
           
@@ -91,7 +91,7 @@ module.exports = new (class {
         }
       );
      }else{
-      console.log("i am else")
+
       Question.findAndCountAll({ where: { exam_library_id: req.params.examId , type:{[Op.in]: selectedCheck}, id:{[Op.in]: structureEntryQuestionn}} }).then(
         (question) => {
           
@@ -279,6 +279,58 @@ module.exports = new (class {
           //console.log(answer)
 
           res.send(StructureEntryLink);
+        }
+      );
+    } catch (e) {
+      console.log(e);
+      res.status(400).send({
+        status: 400,
+        error: "Bad Request",
+      });
+    }
+  }
+  async deleteExam(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      
+      ExamLibrary.update({ deleted: true },{
+        where: {
+          id: req.params.examId
+        }
+      }).then(
+        () => {
+          //console.log(answer)
+
+          res.send("Deleted");
+        }
+      );
+    } catch (e) {
+      console.log(e);
+      res.status(400).send({
+        status: 400,
+        error: "Bad Request",
+      });
+    }
+  }
+  async recoverExam(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      
+      ExamLibrary.update({ deleted: false },{
+        where: {
+          id: req.params.examId
+        }
+      }).then(
+        () => {
+          //console.log(answer)
+
+          res.send("Recovered");
         }
       );
     } catch (e) {

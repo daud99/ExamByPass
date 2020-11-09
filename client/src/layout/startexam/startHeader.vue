@@ -1,7 +1,7 @@
 <template>
 <b-navbar toggleable="lg" type="light" style="background-color: #e3f2fd;">
     <b-navbar-brand>
-        <h6>70-762</h6>
+        <h6>{{this.examName}}</h6>
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -38,13 +38,13 @@
                 </router-link>
             </b-nav-item>
             <b-nav-item>
-                <router-link class="nav-item nav-link" :to="{path: '/about'}">
+                <a class="nav-item nav-link" @click="save()">
                     <h6>
                         <v-icon right>
                             mdi-pause
                         </v-icon>PAUSE
                     </h6>
-                </router-link>
+                </a>
             </b-nav-item>
             <b-nav-item>
                 <b-button variant="danger" @click="stop()">STOP</b-button>
@@ -62,11 +62,20 @@ export default {
 
     data: () => ({
         //
+        examName: String
     }),
+    created() {
+        console.log("name is", this.$examName)
+        this.examName = this.$examName
+    },
     methods: {
         stop() {
             console.log(" ia am stop")
             EventBus.$emit('stop');
+        },
+        save() {
+            console.log(" ia am save")
+            EventBus.$emit('save');
         }
     },
 };

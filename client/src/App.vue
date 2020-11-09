@@ -1,10 +1,12 @@
 <template>
 <div>
-
+    <div class="dark-drop" v-show="fullView"></div>
     <router-view name="header"></router-view>
     <v-app>
         <v-main>
+
             <router-view :fullView.sync="fullView" />
+
         </v-main>
     </v-app>
     <router-view name="footer"></router-view>
