@@ -1,136 +1,139 @@
 <template>
 <header class="header-global">
-    <base-nav type="white" effect="light" expand>
-        <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-            <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
-        </router-link>
-
-        <div class="row" slot="content-header" slot-scope="{closeMenu}">
-            <div class="col-6 collapse-brand">
-                <a href="#">
+    <headroom>
+        <header>
+            <base-nav type="white" effect="light" expand>
+                <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
                     <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
-                </a>
-            </div>
-            <div class="col-6 collapse-close">
-                <close-button @click="closeMenu"></close-button>
-            </div>
-        </div>
+                </router-link>
 
-        <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-            <li class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                        <router-link :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link>
-                    </strong></h6>
-            </li>
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            <li class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                        <router-link :to="{path: '/about'}" class="nav-item">About</router-link>
-                    </strong></h6>
-            </li>
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            <li class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                        <router-link :to="{path: '/faq'}" class="nav-item">FAQS</router-link>
-                    </strong></h6>
-            </li>
-            &nbsp;
-            &nbsp;
-            &nbsp;
+                <div class="row" slot="content-header" slot-scope="{closeMenu}">
+                    <div class="col-6 collapse-brand">
+                        <a href="#">
+                            <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
+                        </a>
+                    </div>
+                    <div class="col-6 collapse-close">
+                        <close-button @click="closeMenu"></close-button>
+                    </div>
+                </div>
 
-            <li class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                        <router-link :to="{path: '/pricing'}" class="nav-item">Pricing</router-link>
-                    </strong></h6>
-            </li>
+                <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                    <li class="nav-item pointer">
+                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
+                                <router-link :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link>
+                            </strong></h6>
+                    </li>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <li class="nav-item pointer">
+                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
+                                <router-link :to="{path: '/about'}" class="nav-item">About</router-link>
+                            </strong></h6>
+                    </li>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <li class="nav-item pointer">
+                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
+                                <router-link :to="{path: '/faq'}" class="nav-item">FAQS</router-link>
+                            </strong></h6>
+                    </li>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
 
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            <li v-if="!_self['auth/isAuthenticated']" class="nav-item pointer">
-                <h6 style="color: black; padding-top: 10px" @click="h6">
-                    <strong>EDITOR</strong>
-                </h6>
-            </li>
+                    <li class="nav-item pointer">
+                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
+                                <router-link :to="{path: '/pricing'}" class="nav-item">Pricing</router-link>
+                            </strong></h6>
+                    </li>
 
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <li v-if="!_self['auth/isAuthenticated']" class="nav-item pointer">
+                        <h6 style="color: black; padding-top: 10px" @click="h6">
+                            <strong>EDITOR</strong>
+                        </h6>
+                    </li>
 
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
-                <base-dropdown>
-                    <base-button slot="title" type="secondary" icon="fa fa-user">
-                        Administration
-                    </base-button>
-                    <router-link class="dropdown-item" to="/users">
-                        <i class="ni ni-single-02"></i>
-                        <span>All Users</span>
-                    </router-link>
-                    <router-link class="dropdown-item" to="/messages">
-                        <i class="ni ni-single-02"></i>
-                        <span>Messages</span>
-                    </router-link>
-                    <router-link class="dropdown-item" to="/products">
-                        <i class="ni ni-single-02"></i>
-                        <span>Products</span>
-                    </router-link>
-                    <router-link class="dropdown-item" to="/invoices">
-                        <i class="ni ni-single-02"></i>
-                        <span>Invoices</span>
-                    </router-link>
-                    <router-link class="dropdown-item" to="/subscriptions">
-                        <i class="ni ni-single-02"></i>
-                        <span>Subscritions</span>
-                    </router-link>
-                </base-dropdown>
-            </li>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
+                        <base-dropdown>
+                            <base-button slot="title" type="secondary" icon="fa fa-user">
+                                Administration
+                            </base-button>
+                            <router-link class="dropdown-item" to="/users">
+                                <i class="ni ni-single-02"></i>
+                                <span>All Users</span>
+                            </router-link>
+                            <router-link class="dropdown-item" to="/messages">
+                                <i class="ni ni-single-02"></i>
+                                <span>Messages</span>
+                            </router-link>
+                            <router-link class="dropdown-item" to="/products">
+                                <i class="ni ni-single-02"></i>
+                                <span>Products</span>
+                            </router-link>
+                            <router-link class="dropdown-item" to="/invoices">
+                                <i class="ni ni-single-02"></i>
+                                <span>Invoices</span>
+                            </router-link>
+                            <router-link class="dropdown-item" to="/subscriptions">
+                                <i class="ni ni-single-02"></i>
+                                <span>Subscritions</span>
+                            </router-link>
+                        </base-dropdown>
+                    </li>
 
-            &nbsp; &nbsp; &nbsp;
-            <li v-if="!_self['auth/isAuthenticated']" class="nav-item">
-                <b-button variant="outline-primary" tag="a" @click="
+                    &nbsp; &nbsp; &nbsp;
+                    <li v-if="!_self['auth/isAuthenticated']" class="nav-item">
+                        <b-button variant="outline-primary" tag="a" @click="
                       () => {
                         this.$router.push({ name: 'login' });
                       }
                     " class="mb-3 mb-sm-0" icon="fa fa-sign-in">
-                    Login
-                </b-button>
-            </li>&nbsp; &nbsp; &nbsp;
+                            Login
+                        </b-button>
+                    </li>&nbsp; &nbsp; &nbsp;
 
-            <li v-if="_self['auth/isAuthenticated']" class="nav-item">
-                <base-dropdown>
-                    <base-button slot="title" type="secondary" icon="fa fa-user">
-                        {{
+                    <li v-if="_self['auth/isAuthenticated']" class="nav-item">
+                        <base-dropdown>
+                            <base-button slot="title" type="secondary" icon="fa fa-user">
+                                {{
                           _self["auth/getUser"].email
                           }}
-                    </base-button>
-                    <router-link class="dropdown-item" to="/account">
-                        <i class="ni ni-single-02"></i>
-                        <span>My Account</span>
-                    </router-link>
+                            </base-button>
+                            <router-link class="dropdown-item" to="/account">
+                                <i class="ni ni-single-02"></i>
+                                <span>My Account</span>
+                            </router-link>
 
-                    <!-- <a href="#!" class="dropdown-item">
+                            <!-- <a href="#!" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
                         <span>Settings</span>
                       </a> -->
-                    <a href="#!" class="dropdown-item">
-                        <i class="ni ni-single-copy-04"></i>
-                        <span>My Exams</span>
-                    </a>
+                            <a href="#!" class="dropdown-item">
+                                <i class="ni ni-single-copy-04"></i>
+                                <span>My Exams</span>
+                            </a>
 
-                    <div class="dropdown-divider"></div>
-                    <a href="#!" class="dropdown-item" @click="logout">
-                        <i class="ni ni-user-run"></i>
-                        <span>Logout</span>
-                    </a>
-                </base-dropdown>
-            </li>
+                            <div class="dropdown-divider"></div>
+                            <a href="#!" class="dropdown-item" @click="logout">
+                                <i class="ni ni-user-run"></i>
+                                <span>Logout</span>
+                            </a>
+                        </base-dropdown>
+                    </li>
 
-        </ul>
-    </base-nav>
+                </ul>
+            </base-nav>
+        </header>
+    </headroom>
 </header>
 </template>
 
@@ -138,6 +141,9 @@
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
+import {
+    headroom
+} from 'vue-headroom'
 import {
     quickRequest
 } from "../../../common/misc";
@@ -150,7 +156,8 @@ export default {
     components: {
         BaseNav,
         CloseButton,
-        BaseDropdown
+        BaseDropdown,
+        headroom
     },
     data() {
         return {
