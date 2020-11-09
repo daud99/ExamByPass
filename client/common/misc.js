@@ -1,10 +1,10 @@
 const axios = require('axios')
-    export const quickRequest = async (url, method, body, paramS) => {
+    export const quickRequest = async (url, method, body, paramS,examId) => {
        
         // var csrfToken = document
         //     .querySelector("invisible-config[data-csrf-token]")
         //     .getAttribute("data-csrf-token");
-        
+        console.log("body is", body)
         var response = await axios({
             url: url,
             method: method,
@@ -13,8 +13,10 @@ const axios = require('axios')
                 'Content-Type': 'application/json',
             },
             params:{
-                paramS
-            }
+                paramS,
+                examId
+            },
+           
         });
 
         if (response.status >= 400 && response.status < 600) {

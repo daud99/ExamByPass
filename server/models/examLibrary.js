@@ -30,7 +30,7 @@ const examLibrary = db.define('exam_library',{
     size:DataTypes.DOUBLE,  
     time_limit	:DataTypes.INTEGER,
     type:DataTypes.STRING,
-   
+   deleted:DataTypes.BOOLEAN
 },{freezeTableName: true,
     underscored: true })
 

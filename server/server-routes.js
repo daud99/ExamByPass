@@ -98,6 +98,12 @@ router.get("/api/answers_area/:answer_id", ParserController.getAnswersArea);
 router.get("/api/structureEntry/:examId", ParserController.structureEntry);
 //Route for structure entry Question
 router.get("/api/structureEntryQuestion/:structureId", ParserController.structureEntryQuestion);
+//Route for deleting exam library
+router.put("/api/delete/:examId", ParserController.deleteExam);
+//Route for recover deleted exam library
+router.put("/api/recover/:examId", ParserController.recoverExam);
+//Route for updating session status
+router.put("/api/updateSessionStatus", userExamsessionController.updateSessionStatus);
 
 
 
