@@ -64,7 +64,7 @@
                     &nbsp;
                     <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
                         <base-dropdown>
-                            <base-button slot="title" type="secondary" icon="fa fa-user">
+                            <base-button slot="title" type="transparent">
                                 Administration
                             </base-button>
                             <router-link class="dropdown-item" to="/users">
@@ -121,10 +121,10 @@
                         <i class="ni ni-settings-gear-65"></i>
                         <span>Settings</span>
                       </a> -->
-                            <a href="#!" class="dropdown-item">
+                            <router-link class="dropdown-item" to="/exams">
                                 <i class="ni ni-single-copy-04"></i>
                                 <span>My Exams</span>
-                            </a>
+                            </router-link>
 
                             <div class="dropdown-divider"></div>
                             <a href="#!" class="dropdown-item" @click="logout">

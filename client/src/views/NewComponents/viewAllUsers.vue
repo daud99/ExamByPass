@@ -110,7 +110,7 @@
   import card from '../../components/Card';
   import {mapActions, mapGetters} from 'vuex';
   import Swal from "sweetalert2";
-  import { quickRequest } from "../../../common/misc";
+  import { quickRequest, dateGet } from "../../../common/misc";
   import PageMixin from "../page-mixin";
   import Vue from 'vue'
   import JsonCSV from 'vue-json-csv'
@@ -125,12 +125,11 @@
       json_data: [],
       headers: [
         {
-          text: 'First Name',
+          text: 'Name',
           align: 'start',
           sortable: false,
-          value: 'firstName',
+          value: 'name',
         },
-        { text: 'Last Name', value: 'lastName' },
         { text: 'Email', value: 'email' },
         { text: 'Email Verified', value: 'emailVerified' },
         { text: 'Phone Number', value: 'phoneNumber' },
@@ -267,13 +266,12 @@
                   if(response.users.length>0){
                     for(let index=0; index<response.users.length; index++){
                       userObject.id=response.users[index].id
-                      userObject.firstName=response.users[index].firstName
-                      userObject.lastName=response.users[index].lastName
+                      userObject.name=response.users[index].firstName +  ' ' + response.users[index].lastName
                       userObject.email=response.users[index].email
                       userObject.emailVerified=response.users[index].emailVerified
                       userObject.phoneNumber=response.users[index].phoneNumber
                       userObject.roles=response.users[index].roles
-                      userObject.createdAt=response.users[index].createdAt
+                      userObject.createdAt=dateGet(response.users[index].createdAt)
                       userObject.archieved=response.users[index].archieved
                       userObject.sessions=response.users[index].Sessions.length
                       if(response.users[index].subscription!=null){

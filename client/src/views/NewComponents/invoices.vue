@@ -27,7 +27,7 @@ import {
 } from 'vuex';
 import Swal from "sweetalert2";
 import {
-    quickRequest
+    quickRequest, dateGet
 } from "../../../common/misc";
 import PageMixin from "../page-mixin";
 import Vue from 'vue'
@@ -58,11 +58,11 @@ export default {
                 value: 'userId'
             },
             {
-                text: 'Created At',
+                text: 'Issued',
                 value: 'createdAt'
             },
             {
-                text: 'Updated At',
+                text: 'Last Updated',
                 value: 'updatedAt'
             },
         ],
@@ -111,9 +111,9 @@ export default {
                         for (let index = 0; index < response.invoices.length; index++) {
                             invoiceObject.id = response.invoices[index].id
                             invoiceObject.invoiceId = response.invoices[index].invoiceId
-                            invoiceObject.createdAt = response.invoices[index].createdAt
-                            invoiceObject.updatedAt = response.invoices[index].updatedAt
-                            invoiceObject.total = response.invoices[index].total
+                            invoiceObject.createdAt = dateGet(response.invoices[index].createdAt)
+                            invoiceObject.updatedAt = dateGet(response.invoices[index].updatedAt)
+                            invoiceObject.total = '$'+response.invoices[index].total
                             invoiceObject.userId = response.invoices[index].userId
                             invoiceObject.productName = response.invoices[index].Product.name
                             this.invoiceArray.push(invoiceObject)
