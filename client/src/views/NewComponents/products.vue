@@ -252,6 +252,7 @@
             }else{
               if(response.prices.length>0){
                 for(let index=0; index<response.prices.length; index++){
+                  console.log(productObj.currency=response.prices[index].Price.currency)
                   productObj.pid=response.prices[index].pid
                   productObj.active=response.prices[index].active
                   productObj.createdAt=response.prices[index].createdAt
@@ -259,7 +260,7 @@
                   productObj.name=response.prices[index].name
                   productObj.currency=response.prices[index].Price.currency
                   productObj.interval=response.prices[index].Price.interval
-                  productObj.amount=response.prices[index].Price.amount
+                  productObj.amount='$'+response.prices[index].Price.amount
                   this.productArray.push(productObj)
                   productObj={}
                 }

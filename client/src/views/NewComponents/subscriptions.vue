@@ -36,6 +36,7 @@ import moment from 'moment';
 Vue.component('downloadCsv', JsonCSV)
 export default {
     data: () => ({
+
         search: '',
         loading: false,
         headers: [{
@@ -46,6 +47,7 @@ export default {
                 text: 'Amount',
                 value: 'amount'
             },
+
 
             {
                 text: 'Auto Charge',
@@ -127,6 +129,7 @@ export default {
             // console.log(dat)
             return dat
         },
+
         async initialize() {
             this.subscriptionArray = []
             let subscriptionObject = {}
@@ -152,6 +155,7 @@ export default {
                             subscriptionObject.start = this.dateGet(response.subscriptions[index].start)
                             subscriptionObject.end = this.dateGet(response.subscriptions[index].end)
                             subscriptionObject.interval = response.subscriptions[index].interval
+
 
                             subscriptionObject.status = response.subscriptions[index].status
                             subscriptionObject.firstname = response.subscriptions[index].user.firstName
