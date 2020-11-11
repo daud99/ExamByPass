@@ -85,8 +85,8 @@ module.exports = new class {
       Question.hasMany(structureEntryQuestionLink,{onDelete: 'CASCADE'})
       structureEntry.hasMany(structureEntryQuestionLink,{onDelete: 'CASCADE'})
       Testlet.hasMany(Question,{onDelete: 'CASCADE'})
-      Ticket.hasMany(Comment,{onDelete: 'CASCADE'})
-      Answer.hasMany(answerArea,{onDelete: 'CASCADE'})
+      Ticket.hasMany(Comment)
+      Answer.hasMany(answerArea)
 
 
 

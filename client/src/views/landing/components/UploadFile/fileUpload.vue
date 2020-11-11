@@ -2,28 +2,7 @@
 <div>
     <v-row justify="center">
         <v-dialog v-model="dialog" persistent max-width="600px">
-            <template v-slot:activator="{ on, attrs }">
-                <div class="row">
-                    <div class="col col-lg-6 col-md-6 col-xs-12">
-                        <a v-bind="attrs" v-on="on">
-                            <card class="d-flex align-items-center">
-                                <h5>Upload .ete file</h5>
-                                <p>Upload your file here</p>
-                            </card>
-                        </a>
-                    </div>
-                    <div class="col col-lg-6 col-md-6 col-xs-12">
-                        <router-link to="/exams">
-                            <card class="d-flex align-items-center">
 
-                                <h5>Show my exams</h5>
-                                <p>Show my uploaded files</p>
-                            </card>
-                        </router-link>
-
-                    </div>
-                </div>
-            </template>
             <v-card>
                 <v-alert v-if="this.files_check" type="success">File Uploaded</v-alert>
                 <v-alert v-if="this.show_alert" color="red" type="error" dark>

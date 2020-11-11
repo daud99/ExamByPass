@@ -371,7 +371,7 @@ module.exports = {
                
                 // Create the subscription
                 const subscription = await stripe.subscriptions.create(obj);
-                console.log(subscription);
+             //   console.log("subscribe is",subscription);
                 await req.user.createSubscription({
                     amount: subscription.plan.amount/100,
                     subscription_id: subscription.id,
@@ -382,6 +382,7 @@ module.exports = {
                 });
 
                 // Create the invoice
+            console.log("plan",subscription.plan.product)
                 await req.user.createInvoice({
                     total: subscription.plan.amount/100,
                     invoiceId: subscription.latest_invoice,

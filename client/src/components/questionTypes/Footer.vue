@@ -57,7 +57,7 @@ export default {
             timer: Number,
             count: 0,
             selectedTab: Number,
-
+            subscriptionStatus: String
         }
     },
     // watch: {
@@ -75,6 +75,7 @@ export default {
     },
     created() {
         this.selectedTab = JSON.parse(localStorage.getItem("selectedTab"));
+        this.subscriptionStatus = JSON.parse(localStorage.getItem("subscriptionStatus"));
         let examTime = JSON.parse(localStorage.getItem("examTime")) * 60;
 
         let timer_now = localStorage.getItem('timer_now')
@@ -107,9 +108,21 @@ export default {
         nextQuestion() {
 
             //console.log(this.obtainScore2, this.obtainScore)
-            if (this.counter + 1 < this.totalQuestions) {
-                console.log(this.counter + 1, this.totalQuestions)
-                this.$parent.submit();
+            if (this.subscriptionStatus === 'active') {
+                if (this.counter + 1 < this.totalQuestions) {
+                    console.log("i am if", this.counter + 1)
+                    this.$parent.submit();
+                }
+            } else {
+                if (this.counter + 1 < this.totalQuestions) {
+                    console.log("i am else", this.counter + 1)
+                    if (this.counter + 1 <= 10) {
+
+                        this.$parent.submit(this.counter + 1);
+                    } else {
+                        console.log("please subscribe")
+                    }
+                }
             }
 
         },

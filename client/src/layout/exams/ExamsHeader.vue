@@ -38,6 +38,7 @@
 
         </b-collapse>
     </b-navbar>
+    <div></div>
 </header>
 </template>
 

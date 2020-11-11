@@ -71,10 +71,10 @@ export default {
         };
     },
     created() {
-        console.log("i am single created", this.allowShuffleAnswer);
+
         if (this.allowShuffleAnswer) {
             this.allowShuffleAnswers = true;
-            console.log(" ia am allow")
+
         }
         this.getAnswers();
     },
@@ -85,21 +85,19 @@ export default {
             this.getAnswers();
         },
     },
-    updated() {
-        console.log("prop", this.wrongProp)
-    },
+
     methods: {
         getAnswers() {
             this.answers = [];
             axios
                 .get("/answers/" + this.questionn.id, {})
                 .then((resp) => {
-                    console.log(resp);
+                    //console.log(resp);
 
                     this.answers = resp.data;
 
                     if (this.allowShuffleAnswers) {
-                        console.log("i am random", this.allowShuffleAnswers)
+
                         let answerShuffle = this.answers.sort(() => {
                             return 0.5 - Math.random();
                         });
@@ -118,7 +116,7 @@ export default {
         },
 
         randomAnswers: (answers, allowShuffleAnswers) => {
-            console.log("randomize")
+
             if (allowShuffleAnswers) {
                 return answers.sort(() => {
                     return 0.5 - Math.random();
@@ -137,19 +135,19 @@ export default {
             });
 
             this.showAnswer = true;
-            console.log(this.getAnswerElementById(this.correctAnswer[0].id));
+
             this.getAnswerElementById(this.correctAnswer[0].id).styleAfterSubmit =
                 "background-color: green";
             //DOTO AJAX call to get the right answer
             if (this.userAnswer == this.correctAnswer[0].id) {
                 this.message = "CORRECT ANSWER";
                 this.answerCondition = true
-                console.log("i am iff")
+
                 if (!this.detailsDialog) {
                     this.$parent.getCorrectQuestion();
                 }
             } else {
-                console.log("i am elsee")
+
                 this.getAnswerElementById(this.userAnswer).styleAfterSubmit =
                     "background-color: red";
                 if (!this.detailsDialog) {

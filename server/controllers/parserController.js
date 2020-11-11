@@ -7,6 +7,7 @@ const Answer = require("../models/Answer.js");
 const Testlet = require("../models/Testlet");
 const AnswerArea = require("../models/answerArea.js");
 const ExamLibrary = require("../models/examLibrary.js");
+const Subscription = require("../models/Subscription");
 const StructureEntry = require("../models/structureEntry");
 const StructureEntryLink = require("../models/structureEntryQuestionLink");
 const { Op } = require("sequelize");
@@ -24,7 +25,7 @@ module.exports = new (class {
       }
 
       var data = new FormData(this);
-      console.log(req.body)
+      console.log("bodyy iss",req.body)
      data.append("file", fs.createReadStream(req.file.path));
       data.append("user_id", req.body.userId);
     
@@ -210,7 +211,9 @@ module.exports = new (class {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      ExamLibrary.findAll(
+      ExamLibrary.findAll({
+        where: { user_id: req.params.uuid },
+      }
       ).then((exams) => {
        // console.log("i am exam",exams)
 
@@ -342,4 +345,28 @@ module.exports = new (class {
       });
     }
   }
+   async getSubscription(req,res, next) {
+       
+        try {
+            const userSubscription = await Subscription.findAll({
+                where: {
+                    user_id: req.query.paramS,
+                    
+                 
+                }
+            });
+            res.send({
+                data: {
+                    userSubscription
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
 })();

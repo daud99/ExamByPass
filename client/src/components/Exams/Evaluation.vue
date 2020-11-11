@@ -120,6 +120,10 @@ import {
     quickRequest
 } from "../../../common/misc.js"
 import Swal from "sweetalert2";
+import {
+    mapActions,
+    mapGetters
+} from 'vuex';
 export default {
     components: {
         DetailsDialog,
@@ -235,10 +239,14 @@ export default {
         //this.updateSessionStatus()
 
     },
+    computed: {
+        ...mapGetters(["auth/getUser"]),
+        ...mapGetters(["auth/isAuthenticated"]),
+    },
     methods: {
 
         async getExamSession() {
-            let user_id = 100
+            let user_id = this["auth/getUser"].id
 
             let examIdd = JSON.parse(localStorage.getItem("examId"));
 
