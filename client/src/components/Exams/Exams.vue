@@ -185,6 +185,18 @@
     <div v-if="this.deletedDialog">
         <deletedExam :exams='this.exams' :deletedDialog='this.deletedDialog' />
     </div>
+    <div>
+        <v-dialog v-model="loginDialog" persistent max-width="1000px">
+
+            <v-card>
+                <v-card-title>Please Sign in</v-card-title>
+                <v-card-text>
+                    <login />
+                </v-card-text>
+
+            </v-card>
+        </v-dialog>
+    </div>
 </div>
 </template>
 
@@ -192,16 +204,23 @@
 import axios from "axios";
 import Main from "../questionTypes/Main";
 import deletedExam from "./deletedExamDialog";
+import {
+    mapActions,
+    mapGetters
+} from 'vuex';
 import vue from 'vue'
 import {
     quickRequest
 } from "../../../common/misc.js"
 import Swal from "sweetalert2";
 import EventBus from "../../Event/eventBus"
+import login from '../../views/login/Login'
+
 export default {
     components: {
         Main,
-        deletedExam
+        deletedExam,
+        login
     },
     name: "Exams",
     data: () => {
@@ -212,6 +231,7 @@ export default {
             myToggle: true,
             myToggle2: false,
             deletedDialog: false,
+            loginDialog: false,
             exams: [],
             examName: "",
             slectedExamTab: "",
@@ -247,6 +267,7 @@ export default {
             examId: Number,
             examTime: Number,
             showList: true,
+            subscriptionStatus: String,
             localKeys: ["examId", "selectedCheck", "selectedRandomAnswer", "candidateName", "selectedTab", "structureEntryQuestionn", "condition"],
             items: [{
                     title: 'Delete',
@@ -265,9 +286,17 @@ export default {
         //     localStorage.removeItem(k)
         // );
         localStorage.setItem("condition", JSON.stringify(true));
-        console.log("created")
-
+        console.log("created", this["auth/getUser"])
+        if (this["auth/getUser"].id === undefined) {
+            console.log("please sign in")
+            this.loginDialog = true
+        } else {
+            this.subscriptionStatus = this["auth/getUser"].subscription_status
+            localStorage.setItem("subscriptionStatus", JSON.stringify(this["auth/getUser"].subscription_status));
+        }
         this.getExams()
+
+        //this.getSubscription()
 
     },
     updated() {
@@ -279,6 +308,10 @@ export default {
             this.deletedDialog = true
 
         });
+    },
+    computed: {
+        ...mapGetters(["auth/getUser"]),
+        ...mapGetters(["auth/isAuthenticated"]),
     },
     methods: {
         toggleButton(number) {
@@ -293,7 +326,7 @@ export default {
             }
         },
         async getExamSession(id) {
-            let user_id = 100
+            let user_id = this["auth/getUser"].id
             this.selected_check = []
             try {
                 let response = await quickRequest("/getExamsession", "GET", {}, user_id, id);
@@ -307,7 +340,7 @@ export default {
                 }
                 if (response) {
                     this.examSessionLength = response.examSessions.length
-                    console.log(response.examSessions)
+
                     if (response.examSessions.length > 0) {
                         this.examId = response.examSessions[0].examId
                         this.selected_check = JSON.parse(response.examSessions[0].selectedCheck)
@@ -331,12 +364,44 @@ export default {
                 });
             }
         },
+
+        async getSubscription() {
+            let user_id = this["auth/getUser"].id
+
+            try {
+                if (user_id !== undefined) {
+
+                    let response = await quickRequest("/getSubscription", "GET", {}, user_id);
+
+                    this.subscriptionStatus = response.userSubscription[0].status
+                    localStorage.setItem("subscriptionStatus", JSON.stringify(response.userSubscription[0].status));
+                    if ("error" in response) {
+                        Swal.fire({
+                            type: "error",
+                            icon: "error",
+                            title: "Error",
+                            text: response.error,
+                        });
+                    }
+
+                }
+
+            } catch (e) {
+                console.log(e)
+                Swal.fire({
+                    type: "error",
+                    title: "Error Occured",
+                    text: "Error occured while retriving session",
+                });
+            }
+        },
+
         getExams() {
-            // console.log("i am exam")
+
             axios
-                .get("/exams")
+                .get("/exams/" + this["auth/getUser"].id)
                 .then((resp) => {
-                    // console.log(resp);
+
                     this.exams = resp.data;
                     // var results = resp.data.filter(function (entry) {
                     //   return entry.is_correct === 1;
@@ -348,7 +413,7 @@ export default {
                 });
         },
         getExamType(id) {
-            console.log("i am type")
+
             axios
                 .get("/structureEntry/" + id)
                 .then((resp) => {
@@ -356,7 +421,7 @@ export default {
                     this.examType = resp.data;
                     let tab = resp.data.map(t => t.name);
                     this.examTab = tab
-                    console.log(resp);
+
                     // var results = resp.data.filter(function (entry) {
                     //   return entry.is_correct === 1;
                     // });
@@ -385,13 +450,13 @@ export default {
                 });
         },
         listItem(item, id) {
-            console.log("i am in list", item.title)
+
             if (item.title === "Delete") {
                 this.deleteExam(id)
             }
         },
         deleteExam(id) {
-            console.log("id is", id)
+
             axios
                 .put("/delete/" + id)
                 .then(() => {
@@ -436,7 +501,6 @@ export default {
 
                     let sortedArray = resp.data.map(sa => sa.questionId)
                     this.structureEntryQuestionn = sortedArray
-                    console.log(sortedArray)
 
                 })
                 .catch((err) => {
@@ -445,7 +509,7 @@ export default {
 
         },
         startExam(condition) {
-            console.log("condition", condition)
+
             let sendTab = this.examType.filter(st => st.name === this.slectedExamTab)
             this.filterExamType = sendTab
             this.showList = false

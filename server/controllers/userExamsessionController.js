@@ -109,16 +109,18 @@ async saveSessionExam(req,res, next) {
             return res.status(400).json({ errors: errors.array() });
           }
          
-         
+          console.log("qryy",req.query)
           ExamUserSession.update({ isDelete: 1 },{
             where: {
-                examLibraryId:req.query.examId
+                  examLibraryId: req.query.examId,
+                    userId: req.query.paramS,
+                
             }
           }).then(
-            () => {
-              //console.log(answer)
+            (t) => {
+              console.log(t)
     
-              res.send("Recovered");
+              res.send(t);
             }
           );
         } catch (e) {

@@ -61,7 +61,7 @@ export default new Router({
         default: Landing,
         footer: DashboardFooter,
       },
-      beforeEnter: Guards.isNotAuthenticated,
+     // beforeEnter: Guards.isNotAuthenticated,
     },
     {
       path: "/pricing",

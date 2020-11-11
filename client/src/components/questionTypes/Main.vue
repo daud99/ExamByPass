@@ -57,7 +57,10 @@ import FillInTheBlank from './FillInTheBlank'
 import HotArea from './HotArea'
 import axios from "axios";
 import Footer from "./Footer"
-
+import {
+    mapActions,
+    mapGetters
+} from 'vuex';
 import EventBus from "../../Event/eventBus"
 
 import {
@@ -114,6 +117,8 @@ export default {
             obtainScore: 0,
             correctCount: 0,
             random: Number,
+            isUpdate: false,
+            subscriptionStatus: String,
             localKeys: ["examId", "selectedCheck", "selectedRandomAnswer", "candidateName", "selectedTab", "structureEntryQuestionn", "condition"]
         };
     },
@@ -121,24 +126,24 @@ export default {
     mounted() {
 
         EventBus.$once('stop', () => {
-            // this.toForward = false
+
             console.log("i am bus", this.$route.params.examId, this.examId)
             this.stop()
             //  this.deleteExamsession(this.examId, true)
-            //  console.log("id in bus", this.examId)
+
             this.toDestroy = true
 
         });
 
         EventBus.$on('save', () => {
-            console.log("i am bus")
+
             this.deleteExamsession(this.examId, true)
             this.saveSession(true)
 
         });
     },
     beforeDestroy: function () {
-        console.log("i am before destroy")
+
         window.removeEventListener('beforeunload', this.warning)
         this.offEventbus()
         if (!this.toDestroy && this.toForward) {
@@ -148,19 +153,23 @@ export default {
 
     },
     beforeRouteLeave(to, from, next) {
-        console.log("before route leaves", to, from, this.toForward)
+
         if (to.name === "Evaluation" && from.name === 'main' && this.toForward) {
-            console.log("calling stop in forward button")
+
             this.stop()
             return next()
         }
         next()
     },
+    computed: {
+        ...mapGetters(["auth/getUser"]),
+        ...mapGetters(["auth/isAuthenticated"]),
+    },
     created() {
         //localStorage.setItem("obtainScore", JSON.stringify(this.obtainScore));
         this.toForward = true
         if (this.$route.name === 'main') {
-            console.log('route name', this.$route.name)
+
             window.addEventListener('beforeunload', this.warning)
         }
         // window.addEventListener('beforeunload', this.warning)
@@ -184,9 +193,10 @@ export default {
         this.structureEntryQuestionn = JSON.parse(localStorage.getItem("structureEntryQuestionn"));
         this.condition = JSON.parse(localStorage.getItem("condition"));
         this.random = JSON.parse(localStorage.getItem("random"));
-        console.log("shuffle q", this.selectedRandomQuestion[0])
+        this.subscriptionStatus = JSON.parse(localStorage.getItem("subscriptionStatus"));
+
         if (this.selectedRandomQuestion[0] === 'Question order') {
-            console.log("shuffle q", this.selectedRandomQuestion[0])
+
             this.allowShuffleQuestion = true
         } else {
             this.allowShuffleQuestion = false
@@ -199,11 +209,11 @@ export default {
                 text: "You have " + this.examTime + " Minutes",
             });
         }
-        console.log("vreated", this.examId, this.selectedCheck, this.$route.params.selectedCheck, this.$route.params.examId)
+
         if (this.condition) {
             this.getExamSession()
         } else {
-            //  console.log("i am else in created", this.$route.params.condition)
+
             this.deleteExamsession()
             this.getTestlet()
             this.getQuestions()
@@ -213,7 +223,7 @@ export default {
 
     methods: {
         warning() {
-            console.log('reload')
+
             this.deleteExamsession()
             this.saveSession()
             localStorage.setItem("condition", JSON.stringify(true));
@@ -236,7 +246,7 @@ export default {
                 this.obtainScore = floorScore * this.correctQuestion.length
                 // localStorage.setItem("obtainScore", JSON.stringify(this.obtainScore));
             }
-            console.log("count is", this.correctQuestion.length, this.obtainScore)
+
         },
         offEventbus() {
             EventBus.$off('save')
@@ -244,12 +254,13 @@ export default {
         },
         async updateSessionStatus() {
             let id = JSON.parse(localStorage.getItem("examId"));
-            console.log("updatesess", id)
-            let response = await quickRequest("/updateSessionStatus", "PUT", {}, {}, id);
+
+            let response = await quickRequest("/updateSessionStatus", "PUT", {}, this["auth/getUser"].id, id);
 
         },
-        saveSession(condition) {
+        saveSession(cond) {
             this.deleteExamsession()
+            this.isUpdate = false
             for (let index1 = 0; index1 < this.wrongQuestion.length; index1++) {
                 this.wrongQuestion[index1].condition = 'false'
                 this.wrongQuestion[index1].page = this.page
@@ -292,15 +303,16 @@ export default {
                 this.unansweredQuestion[index3].selectedTab = this.selectedTab
                 this.unansweredQuestion[index3].obtainScore = this.obtainScore
             }
-            console.log("wrong is", this.wrongQuestion)
+
             let cQuestions = [...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
-            console.log(cQuestions)
-            let id = 100
-            this.examSession(id, cQuestions, condition)
+
+            let id = this["auth/getUser"].id
+
+            this.examSession(id, cQuestions, cond)
         },
         deleteExamsession(id, condition) {
 
-            let user_id = 100
+            let user_id = this["auth/getUser"].id
             let examIdd
             if (condition) {
                 examIdd = id
@@ -308,10 +320,9 @@ export default {
                 examIdd = JSON.parse(localStorage.getItem("examId"));
             }
 
-            console.log("i am delete", examIdd)
             try {
                 let response = quickRequest("/deleteExamsession", "POST", {
-                    id: 100
+                    id: user_id
                 }, {}, examIdd);
                 if ("error" in response) {
                     Swal.fire({
@@ -332,14 +343,13 @@ export default {
             }
         },
         async getExamSession() {
-            let user_id = 100
+            let user_id = this["auth/getUser"].id
 
             let examIdd = JSON.parse(localStorage.getItem("examId"));
 
-            // console.log("id is", this.examId, this.$route.params.examId)
             try {
                 let response = await quickRequest("/getExamsession", "GET", {}, user_id, examIdd);
-                console.log("response", response)
+
                 if ("error" in response) {
                     Swal.fire({
                         type: "error",
@@ -353,13 +363,13 @@ export default {
                     this.getTestlet()
                     this.getQuestions()
                     this.examSessionLength = response.examSessions.length
-                    console.log(response.examSessions[0].indexVar)
+
                     if (response.examSessions.length > 0) {
                         this.page = response.examSessions[0].page
                         this.indexVar = response.examSessions[0].indexVar
                         this.counterL = response.examSessions[0].counterL
                         this.obtainScore = response.examSessions[0].obtainScore
-                        console.log("i if", response.examSessions[0].counterL)
+
                         for (let indexs = 0; indexs < response.examSessions.length; indexs++) {
                             if (response.examSessions[indexs].conditionOf == 'unanswered') {
                                 this.unansweredQuestion.push(response.examSessions[indexs])
@@ -381,14 +391,14 @@ export default {
                 });
             }
         },
-        async examSession(IdOfUser, combinedQuestions, condition) {
-            console.log("save", combinedQuestions)
+        async examSession(IdOfUser, combinedQuestions, cond) {
+
             try {
                 const data = {
                     userId: IdOfUser,
                     record: combinedQuestions
                 };
-                console.log("exam session", data)
+
                 let response = await quickRequest("/saveExamsession", "POST", data);
                 if ("error" in response) {
                     Swal.fire({
@@ -399,8 +409,13 @@ export default {
                     });
                 }
                 if (response) {
-                    console.log(response)
-                    if (condition) {
+
+                    if (cond === 'stop') {
+
+                        this.updateSessionStatus()
+                    }
+                    this.isUpdate = true
+                    if (cond === true) {
                         Swal.fire({
                             type: "success",
                             title: "Session Saved",
@@ -422,15 +437,12 @@ export default {
             axios
                 .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck)
                 .then((resp) => {
-                    // console.log(resp);
-                    console.log("in getquestion", this.indexVar)
 
                     if (this.structureEntryQuestionn.length !== 0) {
                         axios
                             .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + this.structureEntryQuestionn)
                             .then((resp) => {
-                                console.log(resp);
-
+                                console.log(resp.data)
                                 this.questions = this.questions.concat(resp.data)
 
                                 if (this.allowShuffleQuestion) {
@@ -453,8 +465,7 @@ export default {
                         axios
                             .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + 0)
                             .then((resp) => {
-                                console.log(resp);
-
+                                console.log(resp.data)
                                 this.questions = this.questions.concat(resp.data)
                                 if (this.allowShuffleQuestion) {
 
@@ -486,7 +497,7 @@ export default {
             axios
                 .get("/testlet/" + this.examId)
                 .then((resp) => {
-                    console.log(resp);
+
                     this.testlet = resp.data
 
                 })
@@ -494,14 +505,14 @@ export default {
                     console.log(err);
                 });
         },
-        submit() {
+        submit(number) {
             this.count++
 
             this.$refs.single.submit()
-            if (this.count > 1) {
+            if (this.count > 1 && number < 10) {
 
                 this.nextQuestionCounter()
-            } else if (this.selectedTab === 1) {
+            } else if (this.selectedTab === 1 && number < 10) {
 
                 this.nextQuestionCounter()
             }
@@ -531,8 +542,33 @@ export default {
             this.counterL--
             this.indexVar = this.counterL;
         },
-        getWrongQuestion() {
+        findDuplicateQuestions(type, id) {
 
+            let Correct = this.correctQuestion
+            let Wrong = this.wrongQuestion
+            let Unanaswer = this.unansweredQuestion
+            // this.examId
+            if (type === 'wrong') {
+
+                this.correctQuestion = Correct.filter(question => question.id !== id);
+                this.unansweredQuestion = Unanaswer.filter(question => question.id !== id);
+                console.log("remove correct", this.correctQuestion, Correct)
+                //  const newData = remove(this.correctQuestion, "id", );
+            } else if (type === 'correct') {
+                // const removeWrong = this.removeDuplicate(this.wrongQuestion, "id", id);
+                this.wrongQuestion = Wrong.filter(question => question.id !== id);
+                this.unansweredQuestion = Unanaswer.filter(question => question.id !== id);
+                console.log("remove wrong", this.wrongQuestion, Wrong, id)
+            } else if (type === 'unanswer') {
+                this.correctQuestion = Correct.filter(question => question.id !== id);
+                this.wrongQuestion = Wrong.filter(question => question.id !== id);
+            }
+            console.log(this.correctQuestion, this.wrongQuestion)
+
+        },
+
+        getWrongQuestion() {
+            this.findDuplicateQuestions("wrong", this.questions[this.indexVar].id)
             this.wrongQuestion = this.wrongQuestion.concat(this.questions[this.indexVar])
             let uniqueAddresses = Array.from(new Set(this.wrongQuestion.map(a => a.id)))
                 .map(id => {
@@ -541,8 +577,9 @@ export default {
             this.wrongQuestion = uniqueAddresses
 
         },
-        getCorrectQuestion() {
 
+        getCorrectQuestion() {
+            this.findDuplicateQuestions("correct", this.questions[this.indexVar].id)
             this.correctQuestion = this.correctQuestion.concat(this.questions[this.indexVar])
             let uniqueAddresses = Array.from(new Set(this.correctQuestion.map(a => a.id)))
                 .map(id => {
@@ -552,7 +589,7 @@ export default {
 
         },
         getunansweredQuestion() {
-
+            this.findDuplicateQuestions("unanswer", this.questions[this.indexVar].id)
             this.unansweredQuestion = this.unansweredQuestion.concat(this.questions[this.indexVar])
             let uniqueAddresses = Array.from(new Set(this.unansweredQuestion.map(a => a.id)))
                 .map(id => {
@@ -563,6 +600,7 @@ export default {
 
         stop() {
             this.toForward = false
+            console.log("wrong and coreect", this.wrongQuestion, this.correctQuestion)
             let wrong = this.wrongQuestion.map((elem) => {
                 let json = {}
                 json.id = elem.id
@@ -574,6 +612,7 @@ export default {
                 json.exam_library_id = elem.exam_library_id
                 json.testlet_id = elem.testlet_id
                 json.condition = 'false'
+                json.userId = this["auth/getUser"].id
                 return json
 
             })
@@ -588,6 +627,7 @@ export default {
                 json.exam_library_id = elem.exam_library_id
                 json.testlet_id = elem.testlet_id
                 json.condition = 'true'
+                json.userId = this["auth/getUser"].id
                 return json
 
             })
@@ -602,13 +642,14 @@ export default {
                 json.exam_library_id = elem.exam_library_id
                 json.testlet_id = elem.testlet_id
                 json.condition = 'unanswered'
+                json.userId = this["auth/getUser"].id
                 return json
 
             })
-            console.log('stop', wrong, correct)
+
             localStorage.setItem("condition", JSON.stringify(true));
             this.deleteExamsession()
-            this.saveSession()
+            this.saveSession("stop")
 
             this.$router.push({
                 name: "Evaluation",
@@ -622,7 +663,6 @@ export default {
 
                 }
             }).catch(() => {});
-            this.updateSessionStatus()
 
         },
         openDialog() {
@@ -632,7 +672,7 @@ export default {
         openDialogOnEntry() {
             if (this.testlet.length !== 0) {
                 const result = this.testlet.filter(testlet => testlet.id === this.questions[this.indexVar].TestletId);
-                console.log("result is cs", result)
+
                 if (result.length !== 0) {
                     this.questionTestlet = result
                     this.caseStudyDialog = true

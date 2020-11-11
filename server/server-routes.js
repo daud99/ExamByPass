@@ -52,6 +52,7 @@ router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.ge
 router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
 router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
 router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
+router.post('/webhook', bodyParser.raw({ type: 'application/json' }), StripeController.webHook);
 
 router.get('/api/getInvoices',[Auth.isAuthenticatedAndAdmmin], StripeController.getAllInvoices);
 router.get('/api/getSubscriptions',[Auth.isAuthenticatedAndAdmmin], SubscriptionManagementController.getAllSubscriptions);
@@ -83,8 +84,10 @@ router.post('/api/archive-promotion-code', [Auth.isAuthenticatedAndAdmmin], Midd
 router.post('/api/saveExamsession', userExamsessionController.saveSessionExam);
 router.get('/api/getExamsession', userExamsessionController.getSessionExam);
 router.post('/api/deleteExamsession', userExamsessionController.deleteSessionExam);
-//Route for allExams
-router.get("/api/exams", ParserController.getExams);
+//Route for subscription
+router.get('/api/getSubscription', ParserController.getSubscription);
+
+router.get("/api/exams/:uuid", ParserController.getExams);
 //Route for questions
 router.get("/api/questions/:page/:examId/:selectedCheck/:structureEntryQuestionn", ParserController.getQuestions);
 //Route for questions types
@@ -111,14 +114,7 @@ router.put("/api/updateSessionStatus", userExamsessionController.updateSessionSt
 // DB Routes
 router.get('/syncDB', DbController.syncDB);
 
-// Stripe Routes 
-router.post('/api/create-checkout-session', StripeController.createCheckoutSession);
-router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.createCustomer);
-router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
-router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
-router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
-router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
-router.post('/webhook', bodyParser.raw({type: 'application/json'}), StripeController.webHook);
+
 
 
 // Subscription Management Routes

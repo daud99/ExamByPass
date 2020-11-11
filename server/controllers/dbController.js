@@ -74,7 +74,7 @@ module.exports = new class {
         console.log("starting populating DB");
         try {
             const products = await stripe.products.list({
-                limit: 10,
+                limit: 100,
             });
             console.log(products);
             if(products.data.length > 0) {
@@ -87,7 +87,7 @@ module.exports = new class {
                 }
             }
             const prices = await stripe.prices.list({
-                limit: 10,
+                limit: 100,
             });
             if(prices.data.length > 0) {
                 for (const element in prices.data) {
