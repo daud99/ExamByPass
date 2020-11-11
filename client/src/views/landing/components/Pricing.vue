@@ -20,7 +20,7 @@
                     <h5 style="text-weight: bolder">{{product.name}} Subscription</h5>
                   </v-layout>
                   <v-layout justify-center>
-                    <h5 style="text-weight: bolder">${{product.Price.amount}}&nbsp;&nbsp;</h5>
+                    <h5 style="text-weight: bolder">$30&nbsp;&nbsp;</h5>
                     <p>per VCE File</p>
                   </v-layout>
                   <v-layout justify-center>
