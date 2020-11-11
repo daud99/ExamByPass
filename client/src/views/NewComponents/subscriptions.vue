@@ -46,7 +46,7 @@
       headers: [
         {text: 'id',value: 'id',},
         { text: 'Amount', value: 'amount' },
-        { text: 'Product Name', value: 'autoCharge' },
+        { text: 'Auto Charge', value: 'autoCharge' },
         { text: 'Start', value: 'start' },
 
         { text: 'End', value: 'end' },
@@ -108,8 +108,8 @@
             }else{
               if(response.subscriptions.length>0){
                 for(let index=0; index<response.subscriptions.length; index++){
-                  subscriptionObject.id=response.subscriptions[index].id
-                  subscriptionObject.amount=response.subscriptions[index].amount
+                  subscriptionObject.id=response.subscriptions[index].subscription_id
+                  subscriptionObject.amount='$'+response.subscriptions[index].amount
                   subscriptionObject.createdAt=response.subscriptions[index].createdAt
                   subscriptionObject.updatedAt=response.subscriptions[index].updatedAt
                   subscriptionObject.autoCharge=response.subscriptions[index].autoCharge
