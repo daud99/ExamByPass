@@ -11,7 +11,15 @@
 
                     <v-text-field :error-messages="interval_countErrors" type="number" v-model="interval_count" label="Interval Count" outlined shaped @input="$v.interval_count.$touch()" @blur="$v.interval_count.$touch()" required></v-text-field>
 
-                    <v-text-field :error-messages="intervalErrors" v-model="interval" :counter="20" label="Interval" outlined shaped @input="$v.interval.$touch()" @blur="$v.interval.$touch()" required></v-text-field>
+                    <v-select
+                        :error-messages="intervalErrors"
+                        @input="$v.interval.$touch()"
+                        @blur="$v.interval.$touch()"
+                        v-model="interval"
+                        :items="items"
+                        label="Interval"
+                        outlined
+                    ></v-select>
 
                     <v-btn class="mr-4" :disabled="$v.$invalid" @click="submitProduct">
                         Submit
@@ -67,6 +75,7 @@ export default {
         }
     },
     data: () => ({
+        items: ['month', 'year'],
         loading:false,
         name: '',
         unit_amount: '',
