@@ -15,10 +15,10 @@
                     <v-tab-item key="Account">
                         <AccountComponent/>
                     </v-tab-item>
-                    <v-tab-item key="Subscriptions">
+                    <v-tab-item v-if="(_self['auth/getUser'].roles!='admin')" key="Subscriptions">
                         <SubscriptionComponent/>
                     </v-tab-item>
-                    <v-tab-item key="Payments">
+                    <v-tab-item v-if="(_self['auth/getUser'].roles!='admin')" key="Payments">
                         <PaymentComponent/>
                     </v-tab-item>
                 </v-tabs-items>
@@ -59,7 +59,8 @@ export default {
   computed: {
     ...mapGetters([
       'auth/getUser'
-    ])
+    ]),
+    ...mapGetters(["auth/isAuthenticated"])
   },
   methods: {
      ...mapActions([
