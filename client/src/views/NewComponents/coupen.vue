@@ -424,7 +424,7 @@
         console.log(this.amount_off)
         console.log(this.percent_off)
         if(this.row=='1'){
-          data.percent_off=parseInt(this.percent_off)
+          data.percent_off=parseInt(this.percentage_off)
           delete data.amount_off
         }else if(this.row=='2'){
           data.amount_off=parseInt(this.amount_off)

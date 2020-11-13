@@ -60,7 +60,7 @@
 import card from '../../components/Card'
 import Swal from "sweetalert2";
 import {mapGetters} from 'vuex';
-import { quickRequest } from "../../../common/misc";
+import { quickRequest , dateGet } from "../../../common/misc";
 import PageMixin from "../page-mixin";
 import moment from 'moment';
 import { jsPDF } from "jspdf";
@@ -75,12 +75,10 @@ export default {
             value: 'email',
           },
           { text: 'Invoice ID', value: 'invoiceId' },
-          { text: 'Date Of Issue', value: 'issueDate' },
+          { text: 'Amount OFF', value: 'coupon.amount_off' },
+          { text: 'Percent OFF', value: 'coupon.percent_off' },
           { text: 'Total', value: 'total' },
-          {
-              text: 'PDF',
-              value: 'pdfPrint'
-          },
+          { text: 'PDF', value: 'pdfPrint' },
       ],
       rows: [],
       msg: ''
@@ -101,6 +99,16 @@ export default {
         } else if(response.invoices) {
 
             this.rows = response.invoices;
+            this.rows.forEach(element => {
+              element.issueDate = dateGet(element.issueDate);
+              if(element.coupon.percent_off) {
+                let cut = (element.percent_off / 100) * total;
+                element.total -= cut;
+              }
+              if(element.amount_off) element.total -= element.amount_off;
+              element.total = '$'+element.total;
+              if(element.percent_off) element.percent_off = '%'+element.percent_off;
+            });
         }
       } catch (e) {
         console.log(e);
@@ -116,85 +124,98 @@ export default {
   methods: {
     downloadPdf(item){
       console.log(item)
+            let y = 10;
             var doc = new jsPDF();
             doc.setTextColor(0,0,0);
             doc.setFontSize(18);
-            doc.text("Invoice Record Of "+item.invoiceId, 10, 10);
-            doc.text("", 20, 20);
+            doc.text("Invoice Record Of "+item.invoiceId, 10, y+=10);
+            doc.text("", 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("id:", 20, 30);
+            doc.text("id:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.id.toString(), 20, 40);
+            doc.text(item.id.toString(), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("Invoice Id:", 20, 50);
+            doc.text("Invoice Id:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.invoiceId.toString(), 20, 60);
+            doc.text(item.invoiceId.toString(), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("Product Name:", 20, 70);
+            doc.text("Product Name:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.Product.name.toString(), 20, 80);
+            doc.text(item.Product.name.toString(), 20, y+=10);
+
+            if(item.coupon){
+              doc.setTextColor(100);
+              doc.setFontSize(20);
+              if(item.coupon.amount_off) doc.text("Amount OFF:", 20, y+=10);
+              if(item.coupon.percent_off) doc.text("Percent OFF:", 20, y+=10);
+
+              doc.setTextColor(0,0,0);
+              doc.setFontSize(10);
+              if(item.coupon.amount_off) doc.text(item.coupon.amount_off, 20, y+=10); 
+              if(item.coupon.percent_off) doc.text(item.coupon.percent_off, 20, y+=10);
+            }
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("Total:", 20, 90);
+            doc.text("Total:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.total.toString(), 20, 100);
+            doc.text(item.total.toString(), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("User ID:", 20, 110);
+            doc.text("User ID:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.userId.toString(), 20, 120);
+            doc.text(item.userId.toString(), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("User Email:", 20, 130);
+            doc.text("User Email:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.email.toString(), 20, 140);
+            doc.text(item.email.toString(), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("Product Pid:", 20, 150);
+            doc.text("Product Id:", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.productPid.toString(), 20, 160);
+            doc.text(item.productPid.toString(), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("Issued", 20, 170);
+            doc.text("Issued", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.createdAt.toString(), 20, 180);
+            doc.text(dateGet(item.createdAt), 20, y+=10);
 
             doc.setTextColor(100);
             doc.setFontSize(20);
-            doc.text("Last Updated", 20, 190);
+            doc.text("Last Updated", 20, y+=10);
 
             doc.setTextColor(0,0,0);
             doc.setFontSize(10);
-            doc.text(item.updatedAt.toString(), 20, 200);
+            doc.text(dateGet(item.updatedAt), 20, y+=10);
 
-            doc.save('sample-document.pdf');
+            doc.save('invoice.pdf');
         },
     
   },
