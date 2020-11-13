@@ -67,11 +67,12 @@ module.exports = new class {
       User.hasMany(discountApplicable,{onDelete: 'CASCADE'})
       User.hasMany(Discount,{onDelete: 'CASCADE'})
       User.hasMany(Ticket,{onDelete: 'CASCADE'})
-      User.hasMany(examLibrary,{onDelete: 'CASCADE'})
       User.hasMany(resetPasswordRequest,{onDelete: 'CASCADE'})
       User.hasMany(Invoice,{onDelete: 'CASCADE'})
       User.hasMany(Coupon,{onDelete: 'CASCADE'})
       User.hasOne(Subscription,{onDelete: 'CASCADE'})
+      User.belongsToMany(examLibrary, { through: 'Exam_library_users' });
+      examLibrary.belongsToMany(User, { through: 'Exam_library_users' });
       Product.hasOne(Price, { foreignKey: 'productPid' },{onDelete: 'CASCADE'})
       Product.hasMany(Invoice, { foreignKey: 'productPid' },{onDelete: 'CASCADE'})
       Invoice.belongsTo(Product,{onDelete: 'CASCADE'})
