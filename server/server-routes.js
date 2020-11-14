@@ -70,7 +70,7 @@ router.get('/api/getUsers', [Auth.isAuthenticatedAndAdmmin], AuthController.getA
 router.post('/api/deleteUsers',[Auth.isAuthenticatedAndAdmmin], AuthController.deleteUser);
 router.post('/api/archivedUser',[Auth.isAuthenticatedAndAdmmin], AuthController.archiveUser);
 router.post('/api/list-products', [Auth.isAuthenticatedAndAdmmin], StripeController.listAllProducts);
-router.post('/api/get-prices', [Auth.isAuthenticated], StripeController.getPrices);
+router.post('/api/get-prices',  StripeController.getPrices);
 router.post('/api/create-product', [Auth.isAuthenticatedAndAdmmin], Middleware.checkProductPriceInfo(), StripeController.createProduct);
 router.post('/api/update-product', [Auth.isAuthenticatedAndAdmmin], Middleware.checkProductId(), StripeController.updateProduct);
 

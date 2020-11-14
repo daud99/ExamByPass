@@ -46,6 +46,9 @@
             </v-card>
         </v-dialog>
     </v-row>
+    <div v-if="showPricing">
+        <pricing :pricingDialog='true' />
+    </div>
 </div>
 </template>
 
@@ -57,6 +60,7 @@ import FillInTheBlank from './FillInTheBlank'
 import HotArea from './HotArea'
 import axios from "axios";
 import Footer from "./Footer"
+import pricing from '../../views/landing/components/Pricing'
 import {
     mapActions,
     mapGetters
@@ -77,7 +81,8 @@ export default {
         DragAndDrop,
         FillInTheBlank,
         HotArea,
-        Footer
+        Footer,
+        pricing
     },
     props: {
 
@@ -86,6 +91,7 @@ export default {
         return {
 
             questions: [],
+            showPricing: false,
             testlet: null,
             questionTestlet: [],
             caseStudyDialog: false,
@@ -222,6 +228,7 @@ export default {
     },
 
     methods: {
+
         warning() {
 
             this.deleteExamsession()
@@ -506,8 +513,9 @@ export default {
                 });
         },
         submit(number) {
+            this.showPricing = false
             this.count++
-
+            console.log("in main", number, this.count)
             this.$refs.single.submit()
             if (this.count > 1 && number < 10) {
 
@@ -515,6 +523,10 @@ export default {
             } else if (this.selectedTab === 1 && number < 10) {
 
                 this.nextQuestionCounter()
+            } else if (number === 10) {
+
+                this.showPricing = true
+                console.log("please subs", this.showPricing)
             }
 
         },
@@ -540,6 +552,7 @@ export default {
         },
         decrement() {
             this.counterL--
+            this.count = 0
             this.indexVar = this.counterL;
         },
         findDuplicateQuestions(type, id) {

@@ -1,6 +1,6 @@
 <template>
 <core-content :loading="loading">
-    <div id="pricingSection" v-if="toRender">
+    <div id="pricingSection" v-if="toRender && this.$route.name === 'pricing'">
         <div class="py-5 bg-secondary">
             <div class="container shape-container d-flex align-items-center">
                 <div class="col px-0">
@@ -43,6 +43,9 @@
             </div>
         </div>
     </div>
+    <div v-else-if="this.pricingDialog">
+        <PricingDialog @selectt="select" :prices='this.prices' :open='true' />
+    </div>
     <login-signup-dialog :visible="showDialog" @close="showDialog=false" />
     <payment-dialog :visible="showPaymentDialog" :name="productName" :id="productId" :amount="productPrice" :publickey="publishableKey" @close="showPaymentDialog=false" />
 </core-content>
@@ -52,6 +55,7 @@
 import card from "../../../components/Card";
 import ComponentOne from "./component1";
 import ComponentTwo from "./component2";
+import PricingDialog from './PricingDialog'
 import Swal from "sweetalert2";
 import PageMixin from "../../page-mixin";
 import {
@@ -69,6 +73,9 @@ import PaymentDialog from "./FirstPageComponents/payment_dialog";
 
 export default {
     mixins: [PageMixin],
+    props: {
+        pricingDialog: Boolean
+    },
     components: {
         card,
         ComponentOne,
@@ -76,7 +83,8 @@ export default {
         StripeCheckout,
         LoginSignupDialog,
         StripeElements,
-        PaymentDialog
+        PaymentDialog,
+        PricingDialog
     },
 
     data() {
@@ -100,8 +108,9 @@ export default {
         ...mapGetters(["auth/isAuthenticated","auth/getUser"]),
     },
     async created() {
-        let response = await quickRequest("/get-prices", "POST", {});
 
+        let response = await quickRequest("/get-prices", "POST", {});
+        console.log("hi me", response)
         if (response.prices) {
 
             this.prices = JSON.parse(JSON.stringify(response)).prices;
@@ -152,7 +161,9 @@ export default {
             }
 
         },
+
         async select(product_id, product_name, product_price) {
+
             this.productId = product_id;
             this.productName = product_name;
             this.productPrice = product_price;

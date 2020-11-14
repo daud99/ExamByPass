@@ -1,6 +1,6 @@
 <template>
 <div>
-    <v-card class="mx-auto" v-if="this.showList">
+    <v-card class="mx-auto " v-if="this.showList">
 
         <v-list subheader two-line>
             <v-subheader inset>Exams</v-subheader>
@@ -11,8 +11,8 @@
                         <v-list-item class="table-hover">
 
                             <v-list-item-avatar>
-                                <v-icon class="grey lighten-2" dark>
-                                    mdi-file
+                                <v-icon color="rgba(0,0,0,0.54) " size='25px' dense>
+                                    mdi-file-outline
                                 </v-icon>
                             </v-list-item-avatar>
                             <v-hover>
@@ -26,7 +26,7 @@
                                 <v-list-item-action-text>Time Limit:{{exam.time_limit}}</v-list-item-action-text>
                                 <v-menu bottom offset-y>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-btn class="ma-2" v-bind="attrs" v-on="on" fab outlined color="indigo">
+                                        <v-btn medium class="ma-2" v-bind="attrs" v-on="on" fab outlined color="rgba(0,0,0,0.54)">
                                             <v-icon>mdi-format-list-bulleted-square</v-icon>
                                         </v-btn>
                                     </template>

@@ -14,6 +14,7 @@ const resetPasswordRequest = require('../models/resetPasswordRequest')
 const structureEntryQuestionLink = require('../models/structureEntryQuestionLink')
 const Testlet = require('../models/Testlet')
 const Answer = require('../models/Answer')
+
 const Product = require('../models/Product')
 const Price = require('../models/Price')
 const MaxSession = require('../models/MaxSession')
@@ -34,6 +35,10 @@ module.exports = new class {
             User.hasMany(Discount)
             User.hasMany(Ticket)
             User.hasMany(examLibrary)
+    //         User.belongsToMany(examLibrary, {
+    //             through: 'examUser',
+    //               foreignKey: "user_id",
+    //   });
             User.hasMany(resetPasswordRequest)
             User.hasMany(Invoice)
             User.hasMany(Coupon)
@@ -50,6 +55,10 @@ module.exports = new class {
             examLibrary.hasMany(structureEntry)
             examLibrary.hasMany(structureEntryQuestionLink)
             examLibrary.hasMany(Testlet)
+    //          examLibrary.belongsToMany(User, {
+    //              through: 'examUser',
+    //                foreignKey: "exam_library_id",
+    //   });
             Coupon.hasMany(promotionCode)
             promotionCode.belongsTo(Coupon)
             Question.hasMany(Answer)
