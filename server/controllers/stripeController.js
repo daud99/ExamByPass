@@ -716,7 +716,8 @@ module.exports = {
             });
             res.send({
                 data: {
-                    subscription
+                    subscription,
+                    msg:'Subscription assigned successfully'
                 }
             })
         }
