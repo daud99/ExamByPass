@@ -1,45 +1,47 @@
 <template>
-<header class="header-global">
-    <b-navbar toggleable="lg" type="light" style="background-color: #e3f2fd;">
-        <b-navbar-brand>
-            <router-link class="navbar-brand" to="/">
-                <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
-            </router-link>
-        </b-navbar-brand>
+<div>
+    <base-nav background='background-color:  #e3f2fd;' effect="light" expand>
+        <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
+            <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
+        </router-link>
 
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <div class="row" slot="content-header" slot-scope="{closeMenu}">
+            <div class="col-6 collapse-brand">
+                <a href="#">
+                    <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
+                </a>
+            </div>
+            <div class="col-6 collapse-close">
+                <close-button @click="closeMenu"></close-button>
+            </div>
+        </div>
 
-        <b-collapse id="nav-collapse" is-nav>
-            <b-navbar-nav class="ml-auto">
-                <b-nav-item href="#">
-                    <a class="nav-item nav-link " @click="showDeleted()">
+        <ul class="navbar-nav ml-lg-auto">
+            <li class="nav-item">
+                <button type="button" class="nav-item nav-link btn-sm " @click="showDeleted()">
+                    <v-icon color='rgba(0,0,0,0.87)' class="mb-2" size='25px' right>
+                        mdi-delete-variant
+                    </v-icon>
+                    <span class="spanText ">SHOW DELETED</span>
+                </button>
 
-                        <h6>
-                            <v-icon right>
-                                mdi-delete-variant
-                            </v-icon>SHOW DELETED
-                        </h6>
-                    </a>
-                </b-nav-item>
-                <b-nav-item>
-                    <router-link class="nav-item nav-link" :to="{path: '/about'}">
-                        <h6>
-                            <v-icon right>
-                                mdi-upload
-                            </v-icon>UPLOAD
-                        </h6>
-                    </router-link>
-                </b-nav-item>
-                <b-nav-item>
+            </li>
+            <li class="nav-item">
+                <button class="nav-item nav-link btn-xs  ">
 
-                </b-nav-item>
+                    <v-icon color='rgba(0,0,0,0.87)' class="mb-1" size='25px' right>
+                        mdi-upload
+                    </v-icon>
+                    <span class="spanText ">UPLOAD</span>
 
-            </b-navbar-nav>
+                </button>
 
-        </b-collapse>
-    </b-navbar>
-    <div></div>
-</header>
+            </li>
+
+        </ul>
+
+    </base-nav>
+</div>
 </template>
 
 <script>
@@ -80,8 +82,15 @@ export default {
 }
 
 .nav-item>h6 {
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: 400;
+    font-size: 15px;
+
+}
+
+.spanText {
+    font-weight: 450;
+    font-size: 14px;
+    letter-spacing: 1.2px;
 
 }
 </style>

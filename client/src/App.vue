@@ -1,8 +1,8 @@
 <template>
 <div>
-    <div class="dark-drop" v-show="fullView"></div>
-    <router-view name="header"></router-view>
+
     <v-app>
+        <router-view name="header"></router-view>
         <v-main>
 
             <router-view :fullView.sync="fullView" />

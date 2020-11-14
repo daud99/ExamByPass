@@ -14,6 +14,7 @@ const resetPasswordRequest = require('./models/resetPasswordRequest')
 const structureEntryQuestionLink = require('./models/structureEntryQuestionLink')
 const Testlet = require('./models/Testlet')
 const Answer = require('./models/Answer')
+
 const Product = require('./models/Product')
 const Price = require('./models/Price')
 const Coupon = require('./models/Coupon')
@@ -67,7 +68,11 @@ module.exports = new class {
       User.hasMany(discountApplicable,{onDelete: 'CASCADE'})
       User.hasMany(Discount,{onDelete: 'CASCADE'})
       User.hasMany(Ticket,{onDelete: 'CASCADE'})
-      User.hasMany(examLibrary,{onDelete: 'CASCADE'})
+      User.hasMany(examLibrary, { onDelete: 'CASCADE' })
+      // User.belongsToMany(examLibrary, {
+      //   through: 'examUser',
+      //     foreignKey: "user_id",
+      // });
       User.hasMany(resetPasswordRequest,{onDelete: 'CASCADE'})
       User.hasMany(Invoice,{onDelete: 'CASCADE'})
       User.hasMany(Coupon,{onDelete: 'CASCADE'})
@@ -79,7 +84,11 @@ module.exports = new class {
       examLibrary.hasMany(Question,{onDelete: 'CASCADE'})
       examLibrary.hasMany(structureEntry,{onDelete: 'CASCADE'})
       examLibrary.hasMany(structureEntryQuestionLink,{onDelete: 'CASCADE'})
-      examLibrary.hasMany(Testlet,{onDelete: 'CASCADE'})
+      examLibrary.hasMany(Testlet, { onDelete: 'CASCADE' })
+      //  examLibrary.belongsToMany(User, {
+      //    through: 'examUser',
+      //      foreignKey: "exam_library_id",
+      // });
       Coupon.hasMany(promotionCode,{onDelete: 'CASCADE'})
       Question.hasMany(Answer,{onDelete: 'CASCADE'})
       Question.hasMany(structureEntryQuestionLink,{onDelete: 'CASCADE'})

@@ -1,43 +1,46 @@
 <template>
-<v-footer :fixed='true' color="primary lighten-1" padless>
-    <v-row class="justify-space-between" no-gutters>
-        <v-btn text class="my-2" @click=" previousQuestion">
-            <v-icon x-large color="white">
-                mdi-arrow-left-circle
-            </v-icon>
-        </v-btn>
+<div>
+    <v-footer :fixed='true' color="primary lighten-1" padless>
+        <v-row class="justify-space-between" no-gutters>
+            <v-btn text class="my-2" @click=" previousQuestion">
+                <v-icon x-large color="white">
+                    mdi-arrow-left-circle
+                </v-icon>
+            </v-btn>
 
-        <v-chip class="ma-2 " color="primary" label style="font-size:18px">
+            <v-chip class="ma-2 " color="primary" label style="font-size:18px">
 
-            Question <span style="font-size:px;padding-left:30px">{{counter+1}} / {{totalQuestions}}</span>
+                Question <span style="font-size:px;padding-left:30px">{{counter+1}} / {{totalQuestions}}</span>
 
-        </v-chip>
-        <v-btn text class="my-2" @click="nextQuestion">
-            <v-icon x-large color="white">
-                mdi-arrow-right-circle
-            </v-icon>
-        </v-btn>
-
-        <v-col class="primary lighten-2 py-0 text-center white--text" cols="12" style="font-size:22px">
-
-            <v-chip v-if="this.selectedTab === 0" outlined class="ma-2 " color="white" label style="font-size:18px">
-
-                <strong>Score</strong> : {{this.obtainScore}}/{{this.totalScore}}
             </v-chip>
-            <v-chip v-else outlined class="ma-2 " color="white" label style="font-size:18px">
+            <v-btn text class="my-2" @click="nextQuestion">
+                <v-icon x-large color="white">
+                    mdi-arrow-right-circle
+                </v-icon>
+            </v-btn>
 
-                <div id="countdown_timer" class="font-weight-bold headline" v-bind:class="{timer_complete: timer <= 0 }">
-                    <span>{{ hours | two_digits }}</span>
-                    <span>:</span>
-                    <span>{{ minutes | two_digits }}</span>
-                    <span>:</span>
-                    <span>{{ seconds | two_digits }}</span>
-                </div>
-            </v-chip>
-        </v-col>
+            <v-col class="primary lighten-2 py-0 text-center white--text" cols="12" style="font-size:22px">
 
-    </v-row>
-</v-footer>
+                <v-chip v-if="this.selectedTab === 0" outlined class="ma-2 " color="white" label style="font-size:18px">
+
+                    <strong>Score</strong> : {{this.obtainScore}}/{{this.totalScore}}
+                </v-chip>
+                <v-chip v-else outlined class="ma-2 " color="white" label style="font-size:18px">
+
+                    <div id="countdown_timer" class="font-weight-bold headline" v-bind:class="{timer_complete: timer <= 0 }">
+                        <span>{{ hours | two_digits }}</span>
+                        <span>:</span>
+                        <span>{{ minutes | two_digits }}</span>
+                        <span>:</span>
+                        <span>{{ seconds | two_digits }}</span>
+                    </div>
+                </v-chip>
+            </v-col>
+
+        </v-row>
+    </v-footer>
+
+</div>
 </template>
 
 <script>
@@ -48,6 +51,7 @@ export default {
         obtainScore: Number,
 
     },
+
     data: () => {
         return {
             // totalQuestions: 50,
@@ -57,7 +61,8 @@ export default {
             timer: Number,
             count: 0,
             selectedTab: Number,
-            subscriptionStatus: String
+            subscriptionStatus: String,
+
         }
     },
     // watch: {
@@ -121,6 +126,7 @@ export default {
                         this.$parent.submit(this.counter + 1);
                     } else {
                         console.log("please subscribe")
+
                     }
                 }
             }

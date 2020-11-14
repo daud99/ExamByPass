@@ -155,7 +155,8 @@ module.exports = {
     },
     async getPrices(req, res, next ) {
         try {
-            let prices = await Product.findAll({ include:[Price]});
+            let prices = await Product.findAll({ include: [Price] });
+            console.log("i am in gp",prices)
             if(prices.length > 0) {
                 res.send({
                     data: {

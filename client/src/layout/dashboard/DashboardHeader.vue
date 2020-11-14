@@ -2,7 +2,7 @@
 <header class="header-global">
     <headroom>
         <header>
-            <base-nav type="white" effect="light" expand>
+            <base-nav background='background-color:  #e3f2fd;' effect="dark" expand>
                 <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
                     <img src="https://res.cloudinary.com/de1v32nv0/image/upload/v1604080465/logo/logovector_-_Copy_5_rd0qiu.svg">
                 </router-link>
@@ -20,43 +20,34 @@
 
                 <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                     <li v-if="(_self['auth/getUser'].roles!='admin')" class="nav-item pointer">
-                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                                <router-link :to="{path: '/contactUs'}" class="nav-item">Contact Us</router-link>
-                            </strong></h6>
+
+                        <router-link :to="{path: '/contactUs'}" class="nav-item nav-Text" @click="h6">Contact Us</router-link>
+
                     </li>
                     &nbsp;
                     &nbsp;
                     &nbsp;
                     <li v-if="(_self['auth/getUser'].roles!='admin')" class="nav-item pointer">
-                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                                <router-link :to="{path: '/about'}" class="nav-item">About</router-link>
-                            </strong></h6>
+
+                        <router-link :to="{path: '/about'}" class="nav-item nav-Text" @click="h6">About</router-link>
+
                     </li>
                     &nbsp;
                     &nbsp;
                     &nbsp;
                     <li v-if="(_self['auth/getUser'].roles!='admin')" class="nav-item pointer">
-                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                                <router-link :to="{path: '/faq'}" class="nav-item">FAQS</router-link>
-                            </strong></h6>
+
+                        <router-link :to="{path: '/faq'}" class="nav-item nav-Text" @click="h6">FAQS</router-link>
+
                     </li>
                     &nbsp;
                     &nbsp;
                     &nbsp;
 
                     <li class="nav-item pointer">
-                        <h6 style="color: black; padding-top: 10px;" @click="h6"><strong>
-                                <router-link :to="{path: '/pricing'}" class="nav-item">Pricing</router-link>
-                            </strong></h6>
-                    </li>
 
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    <li v-if="!_self['auth/isAuthenticated']" class="nav-item pointer">
-                        <h6 style="color: black; padding-top: 10px" @click="h6">
-                            <strong>EDITOR</strong>
-                        </h6>
+                        <router-link :to="{path: '/pricing'}" class="nav-item nav-Text" @click="h6">Pricing</router-link>
+
                     </li>
 
                     &nbsp;
@@ -94,13 +85,16 @@
                         </base-dropdown>
                     </li>
 
-                    &nbsp; &nbsp; &nbsp;
+                    &nbsp; &nbsp;
                     <li v-if="!_self['auth/isAuthenticated']" class="nav-item">
-                        <b-button variant="outline-primary" tag="a" @click="
+                        <b-button size="sm" variant="outline-success" @click="
                       () => {
                         this.$router.push({ name: 'login' });
                       }
-                    " class="mb-3 mb-sm-0" icon="fa fa-sign-in">
+                    " class="mb-3 mb-sm-0">
+                            <v-icon small color="green lighten-1">
+                                mdi-login
+                            </v-icon>
                             Login
                         </b-button>
                     </li>&nbsp; &nbsp; &nbsp;
@@ -191,7 +185,9 @@ export default {
         async logout() {
             try {
                 let response = await quickRequest("/login/logout", "POST", {});
-                let response2 = await quickRequest("/deleteUserSession", "POST",{id:this["auth/getUser"].id});
+                let response2 = await quickRequest("/deleteUserSession", "POST", {
+                    id: this["auth/getUser"].id
+                });
                 this['auth/setUser']({});
                 localStorage.clear();
                 this.$router.push("login");
@@ -205,6 +201,11 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
+
 .navbar {
     padding: 1rem 1rem;
 }
@@ -212,8 +213,16 @@ export default {
 @media screen and (min-width: 989px) {
     .navbar .nav-item {
         color: black;
-        padding-top: 10px;
+        padding-top: 8px;
 
+    }
+
+    .nav-Text {
+        font-size: 15px;
+        font-weight: 700;
+        padding: 0 6px;
+        min-width: 96;
+        font-family: 'PT Sans', sans-serif;
     }
 }
 </style>
