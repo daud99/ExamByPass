@@ -450,6 +450,13 @@
                 text: response.msg,
             });
             this.loading = false;
+            this.duration='',
+            this.percentage_off=0,
+            this.amount_off=0,
+            this.duration_in_months=0,
+            this.redeem_by='',
+            this.max_redemtions=0,
+            this.name='',
             this.initialize()
             }
         } catch (e) {

@@ -8,6 +8,7 @@ const Ticket = require("./models/Ticket")
 const Session = require("./models/Session")
 const answerArea = require("./models/answerArea")
 const examLibrary = require('./models/examLibrary')
+const examLibraryUser = require('./models/examLibraryUser')
 const Question = require('./models/Question')
 const structureEntry = require('./models/structureEntry')
 const resetPasswordRequest = require('./models/resetPasswordRequest')
@@ -73,8 +74,8 @@ module.exports = new class {
       User.hasMany(Invoice,{onDelete: 'CASCADE'})
       User.hasMany(Coupon,{onDelete: 'CASCADE'})
       User.hasOne(Subscription,{onDelete: 'CASCADE',foreignKey: 'user_id'})
-      User.belongsToMany(examLibrary, { through: 'Exam_library_users' });
-      examLibrary.belongsToMany(User, { through: 'Exam_library_users' });
+      User.belongsToMany(examLibrary, { through: examLibraryUser });
+      examLibrary.belongsToMany(User, { through: examLibraryUser });
       Product.hasOne(Price, { foreignKey: 'productPid' },{onDelete: 'CASCADE'})
       Product.hasMany(Invoice, { foreignKey: 'productPid' },{onDelete: 'CASCADE'})
       Invoice.belongsTo(Product,{onDelete: 'CASCADE'})

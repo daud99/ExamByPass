@@ -58,6 +58,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), StripeCont
 
 router.get('/api/getInvoices',[Auth.isAuthenticatedAndAdmmin], StripeController.getAllInvoices);
 router.get('/api/getSubscriptions',[Auth.isAuthenticatedAndAdmmin], SubscriptionManagementController.getAllSubscriptions);
+router.get('/api/getAdminSubSubscriptions',[Auth.isAuthenticatedAndAdmmin], SubscriptionManagementController.getAllAdminSubSubscribescriptions);
 router.get('/api/getSessionAllowed', AuthController.getSessionsAlloweds);
 router.post('/api/sessionallowedUpdate',[Auth.isAuthenticatedAndAdmmin], AuthController.changeAllowedsessions);
 router.post('/api/deleteUserSession',[Auth.isAuthenticatedAndAdmmin], AuthController.deleteUserSession);

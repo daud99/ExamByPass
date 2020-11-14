@@ -43,4 +43,25 @@ module.exports = new class {
             });
         }
     }
+    async getAllAdminSubSubscribescriptions(req,res, next) {
+        try {
+            const subscriptions = await Subscription.findAll({ include:[{all:true}],
+                where: {
+                    amount : 10000000
+                }
+            });
+            res.send({
+                data: {
+                    subscriptions
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
 };
