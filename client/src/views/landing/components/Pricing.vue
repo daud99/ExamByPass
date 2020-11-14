@@ -105,7 +105,7 @@ export default {
         document.getElementById("preloader-block").style.display = "none";
     },
     computed: {
-        ...mapGetters(["auth/isAuthenticated"]),
+        ...mapGetters(["auth/isAuthenticated", "auth/getUser"]),
     },
     async created() {
 
@@ -161,17 +161,24 @@ export default {
             }
 
         },
-        test3(t) {
-            console.log(" ia m test3", t)
-        },
-        select(product_id, product_name, product_price) {
-            console.log(product_id, product_name, product_price)
+
+        async select(product_id, product_name, product_price) {
+
             this.productId = product_id;
             this.productName = product_name;
             this.productPrice = product_price;
             try {
                 if (this["auth/isAuthenticated"]) {
-                    this.showPaymentDialog = true;
+                    if (this["auth/getUser"].subscription_status !== 'active') {
+                        this.showPaymentDialog = true;
+                    } else {
+                        Swal.fire({
+                            type: "info",
+                            title: "Already subscribed",
+                            text: "You can have only one subscription at a time!",
+                        });
+                    }
+
                 } else {
                     localStorage.setItem("redirectToPricing", true);
                     this.showDialog = true;

@@ -55,7 +55,7 @@
                     &nbsp;
                     <li v-if="(_self['auth/isAuthenticated']) && (_self['auth/getUser'].roles=='admin')" class="nav-item pointer">
                         <base-dropdown>
-                            <base-button slot="title" type="secondary" icon="fa fa-user">
+                            <base-button slot="title" type="transparent">
                                 Administration
                             </base-button>
                             <router-link class="dropdown-item" to="/users">
@@ -63,23 +63,23 @@
                                 <span>All Users</span>
                             </router-link>
                             <router-link class="dropdown-item" to="/messages">
-                                <i class="ni ni-single-02"></i>
+                                <i class="ni ni-email-83"></i>
                                 <span>Messages</span>
                             </router-link>
                             <router-link class="dropdown-item" to="/products">
-                                <i class="ni ni-single-02"></i>
+                                <i class="ni ni-basket"></i>
                                 <span>Products</span>
                             </router-link>
                             <router-link class="dropdown-item" to="/invoices">
-                                <i class="ni ni-single-02"></i>
+                                <i class="ni ni-badge"></i>
                                 <span>Invoices</span>
                             </router-link>
                             <router-link class="dropdown-item" to="/subscriptions">
-                                <i class="ni ni-single-02"></i>
+                                <i class="ni ni-bag-17"></i>
                                 <span>Subscritions</span>
                             </router-link>
                             <router-link class="dropdown-item" to="/coupons">
-                                <i class="ni ni-single-02"></i>
+                                <i class="ni ni-key-25"></i>
                                 <span>Coupons</span>
                             </router-link>
                         </base-dropdown>
@@ -115,10 +115,10 @@
                         <i class="ni ni-settings-gear-65"></i>
                         <span>Settings</span>
                       </a> -->
-                            <a href="#!" class="dropdown-item">
+                            <router-link class="dropdown-item" to="/exams">
                                 <i class="ni ni-single-copy-04"></i>
                                 <span>My Exams</span>
-                            </a>
+                            </router-link>
 
                             <div class="dropdown-divider"></div>
                             <a href="#!" class="dropdown-item" @click="logout">

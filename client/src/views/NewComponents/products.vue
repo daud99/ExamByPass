@@ -127,7 +127,7 @@
   import card from '../../components/Card';
   import {mapActions, mapGetters} from 'vuex';
   import Swal from "sweetalert2";
-  import { quickRequest } from "../../../common/misc";
+  import { quickRequest , dateGet } from "../../../common/misc";
   import PageMixin from "../page-mixin";
   import Vue from 'vue'
   import JsonCSV from 'vue-json-csv'
@@ -144,9 +144,8 @@
         { text: 'Name', value: 'name' },
         { text: 'Active', value: 'active' },
         { text: 'Created At', value: 'createdAt' },
-        { text: 'updated_at', value: 'updatedAt' },
+        { text: 'Last Updated', value: 'updatedAt' },
         { text: 'Interval', value: 'interval' },
-        { text: 'Currency', value: 'currency' },
         { text: 'Amount', value: 'amount' },
         { text: 'Actions', value: 'actions', sortable: false },
         { text: 'Enable/Disable', value: 'archive', sortable: false },
@@ -255,10 +254,9 @@
                   console.log(productObj.currency=response.prices[index].Price.currency)
                   productObj.pid=response.prices[index].pid
                   productObj.active=response.prices[index].active
-                  productObj.createdAt=response.prices[index].createdAt
-                  productObj.updatedAt=response.prices[index].updatedAt
+                  productObj.createdAt= dateGet(response.prices[index].createdAt)
+                  productObj.updatedAt= dateGet(response.prices[index].updatedAt)
                   productObj.name=response.prices[index].name
-                  productObj.currency=response.prices[index].Price.currency
                   productObj.interval=response.prices[index].Price.interval
                   productObj.amount='$'+response.prices[index].Price.amount
                   this.productArray.push(productObj)

@@ -50,8 +50,10 @@ router.post('/api/create-checkout-session', StripeController.createCheckoutSessi
 router.post('/api/create-customer', [Auth.isAuthenticated], StripeController.createCustomer);
 router.post('/api/get-subscription', [Auth.isAuthenticated], StripeController.getSubscription);
 router.post('/api/get-invoices', [Auth.isAuthenticated], StripeController.getInvoices);
-router.post('/api/create-subscription', [Auth.isAuthenticated], StripeController.createSubscription);
-router.post('/api/cancel-subscription', [Auth.isAuthenticated], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
+router.post('/api/create-subscription', [Auth.isAuthenticated, Auth.isUnSubscribed], StripeController.createSubscription);
+router.post('/api/cancel-subscription', [Auth.isAuthenticated, Auth.isSubscribed], Middleware.checkCharge(), StripeController.updateAutoChargeSubscription);
+router.post('/api/assign-subscription', [Auth.isAuthenticatedAndAdmmin], StripeController.assignSubscriptionToUser);
+router.post('/api/delete-self-assign-subscription', [Auth.isAuthenticatedAndAdmmin], Middleware.checkId(), StripeController.deleteSubscription);
 router.post('/webhook', bodyParser.raw({ type: 'application/json' }), StripeController.webHook);
 
 router.get('/api/getInvoices',[Auth.isAuthenticatedAndAdmmin], StripeController.getAllInvoices);
