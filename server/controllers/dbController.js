@@ -25,7 +25,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Keys = require("../config/Keys")
 const Auth = require("../auth")
 const Db = require("../config/db")
-const { compareSync } = require("bcrypt")
 
 module.exports = new class {
     async syncDB(req, res, next) {
@@ -44,9 +43,13 @@ module.exports = new class {
             User.hasMany(Invoice)
             User.hasMany(Coupon)
             User.hasOne(Subscription)
+            User.belongsToMany(examLibrary, { through: 'Exam_library_users' });
+            examLibrary.belongsToMany(User, { through: 'Exam_library_users' });
             Product.hasOne(Price, { foreignKey: 'productPid' })
             Product.hasMany(Invoice, { foreignKey: 'productPid' })
             Invoice.belongsTo(Product)
+            Coupon.hasOne(Invoice,{onDelete: 'CASCADE',foreignKey: 'coupon_id'})
+            Invoice.belongsTo(Coupon,{onDelete: 'CASCADE'})
             Subscription.belongsTo(User)
             examLibrary.hasMany(Question)
             examLibrary.hasMany(structureEntry)
@@ -57,6 +60,7 @@ module.exports = new class {
     //                foreignKey: "exam_library_id",
     //   });
             Coupon.hasMany(promotionCode)
+            promotionCode.belongsTo(Coupon)
             Question.hasMany(Answer)
             Question.hasMany(structureEntryQuestionLink)
             structureEntry.hasMany(structureEntryQuestionLink)

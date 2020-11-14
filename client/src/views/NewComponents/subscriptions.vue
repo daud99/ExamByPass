@@ -72,15 +72,11 @@ export default {
             },
 
             {
-                text: 'User First Name',
-                value: 'firstname'
+                text: 'Name',
+                value: 'name'
             },
             {
-                text: 'User last Name',
-                value: 'lastname'
-            },
-            {
-                text: 'User Email',
+                text: 'Email',
                 value: 'email'
             },
 
@@ -89,11 +85,11 @@ export default {
                 value: 'userId'
             },
             {
-                text: 'Created At',
+                text: 'Created',
                 value: 'createdAt'
             },
             {
-                text: 'Updated At',
+                text: 'Last Updated',
                 value: 'updatedAt'
             },
         ],
@@ -144,12 +140,11 @@ export default {
                     });
                 } else {
                     if (response.subscriptions.length > 0) {
-                        console.log(response)
                         for (let index = 0; index < response.subscriptions.length; index++) {
-                            subscriptionObject.id = response.subscriptions[index].id
-                            subscriptionObject.amount = response.subscriptions[index].amount
-                            subscriptionObject.createdAt = response.subscriptions[index].createdAt
-                            subscriptionObject.updatedAt = response.subscriptions[index].updatedAt
+                            subscriptionObject.id = response.subscriptions[index].subscription_id
+                            subscriptionObject.amount = '$'+response.subscriptions[index].amount
+                            subscriptionObject.createdAt = this.dateGet(response.subscriptions[index].createdAt)
+                            subscriptionObject.updatedAt = this.dateGet(response.subscriptions[index].updatedAt)
                             subscriptionObject.autoCharge = response.subscriptions[index].autoCharge
                             subscriptionObject.userId = response.subscriptions[index].userId
                             subscriptionObject.start = this.dateGet(response.subscriptions[index].start)
@@ -158,8 +153,7 @@ export default {
 
 
                             subscriptionObject.status = response.subscriptions[index].status
-                            subscriptionObject.firstname = response.subscriptions[index].user.firstName
-                            subscriptionObject.lastname = response.subscriptions[index].user.lastName
+                            subscriptionObject.name = response.subscriptions[index].user.firstName + ' ' +  response.subscriptions[index].user.lastName
                             subscriptionObject.email = response.subscriptions[index].user.email
 
                             this.subscriptionArray.push(subscriptionObject)

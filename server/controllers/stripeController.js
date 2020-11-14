@@ -6,6 +6,7 @@ const Product = require('../models/Product');
 const Invoice = require('../models/Invoice');
 const Coupon = require('../models/Coupon');
 const PromotionCode = require('../models/promotionCode');
+const Misc = require("../misc")
 
 const { validationResult } = require('express-validator');
 
@@ -180,7 +181,6 @@ module.exports = {
             });
         }
     },
-
     async listAllProducts(req, res, next ) {
         // do not use me to get product but the above one
         try {
@@ -339,19 +339,19 @@ module.exports = {
     },
     async createSubscription(req, res, next) {
         try {
-
             var obj = {
                 customer: req.user.stripeId,
                 items: [{ price: req.body.id }]
             }
 
             if(req.body.promoCode) {
-                const code = await PromotionCode.findOne({
+                var code = await PromotionCode.findOne({
                     where: {
                         code: req.body.promoCode
                     },
-                    raw: true, nest: true
+                    raw: true, nest: true,include: [Coupon]
                 });
+
                 if(code) {
                     if(code.id) obj["promotion_code"] = code.id;
                 } else {
@@ -361,6 +361,83 @@ module.exports = {
                         }
                     })
                 }
+            }
+
+            await stripe.customers.update(
+                req.user.stripeId,
+                {
+                    source: req.body.token.id 
+                }
+            );
+               
+                // Create the subscription
+                const subscription = await stripe.subscriptions.create(obj);
+                await req.user.createSubscription({
+                    amount: subscription.plan.amount/100,
+                    subscription_id: subscription.id,
+                    status: subscription.status,
+                    start: subscription.current_period_start,
+                    end: subscription.current_period_end,
+                    interval: `${subscription.plan.interval_count} ${subscription.plan.interval}`  
+                });
+
+            // Create the invoice
+            let total = subscription.plan.amount/100;
+            if(code) {
+                if(code.coupon) {
+                    if(code.coupon.percent_off) {
+                        let cut = (code.coupon.percent_off / 100) * total;
+                        total -= cut;
+                      }
+                    if(code.coupon.amount_off) total -= code.coupon.amount_off;
+                }
+            }   
+            
+
+            let invoice = {
+                total: total,
+                invoiceId: subscription.latest_invoice,
+                productPid: subscription.plan.product,
+                issueDate: subscription.created
+            } 
+            if(code) {
+                if(code.couponId) 
+                {
+                    invoice['coupon_id'] = code.couponId;
+                }
+            }
+            await req.user.createInvoice(invoice);
+
+            res.send({
+                data: {
+                    subscription
+                }
+            })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async assignUserSubscription(req, res, next) {
+        try {
+
+            var obj = {
+                customer: req.body.stripeId,
+                items: [{ price: req.body.id }]
+            }
+           
+            if(code) {
+                if(code.id) obj["promotion_code"] = code.id;
+            } else {
+                return res.send({
+                    data: {
+                        error: "Not a valid promotion Code!"
+                    }
+                })
             }
 
             await stripe.customers.update(
@@ -415,7 +492,7 @@ module.exports = {
         //        raw: true,
         //        nest: true 
         //    });
-           const invoices = await req.user.getInvoices({raw: true, nest: true, include:[Product]});
+           const invoices = await req.user.getInvoices({raw: true, nest: true, include:[Product, Coupon]});
            if(invoices.length > 0) {
             res.send({
                 data: {
@@ -620,6 +697,67 @@ module.exports = {
             });
         }
     },
+    async assignSubscriptionToUser(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.send( 
+                {
+                    data:{
+                        error: errors.array()[0].msg
+                    } 
+                });
+        }
+        try {
+            const subscription = await Subscription.create({
+                amount: 10000000,
+                subscription_id: Misc.makeID(10),
+                status: 'active',
+                user_id: req.body.id
+            });
+            res.send({
+                data: {
+                    subscription
+                }
+            })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
+    async deleteSubscription(req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.send( 
+                {
+                    data:{
+                        error: errors.array()[0].msg
+                    } 
+                });
+        }
+        try {
+            await Subscription.destroy({
+                where: {
+                    subscription_id: req.body.id
+                }
+            });
+            res.send({
+                data: {
+                    msg: "Subscription deleted successfully!"
+                }
+            })
+        }
+        catch(e) {
+            console.log(e);
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    },
     async webHook(req, res, next) {
         try {
             const payload = req.body;
@@ -720,5 +858,4 @@ module.exports = {
             });
         }
     }
-
 };

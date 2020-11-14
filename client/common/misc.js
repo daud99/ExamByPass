@@ -1,4 +1,6 @@
 const axios = require('axios')
+const moment = require('moment')
+
     export const quickRequest = async (url, method, body, paramS,examId) => {
        
         // var csrfToken = document
@@ -26,4 +28,8 @@ const axios = require('axios')
 
         if(response.data.data) return JSON.parse(JSON.stringify(response.data.data));
         return JSON.parse(JSON.stringify(response.data));
+    }
+
+    export const dateGet = (numS) => {
+        return moment(numS, "x").format("DD MMM YYYY hh:mm a")
     }

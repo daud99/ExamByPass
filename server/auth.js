@@ -68,18 +68,18 @@ module.exports = new class {
       User.hasMany(discountApplicable,{onDelete: 'CASCADE'})
       User.hasMany(Discount,{onDelete: 'CASCADE'})
       User.hasMany(Ticket,{onDelete: 'CASCADE'})
-      User.hasMany(examLibrary, { onDelete: 'CASCADE' })
-      // User.belongsToMany(examLibrary, {
-      //   through: 'examUser',
-      //     foreignKey: "user_id",
-      // });
+
       User.hasMany(resetPasswordRequest,{onDelete: 'CASCADE'})
       User.hasMany(Invoice,{onDelete: 'CASCADE'})
       User.hasMany(Coupon,{onDelete: 'CASCADE'})
-      User.hasOne(Subscription,{onDelete: 'CASCADE'})
+      User.hasOne(Subscription,{onDelete: 'CASCADE',foreignKey: 'user_id'})
+      User.belongsToMany(examLibrary, { through: 'Exam_library_users' });
+      examLibrary.belongsToMany(User, { through: 'Exam_library_users' });
       Product.hasOne(Price, { foreignKey: 'productPid' },{onDelete: 'CASCADE'})
       Product.hasMany(Invoice, { foreignKey: 'productPid' },{onDelete: 'CASCADE'})
       Invoice.belongsTo(Product,{onDelete: 'CASCADE'})
+      Coupon.hasOne(Invoice,{onDelete: 'CASCADE',foreignKey: 'coupon_id'})
+      Invoice.belongsTo(Coupon,{onDelete: 'CASCADE'})
       Subscription.belongsTo(User,{onDelete: 'CASCADE'})
       examLibrary.hasMany(Question,{onDelete: 'CASCADE'})
       examLibrary.hasMany(structureEntry,{onDelete: 'CASCADE'})
@@ -90,6 +90,7 @@ module.exports = new class {
       //      foreignKey: "exam_library_id",
       // });
       Coupon.hasMany(promotionCode,{onDelete: 'CASCADE'})
+      promotionCode.belongsTo(Coupon)
       Question.hasMany(Answer,{onDelete: 'CASCADE'})
       Question.hasMany(structureEntryQuestionLink,{onDelete: 'CASCADE'})
       structureEntry.hasMany(structureEntryQuestionLink,{onDelete: 'CASCADE'})

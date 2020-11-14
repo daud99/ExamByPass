@@ -62,8 +62,23 @@
                                               </v-col>
                                             </v-row>
 
+                                            <v-radio-group
+                                              v-model="row"
+                                              row
+                                            >
+                                              <v-radio
+                                                label="Percentage_off"
+                                                value="1"
+                                              ></v-radio>
+                                              <v-radio
+                                                label="Amount_off"
+                                                value="2"
+                                              ></v-radio>
+                                            </v-radio-group>
+
                                             <v-row>
                                               <v-col
+                                                v-if="row=='1'"
                                                 cols="12"
                                                 sm="12"
                                                 md="12"
@@ -79,12 +94,63 @@
 
                                             <v-row>
                                               <v-col
+                                                v-if="row=='2'"
+                                                cols="12"
+                                                sm="12"
+                                                md="12"
+                                              >
+                                                <v-text-field
+                                                  v-model="amount_off"
+                                                  type="number"
+                                                  label="Amount Off"
+                                                  outlined shaped
+                                                ></v-text-field>
+                                              </v-col>
+                                            </v-row>
+
+                                            
+
+                                            <v-row>
+                                              <v-col
+                                                cols="12"
+                                                sm="12"
+                                                md="12"
+                                              >
+
+                                                <v-select
+                                                    v-model="duration"
+                                                    :items="items"
+                                                    label="Duration"
+                                                    outlined
+                                                ></v-select>
+                                              </v-col>
+                                            </v-row>
+
+                                            <v-row>
+                                              <v-col
+                                              v-if="duration=='repeating'"
+                                                cols="12"
+                                                sm="12"
+                                                md="12"
+                                              >
+
+                                                <v-text-field
+                                                  v-model="duration_in_months"
+                                                  type="number"
+                                                  label="Duration in Months"
+                                                  outlined shaped
+                                                ></v-text-field>
+                                              </v-col>
+                                            </v-row>
+
+                                            <v-row>
+                                              <v-col
                                                 cols="12"
                                                 sm="12"
                                                 md="12"
                                               >
                                                 <h5>Redeem By</h5><br>
-                                                <v-date-picker v-model="redeem_by"></v-date-picker>
+                                                <input class="form-control" label="Select Redeem By" v-model="redeem_by" type="datetime-local" value="" id="datetime-local-input">
                                               </v-col>
                                             </v-row>
 
@@ -102,20 +168,6 @@
                                                 ></v-text-field>
                                               </v-col>
                                             </v-row>
-
-                                            <v-row>
-                                              <v-col
-                                                cols="12"
-                                                sm="12"
-                                                md="12"
-                                              >
-                                                <v-text-field
-                                                  v-model="duration"
-                                                  label="Duration"
-                                                  outlined shaped
-                                                ></v-text-field>
-                                              </v-col>
-                                            </v-row>
                                           </v-container>
                                         </v-card-text>
 
@@ -129,7 +181,7 @@
                                             Cancel
                                           </v-btn>
                                           <v-btn
-                                          :disabled="duration=='' || name=='' || redeem_by=='' || max_redemtions==0 || percentage_off==0"
+                                          :disabled="duration=='' || name==''"
                                             color="blue darken-1"
                                             text
                                             @click="save"
@@ -240,7 +292,9 @@
   Vue.component('downloadCsv', JsonCSV)
   export default {
     data: () => ({
+      items: ['once', 'repeating' , 'forever'],
       dialogDelete: false,
+      row:'',
       dialog: false,
       dialogPromo: false,
       search: '',
@@ -266,6 +320,8 @@
         editedIndex: -1,
       duration:'',
       percentage_off:0,
+      amount_off:0,
+      duration_in_months:0,
       redeem_by:'',
       max_redemtions:0,
       name:'',
@@ -357,10 +413,25 @@
         this.loading = true;
         let data={
             duration:this.duration,
-            percent_off:parseInt(this.percentage_off),
-            redeem_by:this.redeem_by,
-            max_redemptions:parseInt(this.max_redemtions),
             name:this.name
+        }
+        console.log(this.redeem_by)
+        if(this.redeem_by!=''){
+          data.redeem_by=this.redeem_by
+          data.max_redemptions=parseInt(this.max_redemtions)
+        }
+        console.log(this.row)
+        console.log(this.amount_off)
+        console.log(this.percent_off)
+        if(this.row=='1'){
+          data.percent_off=parseInt(this.percentage_off)
+          delete data.amount_off
+        }else if(this.row=='2'){
+          data.amount_off=parseInt(this.amount_off)
+          delete data.percent_off
+        }
+        if(this.duration=='repeating'){
+          data.duration_in_months=this.duration_in_months
         }
         try{
         let response = await quickRequest("/create-coupon", "POST", data);
@@ -422,7 +493,7 @@
                   couponObj.updatedAt=response.coupons[index].updatedAt
                   couponObj.max_redemptions=response.coupons[index].max_redemptions
                   couponObj.currency=response.coupons[index].currency
-                  couponObj.amount_off=response.coupons[index].amount_off
+                  couponObj.amount_off='$'+response.coupons[index].amount_off
                   couponObj.percent_off=response.coupons[index].percent_off+'%'
                   couponObj.redeem_by=this.dateGet(response.coupons[index].redeem_by)
                   couponObj.duration=response.coupons[index].duration
