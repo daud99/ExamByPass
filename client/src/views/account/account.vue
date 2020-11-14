@@ -8,8 +8,8 @@
                 <v-tabs v-model="tab" align-with-title fixed-tabs next-icon="mdi-arrow-right-bold-box-outline" prev-icon="mdi-arrow-left-bold-box-outline" show-arrows>
                     <v-tabs-slider color="yellow"></v-tabs-slider>
                     <v-tab key="Account" ><v-icon large color="indigo darken-2">mdi-account-child-circle</v-icon>Account</v-tab>
-                    <v-tab key="Subscriptions" ><v-icon large color="indigo darken-2">mdi-playlist-check</v-icon>Subscriptions</v-tab>
-                    <v-tab key="Payments" ><v-icon large color="indigo darken-2">mdi-credit-card-settings-outline</v-icon>Payments and Invoices</v-tab>
+                    <v-tab key="Subscriptions" v-if="(_self['auth/getUser'].roles!='admin')"><v-icon large color="indigo darken-2">mdi-playlist-check</v-icon>Subscriptions</v-tab>
+                    <v-tab key="Payments" v-if="(_self['auth/getUser'].roles!='admin')"><v-icon large color="indigo darken-2">mdi-credit-card-settings-outline</v-icon>Payments and Invoices</v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="tab">
                     <v-tab-item key="Account">
@@ -60,7 +60,8 @@ export default {
     ...mapGetters([
       'auth/getUser'
     ]),
-    ...mapGetters(["auth/isAuthenticated"])
+    ...mapGetters(["auth/isAuthenticated"]),
+    
   },
   methods: {
      ...mapActions([

@@ -91,10 +91,10 @@
                         </template>
 
                         <template v-slot:item.archive="{ item }">
-                        <button v-if="!item.archieved" type="button" class="btn btn-sm btn-danger" @click="setArchive(item,false)">
+                        <button v-if="!item.archieved" type="button" class="btn btn-sm btn-danger" @click="setArchive(item,true)">
                           Disable
                         </button>
-                        <button v-if="item.archieved" type="button" class="btn btn-sm btn-success" @click="setArchive(item,true)">
+                        <button v-if="item.archieved" type="button" class="btn btn-sm btn-success" @click="setArchive(item,false)">
                           Enable
                         </button>
                         </template>
