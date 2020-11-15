@@ -27,7 +27,7 @@
 
             </li>
             <li class="nav-item">
-                <button class="nav-item nav-link btn-xs  ">
+                <button class="nav-item nav-link btn-xs" @click="upload()">
 
                     <v-icon color='rgba(0,0,0,0.87)' class="mb-1" size='25px' right>
                         mdi-upload
@@ -41,6 +41,9 @@
         </ul>
 
     </base-nav>
+    <div v-if="isUpload">
+        <uploadfile @changeUploadCondition="changeUploadCondition" :showButton='true' />
+    </div>
 </div>
 </template>
 
@@ -49,13 +52,26 @@ import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
 import EventBus from '../../Event/eventBus';
+import uploadfile from '../../views/landing/components/FirstPageComponents/upload_files_dialog'
 export default {
+    data() {
+        return {
+            isUpload: false
+        }
+    },
     components: {
         BaseNav,
         CloseButton,
         BaseDropdown,
+        uploadfile
     },
     methods: {
+        upload() {
+            this.isUpload = true
+        },
+        changeUploadCondition() {
+            this.isUpload = false
+        },
         scrollToElement() {
             let element_id = document.getElementById("pricingSection");
             if (element_id) {

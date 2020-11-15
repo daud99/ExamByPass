@@ -3,7 +3,7 @@
     <v-row justify="center">
         <v-dialog v-model="dialog" persistent max-width="600px">
             <template v-slot:activator="{ on, attrs }">
-                <div class="row">
+                <div class="row" v-if="!showButton">
                     <div class="col col-lg-6 col-md-6 col-xs-12">
                         <a v-bind="attrs" v-on="on">
                             <card class="d-flex align-items-center">
@@ -47,7 +47,7 @@
 
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="dialog = false">
+                    <v-btn color="blue darken-1" text @click="closeDialog()">
                         Close
                     </v-btn>
                     <v-btn color="blue darken-1" text @click="submitFiles()">
@@ -74,6 +74,9 @@ import {
     mapGetters
 } from 'vuex';
 export default {
+    props: {
+        showButton: Boolean
+    },
     data: () => ({
         dialog: false,
         files: null,
@@ -84,7 +87,15 @@ export default {
         ...mapGetters(["auth/getUser"]),
         ...mapGetters(["auth/isAuthenticated"]),
     },
+    created() {
+        this.dialog = this.showButton
+        console.log("user is", this["auth/isAuthenticated"])
+    },
     methods: {
+        closeDialog() {
+            this.dialog = false
+            this.$emit("changeUploadCondition");
+        },
         submitFiles() {
             this.show_alert = false
             this.files_check = false

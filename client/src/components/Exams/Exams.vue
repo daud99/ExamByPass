@@ -197,6 +197,7 @@
             </v-card>
         </v-dialog>
     </div>
+
 </div>
 </template>
 
@@ -204,6 +205,7 @@
 import axios from "axios";
 import Main from "../questionTypes/Main";
 import deletedExam from "./deletedExamDialog";
+
 import {
     mapActions,
     mapGetters
@@ -220,7 +222,8 @@ export default {
     components: {
         Main,
         deletedExam,
-        login
+        login,
+
     },
     name: "Exams",
     data: () => {
@@ -402,10 +405,12 @@ export default {
                 .get("/exams/" + this["auth/getUser"].id)
                 .then((resp) => {
 
-                    this.exams = resp.data;
-                    // var results = resp.data.filter(function (entry) {
-                    //   return entry.is_correct === 1;
-                    // });
+                    // this.exams = resp.data;
+                    var results = resp.data.filter(function (entry) {
+                        return entry.users.length !== 0;
+                    });
+                    this.exams = results;
+                    console.log(resp, results)
 
                 })
                 .catch((err) => {
