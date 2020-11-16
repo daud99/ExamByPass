@@ -5,7 +5,7 @@
         <v-col>
             <v-sheet class="pa-12" color="grey lighten-3">
                 <p v-html="questionn.content"></p>
-                <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
+                <loading :active.sync="isLoading" :can-cancel="false" :height='80' :width='80' loader='bars' color='green' :is-full-page="fullPage"></loading>
                 <v-radio-group v-model="userAnswer" :mandatory="true">
                     <v-radio :style="answerElm.styleAfterSubmit" v-for="answerElm in answers" :key="answerElm.id" :label="answerElm.content" :value="answerElm.id"></v-radio>
                 </v-radio-group>

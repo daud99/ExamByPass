@@ -247,12 +247,17 @@ export default {
 
         async getExamSession() {
             let user_id = this["auth/getUser"].id
-
+            let guestId = JSON.parse(localStorage.getItem("guestId"));
             let examIdd = JSON.parse(localStorage.getItem("examId"));
 
             // console.log("id is", this.examId, this.$route.params.examId)
             try {
-                let response = await quickRequest("/getExamsession", "GET", {}, user_id, examIdd);
+                let response
+                if (this["auth/isAuthenticated"]) {
+                    response = await quickRequest("/getExamsession", "GET", {}, user_id, examIdd);
+                } else {
+                    response = await quickRequest("/getGuestExamsession", "GET", {}, guestId, examIdd);
+                }
                 console.log("response", response)
                 if ("error" in response) {
                     Swal.fire({

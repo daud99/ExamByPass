@@ -87,10 +87,13 @@ router.post('/api/archive-promotion-code', [Auth.isAuthenticatedAndAdmmin], Midd
 router.post('/api/saveExamsession', userExamsessionController.saveSessionExam);
 router.get('/api/getExamsession', userExamsessionController.getSessionExam);
 router.post('/api/deleteExamsession', userExamsessionController.deleteSessionExam);
+router.get('/api/getGuestExamsession', userExamsessionController.getGuestSessionExam);
+router.post('/api/deleteGuestExamsession', userExamsessionController.deleteGuestSessionExam);
 //Route for subscription
 router.get('/api/getSubscription', ParserController.getSubscription);
 
 router.get("/api/exams/:uuid", ParserController.getExams);
+router.get("/api/guestExam/:gid", ParserController.getGuestExam);
 //Route for questions
 router.get("/api/questions/:page/:examId/:selectedCheck/:structureEntryQuestionn", ParserController.getQuestions);
 //Route for questions types
