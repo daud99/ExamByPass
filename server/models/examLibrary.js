@@ -24,6 +24,7 @@ const examLibrary = db.define('exam_library',{
     original_file_name:DataTypes.STRING,
     passing_score:DataTypes.DOUBLE,
     real_question_count:DataTypes.INTEGER,
+    guest_user_id:DataTypes.INTEGER,
     share_dropbox_string:DataTypes.TEXT  ,
     share_onedrive_string:DataTypes.TEXT,
     share_url:DataTypes.TEXT,

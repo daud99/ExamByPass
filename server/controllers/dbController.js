@@ -35,7 +35,7 @@ module.exports = new class {
             User.hasMany(discountApplicable)
             User.hasMany(Discount)
             User.hasMany(Ticket)
-            User.hasMany(examLibrary)
+            User.hasMany(examLibrary, {foreignKey: {name: 'user_id', allowNull: true}})
     //         User.belongsToMany(examLibrary, {
     //             through: 'examUser',
     //               foreignKey: "user_id",
