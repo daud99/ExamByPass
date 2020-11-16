@@ -109,6 +109,10 @@ router.get("/api/structureEntryQuestion/:structureId", ParserController.structur
 router.put("/api/delete/:examId", ParserController.deleteExam);
 //Route for recover deleted exam library
 router.put("/api/recover/:examId", ParserController.recoverExam);
+//Route for admin to assign exam library
+router.post("/api/assignExam", ParserController.assignExam);
+//Route for admin to unassign exam library
+router.delete("/api/unassignExam", ParserController.unassignExam);
 //Route for updating session status
 router.put("/api/updateSessionStatus", userExamsessionController.updateSessionStatus);
 

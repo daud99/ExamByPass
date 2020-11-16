@@ -10,6 +10,8 @@ const ExamLibrary = require("../models/examLibrary.js");
 const Subscription = require("../models/Subscription");
 const StructureEntry = require("../models/structureEntry");
 const StructureEntryLink = require("../models/structureEntryQuestionLink");
+const User = require("../models/User");
+const ExamLibraryUser = require("../models/ExamLibraryUser");
 const { Op } = require("sequelize");
 const Sequelize = require("sequelize");
 module.exports = new (class {
@@ -26,9 +28,15 @@ module.exports = new (class {
 
       var data = new FormData(this);
       console.log("bodyy iss",req.body)
-     data.append("file", fs.createReadStream(req.file.path));
+      data.append("file", fs.createReadStream(req.file.path));
+      if (req.body.userId !== 'undefined') {
+        console.log("i am if",req.body.userId)
       data.append("user_id", req.body.userId);
-    
+      } else {
+        data.append("user_id", 1);
+        data.append("guest_user_id", 1234);
+        console.log("i am else")
+    }
     
      
       var response = await ParserClient.performUploadFileRequest({
@@ -212,7 +220,16 @@ module.exports = new (class {
       }
 
       ExamLibrary.findAll({
-        where: { user_id: req.params.uuid },
+        
+          include: [{
+  
+            model:User,
+            //where: {user_id: req.params.uuid  }
+        through: { where: {userId: req.params.uuid  } }
+        }],
+       // 
+      
+
       }
       ).then((exams) => {
        // console.log("i am exam",exams)
@@ -368,5 +385,50 @@ module.exports = new (class {
             "error": "Bad Request",
             });
         }
+  }
+  assignExam(req,res, next) {
+    try {
+        
+             ExamLibraryUser.create({
+                user_id: req.query.paramS,
+                exam_library_id: req.query.examId,
+            })
+        
+        
+        res.send({
+            data: {
+                msg: "Exam assigned Successfully!"
+            }
+        })
+    }
+    catch(e) {
+        console.log(e)
+        res.status(400).send({
+        "status": 400,
+        "error": "Bad Request",
+        });
+    }
+  }
+    unassignExam(req,res, next) {
+    try {
+        
+             ExamLibraryUser.destroy({
+               where: { exam_library_id: req.query.examId,   user_id: req.query.paramS} 
+            })
+        
+        
+        res.send({
+            data: {
+                msg: "Exam unassigned Successfully!"
+            }
+        })
+    }
+    catch(e) {
+        console.log(e)
+        res.status(400).send({
+        "status": 400,
+        "error": "Bad Request",
+        });
+    }
     }
 })();

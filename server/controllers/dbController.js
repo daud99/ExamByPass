@@ -8,6 +8,7 @@ const Ticket = require("../models/Ticket")
 const Session = require("../models/Session")
 const answerArea = require("../models/answerArea")
 const examLibrary = require('../models/examLibrary')
+const examLibraryUser = require('../models/examLibraryUser')
 const Question = require('../models/Question')
 const structureEntry = require('../models/structureEntry')
 const resetPasswordRequest = require('../models/resetPasswordRequest')
@@ -34,7 +35,7 @@ module.exports = new class {
             User.hasMany(discountApplicable)
             User.hasMany(Discount)
             User.hasMany(Ticket)
-            User.hasMany(examLibrary)
+            User.hasMany(examLibrary, {foreignKey: {name: 'user_id', allowNull: true}})
     //         User.belongsToMany(examLibrary, {
     //             through: 'examUser',
     //               foreignKey: "user_id",
@@ -43,8 +44,8 @@ module.exports = new class {
             User.hasMany(Invoice)
             User.hasMany(Coupon)
             User.hasOne(Subscription)
-            User.belongsToMany(examLibrary, { through: 'Exam_library_users' });
-            examLibrary.belongsToMany(User, { through: 'Exam_library_users' });
+            User.belongsToMany(examLibrary, { through: examLibraryUser });
+            examLibrary.belongsToMany(User, { through: examLibraryUser });
             Product.hasOne(Price, { foreignKey: 'productPid' })
             Product.hasMany(Invoice, { foreignKey: 'productPid' })
             Invoice.belongsTo(Product)

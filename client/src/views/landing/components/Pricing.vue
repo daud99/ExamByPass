@@ -105,7 +105,7 @@ export default {
         document.getElementById("preloader-block").style.display = "none";
     },
     computed: {
-        ...mapGetters(["auth/isAuthenticated","auth/getUser"]),
+        ...mapGetters(["auth/isAuthenticated", "auth/getUser"]),
     },
     async created() {
 
@@ -169,11 +169,10 @@ export default {
             this.productPrice = product_price;
             try {
                 if (this["auth/isAuthenticated"]) {
-                    if(this["auth/getUser"].subscription_status !== 'active')
-                    {
+                    if (this["auth/getUser"].subscription_status !== 'active') {
                         this.showPaymentDialog = true;
                     } else {
-                         Swal.fire({
+                        Swal.fire({
                             type: "info",
                             title: "Already subscribed",
                             text: "You can have only one subscription at a time!",
