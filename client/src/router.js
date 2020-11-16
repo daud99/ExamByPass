@@ -361,7 +361,7 @@ export default new Router({
       name: "Evaluation",
       components: {
         default: Evaluation,
-        header: ExamsHeader,
+        header: DashboardHeader,
         footer: LandingFooter,
       },
     },

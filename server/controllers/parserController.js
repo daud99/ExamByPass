@@ -33,7 +33,7 @@ module.exports = new (class {
         console.log("i am if",req.body.userId)
       data.append("user_id", req.body.userId);
       } else {
-        data.append("user_id", 'null');
+        
         console.log("i am else")
     }
     

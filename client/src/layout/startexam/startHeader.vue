@@ -1,72 +1,73 @@
 <template>
-<b-navbar toggleable="lg" type="light" style="background-color: #e3f2fd;">
-    <b-navbar-brand>
-        <h6>{{this.examName}}</h6>
-    </b-navbar-brand>
+<div>
+    <base-nav background='background-color:  #E8F5E9;' effect="light" expand>
+        <div slot="brand" class="navbar-brand mr-lg-5">
+            <h6>{{examName}}</h6>
+        </div>
 
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <div class="row" slot="content-header" slot-scope="{closeMenu}">
+            <div class="col-6 collapse-brand">
+                <h6>{{examName}}</h6>
+            </div>
+            <div class="col-6 collapse-close">
+                <close-button @click="closeMenu"></close-button>
+            </div>
+        </div>
 
-    <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav class="ml-auto">
-            <b-nav-item href="#">
-                <router-link class="nav-item nav-link " :to="{path: '/contactUs'}">
+        <ul class="navbar-nav ml-lg-auto">
+            <li class="nav-item">
+                <button type="button" class="nav-item nav-link btn-sm ">
 
-                    <h6>
-                        <v-icon right>
-                            mdi-export
-                        </v-icon>EXPORT
-                    </h6>
-                </router-link>
-            </b-nav-item>
-            <b-nav-item>
-                <router-link class="nav-item nav-link" :to="{path: '/about'}">
-                    <h6>
-                        <v-icon right>
-                            mdi-pencil
-                        </v-icon>EDIT
-                    </h6>
-                </router-link>
-            </b-nav-item>
+                    <v-icon color='rgba(0,0,0,0.87)' class="mb-2" size='25px' right>
+                        mdi-help-circle
+                    </v-icon><span class="spanText ">HELP</span>
+                </button>
 
-            <b-nav-item>
-                <router-link class="nav-item nav-link" :to="{path: '/about'}">
-                    <h6>
-                        <v-icon right>
-                            mdi-help-circle
-                        </v-icon>HELP
-                    </h6>
-                </router-link>
-            </b-nav-item>
-            <b-nav-item>
-                <a class="nav-item nav-link" @click="save()">
-                    <h6>
-                        <v-icon right>
-                            mdi-pause
-                        </v-icon>PAUSE
-                    </h6>
-                </a>
-            </b-nav-item>
-            <b-nav-item>
-                <b-button variant="danger" @click="stop()">STOP</b-button>
-            </b-nav-item>
+            </li>
+            <li class="nav-item">
+                <button class="nav-item nav-link btn-xs" @click="save()">
 
-        </b-navbar-nav>
+                    <v-icon color='rgba(0,0,0,0.87)' class="mb-2" size='25px' right>
+                        mdi-pause
+                    </v-icon><span class="spanText ">PAUSE</span>
 
-    </b-collapse>
-</b-navbar>
+                </button>
+
+            </li>
+            <li class="nav-item">
+                <div class="nav-item nav-link">
+                    <v-btn small @click="stop()" color="error">
+                        STOP
+                    </v-btn>
+                </div>
+            </li>
+
+        </ul>
+
+    </base-nav>
+
+</div>
 </template>
 
 <script>
 import EventBus from '../../Event/eventBus';
+import BaseNav from "@/components/BaseNav";
+import BaseDropdown from "@/components/BaseDropdown";
+import CloseButton from "@/components/CloseButton";
 export default {
+    components: {
+        BaseNav,
+        CloseButton,
+        BaseDropdown,
 
+    },
     data: () => ({
         //
         examName: String
     }),
     created() {
         console.log("name is", this.$examName)
-        this.examName = this.$examName
+        this.examName = JSON.parse(localStorage.getItem("examName"));
     },
     methods: {
         stop() {
@@ -82,14 +83,14 @@ export default {
 </script>
 
 <style scoped>
-.nav-item>h6 {
-    font-weight: bold;
-    font-size: 18px;
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
 
-}
+.spanText {
 
-.navbar-nav>li {
-    padding-left: 1px;
-    padding-right: 1px;
+    font-size: 15px;
+    font-weight: 700;
+
+    font-family: 'PT Sans', sans-serif;
+
 }
 </style>

@@ -5,9 +5,11 @@
         <v-col>
             <v-sheet class="pa-12" color="grey lighten-3">
                 <p v-html="questionn.content"></p>
+                <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
                 <v-radio-group v-model="userAnswer" :mandatory="true">
                     <v-radio :style="answerElm.styleAfterSubmit" v-for="answerElm in answers" :key="answerElm.id" :label="answerElm.content" :value="answerElm.id"></v-radio>
                 </v-radio-group>
+
             </v-sheet>
         </v-col>
     </v-row>
@@ -44,6 +46,10 @@
 <script scoped>
 import axios from "axios";
 import Footer from "./Footer"
+// Import component
+import Loading from 'vue-loading-overlay';
+// Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
 export default {
     props: {
         questionn: Object,
@@ -53,13 +59,17 @@ export default {
     },
     name: "Single",
     components: {
-        Footer
+        Footer,
+        Loading
+
     },
     data: () => {
         return {
             answers: [],
             showAnswer: false,
             correctAnswer: [],
+            isLoading: false,
+            fullPage: true,
             correctProp: [],
             wrongProp: [],
             unansweredProp: [],
@@ -88,7 +98,9 @@ export default {
 
     methods: {
         getAnswers() {
+            this.isLoading = true;
             this.answers = [];
+            this.isLoading = true
             axios
                 .get("/answers/" + this.questionn.id, {})
                 .then((resp) => {
@@ -109,6 +121,7 @@ export default {
                     const result = resp.data.filter((entry) => entry.is_correct === 1);
                     this.correctAnswer = result;
                     this.$parent.openDialogOnEntry()
+                    this.isLoading = false
                 })
                 .catch((err) => {
                     console.log(err);
