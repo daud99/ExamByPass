@@ -29,7 +29,7 @@
             <li class="nav-item">
                 <button class="nav-item nav-link btn-xs" @click="upload()">
 
-                    <v-icon color='rgba(0,0,0,0.87)' class="mb-1" size='25px' right>
+                    <v-icon color='rgba(0,0,0,0.87)' class="mb-2" size='25px' right>
                         mdi-upload
                     </v-icon>
                     <span class="spanText ">UPLOAD</span>
@@ -92,6 +92,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
+
 .navbar-brand-img {
     height: 45px;
     width: 230px;
@@ -104,9 +106,12 @@ export default {
 }
 
 .spanText {
-    font-weight: 450;
-    font-size: 14px;
-    letter-spacing: 1.2px;
+
+    font-size: 15px;
+    font-weight: 700;
+    padding: 0 6px;
+    min-width: 96;
+    font-family: 'PT Sans', sans-serif;
 
 }
 </style>

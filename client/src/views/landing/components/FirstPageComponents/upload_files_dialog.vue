@@ -25,6 +25,7 @@
                 </div>
             </template>
             <v-card>
+                <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
                 <v-alert v-if="this.files_check" type="success">File Uploaded</v-alert>
                 <v-alert v-if="this.show_alert" color="red" type="error" dark>
                     No Files Selected
@@ -73,15 +74,23 @@ import {
     mapActions,
     mapGetters
 } from 'vuex';
+import Loading from 'vue-loading-overlay';
+// Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
 export default {
     props: {
         showButton: Boolean
+    },
+    components: {
+        Loading
     },
     data: () => ({
         dialog: false,
         files: null,
         files_check: false,
         show_alert: false,
+        isLoading: false,
+        fullPage: true,
     }),
     computed: {
         ...mapGetters(["auth/getUser"]),
@@ -97,14 +106,24 @@ export default {
             this.$emit("changeUploadCondition");
         },
         submitFiles() {
+            this.isLoading = true;
             this.show_alert = false
             this.files_check = false
+            let guestId
             let formData = new FormData();
-
+            if (!this["auth/isAuthenticated"]) {
+                guestId = 2;
+                localStorage.setItem("guestId", JSON.stringify(guestId));
+            }
             if (this.files) {
                 formData.append("file", this.files);
-                formData.append("userId", this["auth/getUser"].id)
-
+                if (this["auth/isAuthenticated"]) {
+                    console.log(" i am if")
+                    formData.append("userId", this["auth/getUser"].id)
+                } else {
+                    console.log(" i am else", guestId)
+                    formData.append("userId", guestId)
+                }
                 console.log(formData.getAll("file"));
                 console.log(this.files, formData);
                 axios
@@ -116,7 +135,7 @@ export default {
                     .then((response) => {
                         console.log("Success!");
                         this.files_check = true;
-
+                        this.isLoading = false;
                         console.log({
                             response
                         });

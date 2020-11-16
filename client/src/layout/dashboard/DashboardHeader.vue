@@ -201,7 +201,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');

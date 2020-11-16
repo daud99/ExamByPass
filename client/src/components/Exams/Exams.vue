@@ -4,7 +4,7 @@
 
         <v-list subheader two-line>
             <v-subheader inset>Exams</v-subheader>
-
+            <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
             <template v-for="exam in this.exams">
                 <div :key="exam.id" v-on:click="myMethod(exam.id,exam.exam_number,exam.exam_name,exam.time_limit)">
                     <a class="list-group-item list-group-item-action" v-if="!exam.deleted">
@@ -52,14 +52,14 @@
 
                     <v-card>
 
-                        <v-toolbar dark color="primary">
+                        <v-toolbar dark color="green lighten-1">
                             <v-btn icon dark @click="close()">
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                             <v-toolbar-title>{{this.examName}}</v-toolbar-title>
                         </v-toolbar>
-                        <v-tabs grow background-color="indigo" v-model="tab" dark>
-                            <v-tab v-for="item in tabItems" :key="item">
+                        <v-tabs grow background-color="green lighten-5" color="green accent-4" v-model="tab" light>
+                            <v-tab c v-for="item in tabItems" :key="item">
                                 {{item}}
                             </v-tab>
 
@@ -71,7 +71,7 @@
                                         <div v-if="examSessionLength>0 && !isDelete" class="row">
                                             <a class="col col-lg-12 col-md-12 col-xs-12" v-on:click="startExam(true)">
                                                 <div class="col col-lg-12 col-md-12 col-xs-12">
-                                                    <button type="button" class="btn btn-sm btn-primary btn-block">
+                                                    <button type="button" class="btn btn-sm btn-success btn-block">
                                                         <h4 style="color:white; text-weigth:bolder; line-height: 1.6;">
                                                             <v-icon color="white">mdi-play</v-icon>
                                                             CONTINUE LAST SESSION
@@ -85,14 +85,14 @@
 
                                             <div class="row">
                                                 <div class="col col-lg-6 col-md-6 col-xs-6">
-                                                    <b-button variant="outline-primary" block @click="toggleButton(0)" :pressed.sync="myToggle">
+                                                    <b-button variant="outline-success" block @click="toggleButton(0)" :pressed.sync="myToggle">
                                                         <v-icon>mdi-clock</v-icon>
                                                         ALL QUESTIONS
 
                                                     </b-button>
                                                 </div>
                                                 <div class="col col-lg-6 col-md-6 col-xs-6">
-                                                    <b-button variant="outline-primary" block @click="toggleButton(1)" :pressed.sync="myToggle2">
+                                                    <b-button variant="outline-success" block @click="toggleButton(1)" :pressed.sync="myToggle2">
                                                         <v-icon>mdi-clock</v-icon>
                                                         SPECIFIC EXAMS
                                                     </b-button>
@@ -137,8 +137,11 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col col-lg-6 col-md-6 col-xs-6">
+                                            <div class="col col-lg-6 col-md-6 col-xs-6" v-if="subscriptionStatus === 'active'">
                                                 <v-checkbox v-model="selectedRandomQuestion" label="Question order (Unavailable in trail mode)" color="success" value="Question order" hide-details></v-checkbox>
+                                            </div>
+                                            <div v-else class="col col-lg-6 col-md-6 col-xs-6">
+                                                <v-checkbox v-model="selectedRandomQuestion" disabled label="Question order (Unavailable in trail mode)" color="success" value="Question order" hide-details></v-checkbox>
                                             </div>
                                             <div class="col col-lg-6 col-md-6 col-xs-6">
                                                 <v-checkbox v-model="selectedRandomAnswer" label="Answer order" color="success" value="Answer order" hide-details></v-checkbox>
@@ -153,7 +156,7 @@
                                         <div class="row">
                                             <div class="col col-lg-4 col-md-4 col-xs-4" v-for="checkbox in checkBox" :key="checkbox.id">
 
-                                                <v-switch v-model="selected_check" aria-checked="false" color="primary" :label="checkbox.type" :value='checkbox.type'></v-switch>
+                                                <v-switch v-model="selected_check" aria-checked="false" color="green lighten-1" :label="checkbox.type" :value='checkbox.type'></v-switch>
                                             </div>
 
                                         </div>
@@ -163,14 +166,14 @@
                         </v-tabs-items>
 
                     </v-card>
-                    <v-footer :fixed='true' color="primary
+                    <v-footer :fixed='true' color="green lighten-1
                     " padless>
 
                         <v-row justify="end" no-gutters>
                             <v-btn outlined color="white" class="my-2" @click="dialog = false">
                                 CANCEL
                             </v-btn>
-                            <v-btn color="primary" class="ma-2" v-on:click="startExam(false)">
+                            <v-btn color="green" class="ma-2" v-on:click="startExam(false)">
                                 START EXAM
                             </v-btn>
 
@@ -217,12 +220,16 @@ import {
 import Swal from "sweetalert2";
 import EventBus from "../../Event/eventBus"
 import login from '../../views/login/Login'
-
+// Import component
+import Loading from 'vue-loading-overlay';
+// Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
 export default {
     components: {
         Main,
         deletedExam,
         login,
+        Loading
 
     },
     name: "Exams",
@@ -234,6 +241,8 @@ export default {
             myToggle: true,
             myToggle2: false,
             deletedDialog: false,
+            isLoading: false,
+            fullPage: true,
             loginDialog: false,
             exams: [],
             examName: "",
@@ -400,7 +409,7 @@ export default {
         },
 
         getExams() {
-
+            this.isLoading = true;
             axios
                 .get("/exams/" + this["auth/getUser"].id)
                 .then((resp) => {
@@ -411,7 +420,7 @@ export default {
                     });
                     this.exams = results;
                     console.log(resp, results)
-
+                    this.isLoading = false;
                 })
                 .catch((err) => {
                     console.log(err);
@@ -487,6 +496,7 @@ export default {
             this.examName = name
             this.examTime = time
             vue.prototype.$examName = examName
+            localStorage.setItem("examName", JSON.stringify(examName));
             this.checkBox = []
             console.log("i am mymethod")
             this.gettypes(id)

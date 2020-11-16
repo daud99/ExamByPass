@@ -1,53 +1,56 @@
 <template>
-<div v-if="is_data_fetched">
+<div>
+    <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
+    <div v-if="is_data_fetched">
 
-    <div v-if="questions[indexVar].type === 'SINGLE_CHOICE'">
-        <Single :questionn="questions[indexVar]" :is_called="true" :allowShuffleAnswer='allowShuffleAnswer' :selectedTab='this.selectedTab' ref="single" />
-    </div>
-    <div v-else-if="questions[indexVar].type === 'MULTIPLE_CHOICE'">
-        <Multiple :questionn="questions[indexVar]" :allowShuffleAnswer='allowShuffleAnswer' :selectedTab='this.selectedTab' ref="single" />
-    </div>
-    <div v-else-if="questions[indexVar].type === 'SELECT_AND_PLACE'">
-        <DragAndDrop :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
-    </div>
-    <div v-else-if="questions[indexVar].type === 'FILL_IN_THE_BLANK'">
-        <FillInTheBlank :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
-    </div>
-    <div v-else-if="questions[indexVar].type === 'HOT_AREA'">
-        <HotArea :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
-    </div>
-    <div style="margin-bottom:100px">
-        <v-btn v-if="this.testlet.length !==0" color="primary" @click="this.openDialog" large>
-            CASE STUDY
-        </v-btn>
-    </div>
-    <div>
-        <Footer :counter='this.counterL' :totalQuestions='this.totalQuestions' :obtainScore="this.obtainScore" />
-    </div>
-    <v-row justify="center">
-        <v-dialog v-model="caseStudyDialog" width="600px">
+        <div v-if="questions[indexVar].type === 'SINGLE_CHOICE'">
+            <Single :questionn="questions[indexVar]" :is_called="true" :allowShuffleAnswer='allowShuffleAnswer' :selectedTab='this.selectedTab' ref="single" />
+        </div>
+        <div v-else-if="questions[indexVar].type === 'MULTIPLE_CHOICE'">
+            <Multiple :questionn="questions[indexVar]" :allowShuffleAnswer='allowShuffleAnswer' :selectedTab='this.selectedTab' ref="single" />
+        </div>
+        <div v-else-if="questions[indexVar].type === 'SELECT_AND_PLACE'">
+            <DragAndDrop :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
+        </div>
+        <div v-else-if="questions[indexVar].type === 'FILL_IN_THE_BLANK'">
+            <FillInTheBlank :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
+        </div>
+        <div v-else-if="questions[indexVar].type === 'HOT_AREA'">
+            <HotArea :questionn="questions[indexVar]" :selectedTab='this.selectedTab' ref="single" />
+        </div>
+        <div style="margin-bottom:100px">
+            <v-btn v-if="this.testlet.length !==0" color="primary" @click="this.openDialog" large>
+                CASE STUDY
+            </v-btn>
+        </div>
+        <div>
+            <Footer :counter='this.counterL' :totalQuestions='this.totalQuestions' :obtainScore="this.obtainScore" />
+        </div>
+        <v-row justify="center">
+            <v-dialog v-model="caseStudyDialog" width="600px">
 
-            <v-card v-if="this.questionTestlet[0] !== undefined">
-                <v-toolbar id="vt" dark color="primary">
+                <v-card v-if="this.questionTestlet[0] !== undefined">
+                    <v-toolbar id="vt" dark color="primary">
 
-                    <v-toolbar-title>{{this.questionTestlet[0].title}}</v-toolbar-title>
-                </v-toolbar>
+                        <v-toolbar-title>{{this.questionTestlet[0].title}}</v-toolbar-title>
+                    </v-toolbar>
 
-                <v-card-text v-html="questionTestlet[0].overview">
+                    <v-card-text v-html="questionTestlet[0].overview">
 
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
 
-                    <v-btn color="green darken-1" text @click="caseStudyDialog = false">
-                        Close
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </v-row>
-    <div v-if="showPricing">
-        <pricing :pricingDialog='true' />
+                        <v-btn color="green darken-1" text @click="caseStudyDialog = false">
+                            Close
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
+        <div v-if="showPricing">
+            <pricing :pricingDialog='true' />
+        </div>
     </div>
 </div>
 </template>
@@ -71,7 +74,9 @@ import {
     quickRequest
 } from "../../../common/misc.js"
 import Swal from "sweetalert2";
-
+import Loading from 'vue-loading-overlay';
+// Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
 //import Vue from "vue";
 
 export default {
@@ -82,7 +87,8 @@ export default {
         FillInTheBlank,
         HotArea,
         Footer,
-        pricing
+        pricing,
+        Loading
     },
     props: {
 
@@ -105,6 +111,8 @@ export default {
             totalQuestions: 0,
             allowShuffleAnswer: Boolean,
             allowShuffleQuestion: Boolean,
+            isLoading: false,
+            fullPage: true,
             wrongQuestion: [],
             correctQuestion: [],
             unansweredQuestion: [],
@@ -191,7 +199,15 @@ export default {
 
         this.examId = JSON.parse(localStorage.getItem("examId"));
         this.examTime = JSON.parse(localStorage.getItem("examTime"));
-        this.selectedCheck = JSON.parse(localStorage.getItem("selectedCheck"));
+
+        if (JSON.parse(localStorage.getItem("selectedCheck")).length === 0) {
+
+            localStorage.setItem("selectedCheck", JSON.stringify(["SINGLE_CHOICE", "MULTIPLE_CHOICE", "SELECT_AND_PLACE"]));
+            this.selectedCheck = ["SINGLE_CHOICE", "MULTIPLE_CHOICE", "SELECT_AND_PLACE"]
+        } else {
+            this.selectedCheck = JSON.parse(localStorage.getItem("selectedCheck"));
+        }
+        //console.log("selectedcheck", JSON.parse(localStorage.getItem("selectedCheck")))
         this.selectedRandomAnswer = JSON.parse(localStorage.getItem("selectedRandomAnswer"));
         this.selectedRandomQuestion = JSON.parse(localStorage.getItem("selectedRandomQuestion"));
         this.candidateName = JSON.parse(localStorage.getItem("candidateName"));
@@ -350,6 +366,7 @@ export default {
             }
         },
         async getExamSession() {
+            this.isLoading = true;
             let user_id = this["auth/getUser"].id
 
             let examIdd = JSON.parse(localStorage.getItem("examId"));
@@ -387,7 +404,7 @@ export default {
                             }
                         }
                     }
-
+                    this.isLoading = false;
                 }
             } catch (e) {
                 console.log(e)
@@ -440,7 +457,7 @@ export default {
             }
         },
         getQuestions() {
-
+            this.isLoading = true;
             axios
                 .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck)
                 .then((resp) => {
@@ -463,12 +480,13 @@ export default {
                                 this.is_data_fetched = true;
                                 this.is_button_disabled = false;
                                 this.totalQuestions = resp.data[resp.data.length - 1].count
-
+                                this.isLoading = false;
                             })
                             .catch((err) => {
                                 console.log(err);
                             });
                     } else {
+                        this.isLoading = true;
                         axios
                             .get("/questions/" + this.page + "/" + this.examId + "/" + this.selectedCheck + "/" + 0)
                             .then((resp) => {
@@ -490,6 +508,7 @@ export default {
                                 this.is_data_fetched = true;
                                 this.is_button_disabled = false;
                                 this.totalQuestions = resp.data[resp.data.length - 1].count
+                                this.isLoading = false
 
                             })
                             .catch((err) => {
@@ -512,18 +531,22 @@ export default {
                     console.log(err);
                 });
         },
-        submit(number) {
+        submitQuestion() {
+            this.$refs.single.submit()
+        },
+        submit(num) {
+
             this.showPricing = false
             this.count++
-            console.log("in main", number, this.count)
+            console.log("in main", num, this.count)
             this.$refs.single.submit()
-            if (this.count > 1 && number < 10) {
+            if (this.count > 1 && num < 10) {
 
                 this.nextQuestionCounter()
-            } else if (this.selectedTab === 1 && number < 10) {
+            } else if (this.selectedTab === 1 && num < 10) {
 
                 this.nextQuestionCounter()
-            } else if (number === 10) {
+            } else if (num === 10) {
 
                 this.showPricing = true
                 console.log("please subs", this.showPricing)
