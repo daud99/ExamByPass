@@ -2,9 +2,9 @@
 <div>
     <v-card class="mx-auto " v-if="this.showList">
 
-        <v-list subheader two-line>
+        <v-list subheader two-line v-if="this['auth/isAuthenticated']">
             <v-subheader inset>Exams</v-subheader>
-            <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
+            <loading :active.sync="isLoading" :can-cancel="false" :height='80' :width='80' loader='bars' color='green' :is-full-page="fullPage"></loading>
             <template v-for="exam in this.exams">
                 <div :key="exam.id" v-on:click="myMethod(exam.id,exam.exam_number,exam.exam_name,exam.time_limit)">
                     <a class="list-group-item list-group-item-action" v-if="!exam.deleted">
@@ -46,13 +46,13 @@
             </template>
 
         </v-list>
-        <div>
+        <div class="toolbar">
             <v-row justify="center">
-                <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+                <v-dialog class="toolbar" v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
 
                     <v-card>
 
-                        <v-toolbar dark color="green lighten-1">
+                        <v-toolbar class="toolbar" dark color="green lighten-1">
                             <v-btn icon dark @click="close()">
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
@@ -232,6 +232,9 @@ export default {
         Loading
 
     },
+    props: {
+        showLogin: Boolean
+    },
     name: "Exams",
     data: () => {
         return {
@@ -298,16 +301,20 @@ export default {
         //     localStorage.removeItem(k)
         // );
         localStorage.setItem("condition", JSON.stringify(true));
-        console.log("created", this["auth/getUser"])
-        if (this["auth/getUser"].id === undefined) {
+        console.log("created", this["auth/getUser"], this["auth/isAuthenticated"], !this.showLogin)
+        if (!this["auth/isAuthenticated"]) {
             console.log("please sign in")
-            this.loginDialog = true
+            if (!this.showLogin) {
+                this.loginDialog = true
+            }
+            localStorage.setItem("subscriptionStatus", JSON.stringify('undefined'));
         } else {
             this.subscriptionStatus = this["auth/getUser"].subscription_status
             localStorage.setItem("subscriptionStatus", JSON.stringify(this["auth/getUser"].subscription_status));
         }
-        this.getExams()
-
+        if (this["auth/isAuthenticated"]) {
+            this.getExams()
+        }
         //this.getSubscription()
 
     },
@@ -326,6 +333,9 @@ export default {
         ...mapGetters(["auth/isAuthenticated"]),
     },
     methods: {
+        test(a, b, c) {
+            console.log("i am test", a, b, c)
+        },
         toggleButton(number) {
             if (number === 0) {
                 this.toggle_exclusive = 0
@@ -489,9 +499,12 @@ export default {
         clickFalse() {
             this.deletedDialog = false
         },
-        myMethod(id, name, examName, time) {
-
+        myMethod(id, name, examName, time, loginDialogg) {
+            console.log(id, name, examName, time, loginDialogg)
             //this.showList = false
+            if (loginDialogg) {
+                this.loginDialog = false
+            }
             this.examId = id;
             this.examName = name
             this.examTime = time
@@ -501,7 +514,7 @@ export default {
             console.log("i am mymethod")
             this.gettypes(id)
             this.getExamType(id)
-            this.getExamSession(id)
+            // this.getExamSession(id)
 
             //   console.log("i am tet", this.examId, name)
             this.dialog = true
@@ -579,5 +592,9 @@ export default {
 
     overflow-y: scroll;
     height: 650px;
+}
+
+.toolbar {
+    z-index: 9999 !important;
 }
 </style>

@@ -25,7 +25,7 @@
                 </div>
             </template>
             <v-card>
-                <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
+                <loading :active.sync="isLoading" :can-cancel="false" :height='80' :width='80' loader='bars' color='green' :is-full-page="fullPage"></loading>
                 <v-alert v-if="this.files_check" type="success">File Uploaded</v-alert>
                 <v-alert v-if="this.show_alert" color="red" type="error" dark>
                     No Files Selected
@@ -58,6 +58,9 @@
             </v-card>
         </v-dialog>
     </v-row>
+    <div v-if="showExamDialog">
+        <exam ref='mt' :showLogin='true' />
+    </div>
 </div>
 </template>
 
@@ -77,12 +80,14 @@ import {
 import Loading from 'vue-loading-overlay';
 // Import stylesheet
 import 'vue-loading-overlay/dist/vue-loading.css';
+import exam from '../../../../components/Exams/Exams'
 export default {
     props: {
         showButton: Boolean
     },
     components: {
-        Loading
+        Loading,
+        exam
     },
     data: () => ({
         dialog: false,
@@ -91,6 +96,7 @@ export default {
         show_alert: false,
         isLoading: false,
         fullPage: true,
+        showExamDialog: false
     }),
     computed: {
         ...mapGetters(["auth/getUser"]),
@@ -101,9 +107,32 @@ export default {
         console.log("user is", this["auth/isAuthenticated"])
     },
     methods: {
+        callExam(data) {
+            console.log(this.exams, data)
+            this.$refs.mt.myMethod(data[0].id, data[0].exam_number, data[0].exam_name, data[0].time_limit, true)
+        },
         closeDialog() {
             this.dialog = false
             this.$emit("changeUploadCondition");
+        },
+        getExams() {
+            let guestId = JSON.parse(localStorage.getItem("guestId"));
+            axios
+                .get("/guestExam/" + guestId)
+                .then((resp) => {
+
+                    // this.exams = resp.data;
+                    // var results = resp.data.filter(function (entry) {
+                    //     return entry.users.length !== 0;
+                    // });
+                    this.exams = resp.data;
+                    this.callExam(resp.data)
+                    console.log(resp)
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         },
         submitFiles() {
             this.isLoading = true;
@@ -112,7 +141,7 @@ export default {
             let guestId
             let formData = new FormData();
             if (!this["auth/isAuthenticated"]) {
-                guestId = 2;
+                guestId = Math.floor(Math.random() * 1000000000);;
                 localStorage.setItem("guestId", JSON.stringify(guestId));
             }
             if (this.files) {
@@ -122,7 +151,7 @@ export default {
                     formData.append("userId", this["auth/getUser"].id)
                 } else {
                     console.log(" i am else", guestId)
-                    formData.append("userId", guestId)
+                    formData.append("guestId", guestId)
                 }
                 console.log(formData.getAll("file"));
                 console.log(this.files, formData);
@@ -136,6 +165,8 @@ export default {
                         console.log("Success!");
                         this.files_check = true;
                         this.isLoading = false;
+                        this.showExamDialog = true
+                        this.getExams()
                         console.log({
                             response
                         });

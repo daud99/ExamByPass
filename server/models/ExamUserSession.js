@@ -23,7 +23,7 @@ const ExamUserSession = db.define('exam_user_session',{
     offset:DataTypes.INTEGER(11),
     type:DataTypes.STRING(255),
     userId:DataTypes.INTEGER,
-
+    guestId:DataTypes.INTEGER,
     page:DataTypes.INTEGER(111),
     examId:DataTypes.INTEGER(111),
     selectedCheck:DataTypes.TEXT,

@@ -4,7 +4,7 @@ module.exports = new class {
 async saveSessionExam(req,res, next) {
     try {
         let userIdd = req.body.userId
-        
+        let guestId = req.body.guestId
         for (let index = 0; index < req.body.record.length; index++) {
         
             await ExamUserSession.create({
@@ -23,6 +23,7 @@ async saveSessionExam(req,res, next) {
                 type: req.body.record[index].type,
                 id: req.body.record[index].id,
                 userId: userIdd,
+                guestId: guestId,
                 page: req.body.record[index].page,
                 examId: req.body.record[index].examId,
                 selectedCheck: req.body.record[index].selectedCheck,
@@ -83,6 +84,55 @@ async saveSessionExam(req,res, next) {
             const messages = await ExamUserSession.destroy({
                 where: {
                     userId: req.body.id,
+                    examLibraryId:req.query.examId
+                }
+            });
+         
+            res.send({
+                data: {
+                    msg: "Session deleted Successfully!",
+                    messages
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+     async getGuestSessionExam(req,res, next) {
+       
+        try {
+            const examSessions = await ExamUserSession.findAll({
+                where: {
+                    guestId: req.query.paramS,
+                    examLibraryId:req.query.examId
+                 
+                }
+            });
+            res.send({
+                data: {
+                    examSessions
+                }
+            })
+        }
+        catch(e) {
+            console.log(e)
+            res.status(400).send({
+            "status": 400,
+            "error": "Bad Request",
+            });
+        }
+    }
+
+    async deleteGuestSessionExam(req,res, next) {
+        try {
+            const messages = await ExamUserSession.destroy({
+                where: {
+                    guestId: req.body.id,
                     examLibraryId:req.query.examId
                 }
             });

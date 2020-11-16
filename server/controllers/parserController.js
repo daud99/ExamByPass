@@ -29,13 +29,13 @@ module.exports = new (class {
       var data = new FormData(this);
       console.log("bodyy iss",req.body)
       data.append("file", fs.createReadStream(req.file.path));
-      if (req.body.userId !== 'undefined') {
+      if (req.body.userId !== 'undefined' && req.body.userId !== undefined) {
         console.log("i am if",req.body.userId)
       data.append("user_id", req.body.userId);
       } else {
 
-        data.append("user_id", 1);
-        data.append("guest_user_id", 1234);
+        //data.append("user_id", 1);
+        data.append("guest_user_id", req.body.guestId);
 
         console.log("i am else")
     }
@@ -230,6 +230,32 @@ module.exports = new (class {
         through: { where: {userId: req.params.uuid  } }
         }],
        // 
+      
+
+      }
+      ).then((exams) => {
+       // console.log("i am exam",exams)
+
+        res.send(exams);
+      });
+    } catch (e) {
+      console.log(e);
+      res.status(400).send({
+        status: 400,
+        error: "Bad Request",
+      });
+    }
+  }
+  async getGuestExam(req, res, next) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      
+      ExamLibrary.findAll({
+        
+      where: {guest_user_id: req.params.gid  }
       
 
       }

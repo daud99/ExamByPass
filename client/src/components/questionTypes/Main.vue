@@ -1,6 +1,6 @@
 <template>
 <div>
-    <loading :active.sync="isLoading" :can-cancel="false" height=80 width=80 loader='bars' color='green' :on-cancel="onCancel" :is-full-page="fullPage"></loading>
+    <loading :active.sync="isLoading" :can-cancel="false" :height='80' :width='80' loader='bars' color='green' :is-full-page="fullPage"></loading>
     <div v-if="is_data_fetched">
 
         <div v-if="questions[indexVar].type === 'SINGLE_CHOICE'">
@@ -180,47 +180,57 @@ export default {
         ...mapGetters(["auth/isAuthenticated"]),
     },
     created() {
+
         //localStorage.setItem("obtainScore", JSON.stringify(this.obtainScore));
         this.toForward = true
         if (this.$route.name === 'main') {
-
+            console.log("i am created")
             window.addEventListener('beforeunload', this.warning)
         }
         // window.addEventListener('beforeunload', this.warning)
         //  window.onbeforeunload = this.warning();
         this.toDestroy = false
-
-        if (this.selectedRandomAnswer[0] === 'Answer order') {
-
+        this.selectedRandomAnswer = JSON.parse(localStorage.getItem("selectedRandomAnswer"));
+        console.log("created 2", this.selectedRandomAnswer[0])
+        if (this.selectedRandomAnswer[0] === 'Answer order' && this.selectedRandomAnswer[0] === undefined) {
+            console.log("created 3")
             this.allowShuffleAnswer = true
         } else {
+            console.log("created 4")
             this.allowShuffleAnswer = false
         }
-
+        console.log("created 5")
         this.examId = JSON.parse(localStorage.getItem("examId"));
         this.examTime = JSON.parse(localStorage.getItem("examTime"));
 
         if (JSON.parse(localStorage.getItem("selectedCheck")).length === 0) {
-
+            console.log("created 6")
             localStorage.setItem("selectedCheck", JSON.stringify(["SINGLE_CHOICE", "MULTIPLE_CHOICE", "SELECT_AND_PLACE"]));
             this.selectedCheck = ["SINGLE_CHOICE", "MULTIPLE_CHOICE", "SELECT_AND_PLACE"]
         } else {
+            console.log("created 7")
             this.selectedCheck = JSON.parse(localStorage.getItem("selectedCheck"));
         }
         //console.log("selectedcheck", JSON.parse(localStorage.getItem("selectedCheck")))
-        this.selectedRandomAnswer = JSON.parse(localStorage.getItem("selectedRandomAnswer"));
+
         this.selectedRandomQuestion = JSON.parse(localStorage.getItem("selectedRandomQuestion"));
         this.candidateName = JSON.parse(localStorage.getItem("candidateName"));
+        console.log("data is 1")
         this.selectedTab = JSON.parse(localStorage.getItem("selectedTab"));
         this.structureEntryQuestionn = JSON.parse(localStorage.getItem("structureEntryQuestionn"));
+        console.log("data is 11")
         this.condition = JSON.parse(localStorage.getItem("condition"));
         this.random = JSON.parse(localStorage.getItem("random"));
+        console.log("data is 111", this.random)
         this.subscriptionStatus = JSON.parse(localStorage.getItem("subscriptionStatus"));
+        console.log("data is 1111")
+        console.log("data is2", this.selectedRandomAnswer, this.selectedTab, this.selectedCheck)
 
         if (this.selectedRandomQuestion[0] === 'Question order') {
 
             this.allowShuffleQuestion = true
         } else {
+            console.log("data is shufflequest else")
             this.allowShuffleQuestion = false
         }
         if (this.selectedTab === 1) {
@@ -246,7 +256,7 @@ export default {
     methods: {
 
         warning() {
-
+            console.log("in warning")
             this.deleteExamsession()
             this.saveSession()
             localStorage.setItem("condition", JSON.stringify(true));
@@ -334,7 +344,7 @@ export default {
             this.examSession(id, cQuestions, cond)
         },
         deleteExamsession(id, condition) {
-
+            let guestId = JSON.parse(localStorage.getItem("guestId"));
             let user_id = this["auth/getUser"].id
             let examIdd
             if (condition) {
@@ -344,9 +354,16 @@ export default {
             }
 
             try {
-                let response = quickRequest("/deleteExamsession", "POST", {
-                    id: user_id
-                }, {}, examIdd);
+                let response
+                if (this["auth/isAuthenticated"]) {
+                    response = quickRequest("/deleteExamsession", "POST", {
+                        id: user_id
+                    }, {}, examIdd);
+                } else {
+                    response = quickRequest("/deleteGuestExamsession", "POST", {
+                        id: guestId
+                    }, {}, examIdd);
+                }
                 if ("error" in response) {
                     Swal.fire({
                         type: "error",
@@ -368,12 +385,17 @@ export default {
         async getExamSession() {
             this.isLoading = true;
             let user_id = this["auth/getUser"].id
+            let guestId = JSON.parse(localStorage.getItem("guestId"));
 
             let examIdd = JSON.parse(localStorage.getItem("examId"));
 
             try {
-                let response = await quickRequest("/getExamsession", "GET", {}, user_id, examIdd);
-
+                let response
+                if (this["auth/isAuthenticated"]) {
+                    response = await quickRequest("/getExamsession", "GET", {}, user_id, examIdd);
+                } else {
+                    response = await quickRequest("/getGuestExamsession", "GET", {}, guestId, examIdd);
+                }
                 if ("error" in response) {
                     Swal.fire({
                         type: "error",
@@ -418,8 +440,10 @@ export default {
         async examSession(IdOfUser, combinedQuestions, cond) {
 
             try {
+                let guestId = JSON.parse(localStorage.getItem("guestId"));
                 const data = {
                     userId: IdOfUser,
+                    guestId: guestId,
                     record: combinedQuestions
                 };
 
