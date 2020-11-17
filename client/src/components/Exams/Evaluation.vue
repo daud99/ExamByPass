@@ -223,9 +223,17 @@ export default {
 
         console.log(this.$route.params.stop)
         if (this.$route.params.stop) {
+            if (this.$route.params.unansweredQuestion.length !== 0) {
+
+                this.unansweredQuestion = this.$route.params.unansweredQuestion
+                console.log("in id")
+            } else {
+                console.log("in else")
+                this.unansweredQuestion = this.$route.params.firstQuestion
+            }
             this.correctQuestions = this.$route.params.correctQuestions
             this.wrongQuestions = this.$route.params.wrongQuestions
-            this.unansweredQuestion = this.$route.params.unansweredQuestion
+            console.log('in eval', this.$route.params.firstQuestion)
             this.totalQuestionsCount = this.$route.params.totalQuestions
             this.candidateName = this.$route.params.candidateName
             this.evaluate()

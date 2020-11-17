@@ -116,6 +116,7 @@ export default {
             wrongQuestion: [],
             correctQuestion: [],
             unansweredQuestion: [],
+            firstQuestion: [],
             count: 0,
             examId: Number,
             examTime: Number,
@@ -293,8 +294,10 @@ export default {
         },
         saveSession(cond) {
             this.deleteExamsession()
+            this.firstQuestion = []
             this.isUpdate = false
             for (let index1 = 0; index1 < this.wrongQuestion.length; index1++) {
+                console.log("index1")
                 this.wrongQuestion[index1].condition = 'false'
                 this.wrongQuestion[index1].page = this.page
                 this.wrongQuestion[index1].examId = this.examId
@@ -309,6 +312,7 @@ export default {
                 this.wrongQuestion[index1].obtainScore = this.obtainScore
             }
             for (let index2 = 0; index2 < this.correctQuestion.length; index2++) {
+                console.log("index2")
                 this.correctQuestion[index2].condition = 'true'
                 this.correctQuestion[index2].page = this.page
                 this.correctQuestion[index2].examId = this.examId
@@ -323,6 +327,7 @@ export default {
                 this.correctQuestion[index2].obtainScore = this.obtainScore
             }
             for (let index3 = 0; index3 < this.unansweredQuestion.length; index3++) {
+                console.log("index3", this.unansweredQuestion)
                 this.unansweredQuestion[index3].condition = 'unanswered'
                 this.unansweredQuestion[index3].page = this.page
                 this.unansweredQuestion[index3].examId = this.examId
@@ -336,8 +341,45 @@ export default {
                 this.unansweredQuestion[index3].selectedTab = this.selectedTab
                 this.unansweredQuestion[index3].obtainScore = this.obtainScore
             }
+            //console.log(this.unansweredQuestion.length, this.correctQuestion.length, this.wrongQuestion.length)
+            if (this.unansweredQuestion.length === 0 && this.correctQuestion.length === 0 && this.wrongQuestion.length === 0) {
+                console.log("for first", this.unansweredQuestion, this.correctQuestion)
+                this.firstQuestion.push(this.questions[0])
+                // let fq = {
+                //     'condition': 'unanswered',
+                //     'page': this.page,
+                //     'examId': this.examId,
+                //     'selectedCheck': JSON.stringify(this.selectedCheck),
+                //     'indexVar': this.indexVar,
+                //     'totalQuestions': this.totalQuestions,
+                //     'counterL': this.counterL,
+                //     'candidateName ': this.candidateName,
+                //     'selectedRandomAnswer': JSON.stringify(this.selectedRandomAnswer),
+                //     'selectedRandomQuestion': JSON.stringify(this.selectedRandomQuestion),
+                //     'selectedTab': this.selectedTab,
+                //     'obtainScore': this.obtainScore
 
-            let cQuestions = [...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion]
+                // }
+                console.log(this.firstQuestion)
+                for (let index4 = 0; index4 < this.firstQuestion.length; index4++) {
+                    this.firstQuestion[index4].condition = 'unanswered'
+                    this.firstQuestion[index4].page = this.page
+                    this.firstQuestion[index4].examId = this.examId
+                    this.firstQuestion[index4].selectedCheck = JSON.stringify(this.selectedCheck)
+                    this.firstQuestion[index4].indexVar = this.indexVar
+                    this.firstQuestion[index4].totalQuestions = this.totalQuestions
+                    this.firstQuestion[index4].counterL = this.counterL
+                    this.firstQuestion[index4].candidateName = this.candidateName
+                    this.firstQuestion[index4].selectedRandomAnswer = JSON.stringify(this.selectedRandomAnswer)
+                    this.firstQuestion[index4].selectedRandomQuestion = JSON.stringify(this.selectedRandomQuestion)
+                    this.firstQuestion[index4].selectedTab = this.selectedTab
+                    this.firstQuestion[index4].obtainScore = this.obtainScore
+                    // this.firstQuestion.push(fq)
+                }
+                console.log(this.firstQuestion, this.questions[0])
+            }
+
+            let cQuestions = [...this.wrongQuestion, ...this.correctQuestion, ...this.unansweredQuestion, ...this.firstQuestion]
 
             let id = this["auth/getUser"].id
 
@@ -706,6 +748,21 @@ export default {
                 return json
 
             })
+            let firstQuestion = this.firstQuestion.map((elem) => {
+                let json = {}
+                json.id = elem.id
+                json.content = elem.content
+                json.explanation = elem.explanation
+                json.description = elem.description
+                json.type = elem.type
+                json.task_image = elem.task_image
+                json.exam_library_id = elem.exam_library_id
+                json.testlet_id = elem.testlet_id
+                json.condition = 'unanswered'
+                json.userId = this["auth/getUser"].id
+                return json
+
+            })
 
             localStorage.setItem("condition", JSON.stringify(true));
             this.deleteExamsession()
@@ -716,6 +773,7 @@ export default {
                 params: {
                     wrongQuestions: wrong,
                     correctQuestions: correct,
+                    firstQuestion: firstQuestion,
                     totalQuestions: this.totalQuestions,
                     candidateName: this.candidateName,
                     unansweredQuestion: unanswered,
