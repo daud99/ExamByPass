@@ -3,5 +3,5 @@ module.exports = {
     "port": 465,
     "secure": true,
     "username": "thedarkbot9@gmail.com",
-    "password": "DaUd!#@%$&^((*))abcyhjk';"
+    "password": ""
 }
